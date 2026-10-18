@@ -1,0 +1,40 @@
+{
+  "name": "fluent-mediabunny",
+  "version": "0.1.0",
+  "description": "Explicit, immutable browser media conversion powered by Mediabunny.",
+  "files": [
+    "dist",
+    "docs",
+    "spec"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp dev --host 127.0.0.1",
+    "test": "vp test run",
+    "check": "vp check",
+    "prepublishOnly": "vp run build",
+    "test:watch": "vp test",
+    "format": "vp fmt",
+    "type-check": "vp check",
+    "test:browser": "playwright test",
+    "fixtures": "node scripts/fixtures.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "^26.6.5",
+    "@types/wicg-file-system-access": "2023.10.7",
+    "mediabunny": "1.61.6",
+    "typescript": "^7.0.2",
+    "vite-plus": "catalog:"
+  },
+  "peerDependencies": {
+    "mediabunny": "1.61.6"
+  },
+  "packageManager": "pnpm@12.14.0"
+}

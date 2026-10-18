@@ -1,0 +1,30 @@
+{
+  "source": "Generated locally with FFmpeg lavfi testsrc/testsrc2 and sine. No third-party media.",
+  "baseline": "2 seconds, 160x120, 15 fps, 440 Hz mono at 44100 Hz; exceptions visible in scripts/fixtures.mjs",
+  "fixtures": [
+    "audio.mp3",
+    "audio.wav",
+    "av.mp4",
+    "av.webm",
+    "corrupt.mp4",
+    "dynamic.mp4",
+    "hevc.mp4",
+    "long.mp4",
+    "multi.mp4",
+    "odd.webm",
+    "offset.mp4",
+    "rate.wav",
+    "rotated.mp4",
+    "silent.mp4",
+    "vfr.mp4"
+  ],
+  "exceptions": {
+    "long.mp4": "30 seconds, 640x360, 24 fps",
+    "dynamic.mp4": "Two 1-second AVC segments: 160x120 then 96x64",
+    "offset.mp4": "Input timestamp shifted by +5 seconds",
+    "rotated.mp4": "90 degree rotation metadata",
+    "vfr.mp4": "Frame selection retains frame indices divisible by 3 or 5",
+    "odd.webm": "161x121, one second, VP9 yuv444p",
+    "rate.wav": "12345 Hz mono, one second"
+  }
+}

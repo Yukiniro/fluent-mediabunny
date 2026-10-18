@@ -1,0 +1,2352 @@
+{
+  "stats": {
+    "startTime": "2026-10-18T14:48:29.238Z",
+    "duration": 22955.842999999997,
+    "expected": 29,
+    "skipped": 4,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": {
+    "chrome": {
+      "tests": [
+        {
+          "name": "real copy, track selection, immutable branches and metadata round trips",
+          "status": "passed"
+        },
+        {
+          "name": "real transcode and transforms, with explicit capability outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "strict errors, pre-abort, no codec fallback and observer isolation",
+          "status": "passed"
+        },
+        {
+          "name": "OPFS transactional write, readback, overwrite and cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "HEVC defaults resolve AVC while copy preserves HEVC without encoders",
+          "status": "passed"
+        },
+        {
+          "name": "URL reads are anonymous; broken network has no retry and abort settles",
+          "status": "passed"
+        },
+        {
+          "name": "built package works as a browser consumer",
+          "status": "passed"
+        },
+        {
+          "name": "dynamic dimensions fail before opening a target",
+          "status": "passed"
+        },
+        {
+          "name": "repeated success failure cancel cycles and 30-second file output",
+          "status": "passed"
+        },
+        {
+          "name": "explicit rotate crop resize and frame rate compose in order",
+          "status": "passed"
+        },
+        {
+          "name": "encoder matrix and explicit audio parameters use the requested configuration",
+          "status": "passed"
+        }
+      ],
+      "attachments": {
+        "capabilities": [
+          {
+            "name": "av.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.6,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "rotated.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.6,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 108
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 108,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 120,
+                  "height": 160
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "offset.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.6,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 5.176009070294785,
+                  "end": 5.776009070294784
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "vfr.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.6,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "hevc.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.533,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "hevc",
+                  "width": 160,
+                  "height": 120
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "odd.webm",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.5,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 161,
+                  "height": 121
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "audio.mp3",
+            "status": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 2.0375510204081633,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "wav",
+                "mode": "transcode",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "audio",
+                    "codec": "pcm-s16",
+                    "sampleRate": 44100,
+                    "channels": 1
+                  }
+                ]
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "mp3",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "rate.wav",
+            "status": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 1,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 12345,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "wav",
+                "mode": "transcode",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "audio",
+                    "codec": "pcm-s16",
+                    "sampleRate": 12345,
+                    "channels": 1
+                  }
+                ]
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 12345,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          }
+        ],
+        "hevc-default": {
+          "copy": "hevc",
+          "auto": {
+            "code": "ok",
+            "codec": "avc",
+            "resolved": "avc"
+          }
+        },
+        "dynamic-input": {
+          "code": "UNSUPPORTED_INPUT",
+          "opened": false
+        },
+        "resource-trend": {
+          "samples": [
+            32508624, 32508624, 32508624, 32508624, 32508624, 32508624, 32508624, 85969481
+          ],
+          "aborts": 4,
+          "size": 6778236,
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36"
+        },
+        "encoder-matrix": [
+          {
+            "format": "mp4",
+            "code": "ok",
+            "info": {
+              "container": "MP4",
+              "durationSeconds": 2.0906666666666665,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "mp4",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120,
+                  "quality": "high"
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "webm",
+            "code": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 2.04,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp8",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "webm",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp8",
+                  "width": 160,
+                  "height": 120,
+                  "bitrate": 300000
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "m4a",
+            "code": "ok",
+            "info": {
+              "container": "MP4",
+              "durationSeconds": 2.0906666666666665,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "m4a",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "wav",
+            "code": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 2.0201458333333333,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "wav",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "webkit": {
+      "tests": [
+        {
+          "name": "real copy, track selection, immutable branches and metadata round trips",
+          "status": "passed"
+        },
+        {
+          "name": "real transcode and transforms, with explicit capability outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "strict errors, pre-abort, no codec fallback and observer isolation",
+          "status": "passed"
+        },
+        {
+          "name": "OPFS transactional write, readback, overwrite and cancellation",
+          "status": "skipped"
+        },
+        {
+          "name": "HEVC defaults resolve AVC while copy preserves HEVC without encoders",
+          "status": "passed"
+        },
+        {
+          "name": "URL reads are anonymous; broken network has no retry and abort settles",
+          "status": "passed"
+        },
+        {
+          "name": "built package works as a browser consumer",
+          "status": "passed"
+        },
+        {
+          "name": "dynamic dimensions fail before opening a target",
+          "status": "passed"
+        },
+        {
+          "name": "repeated success failure cancel cycles and 30-second file output",
+          "status": "skipped"
+        },
+        {
+          "name": "explicit rotate crop resize and frame rate compose in order",
+          "status": "passed"
+        },
+        {
+          "name": "encoder matrix and explicit audio parameters use the requested configuration",
+          "status": "passed"
+        }
+      ],
+      "attachments": {
+        "capabilities": [
+          {
+            "name": "av.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.609,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "rotated.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.609,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 108
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 108,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 120,
+                  "height": 160
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "offset.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.609,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 5.176009070294785,
+                  "end": 5.776009070294784
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "vfr.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.609,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "hevc.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.533,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "hevc",
+                  "width": 160,
+                  "height": 120
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "odd.webm",
+            "status": "unavailable",
+            "code": "CODEC_UNAVAILABLE",
+            "message": "MediaError: Selected track cannot be decoded."
+          },
+          {
+            "name": "audio.mp3",
+            "status": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 2.0375510204081633,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "wav",
+                "mode": "transcode",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "audio",
+                    "codec": "pcm-s16",
+                    "sampleRate": 44100,
+                    "channels": 1
+                  }
+                ]
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "mp3",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "rate.wav",
+            "status": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 1,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 12345,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "wav",
+                "mode": "transcode",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "audio",
+                    "codec": "pcm-s16",
+                    "sampleRate": 12345,
+                    "channels": 1
+                  }
+                ]
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 12345,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          }
+        ],
+        "hevc-default": {
+          "copy": "hevc",
+          "auto": {
+            "code": "ok",
+            "codec": "avc",
+            "resolved": "avc"
+          }
+        },
+        "dynamic-input": {
+          "code": "PROCESSING_FAILED",
+          "opened": false
+        },
+        "encoder-matrix": [
+          {
+            "format": "mp4",
+            "code": "ok",
+            "info": {
+              "container": "MP4",
+              "durationSeconds": 2.0693333333333332,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "mp4",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120,
+                  "quality": "high"
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "webm",
+            "code": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 2.04,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp8",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "webm",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp8",
+                  "width": 160,
+                  "height": 120,
+                  "bitrate": 300000
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "m4a",
+            "code": "ok",
+            "info": {
+              "container": "MP4",
+              "durationSeconds": 2.0693333333333332,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "m4a",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "wav",
+            "code": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 2.0201458333333333,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "wav",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "firefox": {
+      "tests": [
+        {
+          "name": "real copy, track selection, immutable branches and metadata round trips",
+          "status": "passed"
+        },
+        {
+          "name": "real transcode and transforms, with explicit capability outcomes",
+          "status": "passed"
+        },
+        {
+          "name": "strict errors, pre-abort, no codec fallback and observer isolation",
+          "status": "passed"
+        },
+        {
+          "name": "OPFS transactional write, readback, overwrite and cancellation",
+          "status": "skipped"
+        },
+        {
+          "name": "HEVC defaults resolve AVC while copy preserves HEVC without encoders",
+          "status": "passed"
+        },
+        {
+          "name": "URL reads are anonymous; broken network has no retry and abort settles",
+          "status": "passed"
+        },
+        {
+          "name": "built package works as a browser consumer",
+          "status": "passed"
+        },
+        {
+          "name": "dynamic dimensions fail before opening a target",
+          "status": "passed"
+        },
+        {
+          "name": "repeated success failure cancel cycles and 30-second file output",
+          "status": "skipped"
+        },
+        {
+          "name": "explicit rotate crop resize and frame rate compose in order",
+          "status": "passed"
+        },
+        {
+          "name": "encoder matrix and explicit audio parameters use the requested configuration",
+          "status": "passed"
+        }
+      ],
+      "attachments": {
+        "capabilities": [
+          {
+            "name": "av.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.593,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "rotated.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.593,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 108
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 108,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 120,
+                  "height": 160
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "offset.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.593,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 5.176009070294785,
+                  "end": 5.776009070294784
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {
+                  "title": "源标题",
+                  "artist": "fixture"
+                },
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "vfr.mp4",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.593,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  },
+                  {
+                    "id": 2,
+                    "type": "audio",
+                    "codec": "opus",
+                    "sampleRate": 44100,
+                    "channels": 1,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "avc",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "aac",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "hevc.mp4",
+            "status": "unavailable",
+            "code": "CODEC_UNAVAILABLE",
+            "message": "MediaError: Selected track cannot be decoded."
+          },
+          {
+            "name": "odd.webm",
+            "status": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 0.5,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 80,
+                  "height": 60
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "webm",
+                "mode": "auto",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "video",
+                    "codec": "vp9",
+                    "width": 80,
+                    "height": 60,
+                    "quality": "high"
+                  }
+                ],
+                "trim": {
+                  "start": 0.2,
+                  "end": 0.8
+                }
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp9",
+                  "width": 161,
+                  "height": 121
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "audio.mp3",
+            "status": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 2.0375510204081633,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "wav",
+                "mode": "transcode",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "audio",
+                    "codec": "pcm-s16",
+                    "sampleRate": 44100,
+                    "channels": 1
+                  }
+                ]
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "mp3",
+                  "sampleRate": 44100,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          },
+          {
+            "name": "rate.wav",
+            "status": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 1,
+              "durationOrigin": "scanned",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 12345,
+                  "channels": 1
+                }
+              ],
+              "metadata": {},
+              "omittedSourceFields": []
+            },
+            "report": {
+              "resolved": {
+                "format": "wav",
+                "mode": "transcode",
+                "tracks": [
+                  {
+                    "id": 1,
+                    "type": "audio",
+                    "codec": "pcm-s16",
+                    "sampleRate": 12345,
+                    "channels": 1
+                  }
+                ]
+              },
+              "selected": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 12345,
+                  "channels": 1
+                }
+              ],
+              "excludedByUser": [],
+              "metadata": {
+                "values": {},
+                "omittedSourceFields": ["raw"],
+                "removedByUser": [],
+                "replacedSourceMetadata": false
+              },
+              "warnings": [
+                {
+                  "code": "METADATA_OMITTED",
+                  "message": "Unsupported source metadata was omitted.",
+                  "fields": ["raw"]
+                }
+              ]
+            }
+          }
+        ],
+        "hevc-default": {
+          "copy": "hevc",
+          "auto": {
+            "code": "CODEC_UNAVAILABLE"
+          }
+        },
+        "dynamic-input": {
+          "code": "UNSUPPORTED_INPUT",
+          "opened": false
+        },
+        "encoder-matrix": [
+          {
+            "format": "mp4",
+            "code": "CODEC_UNAVAILABLE"
+          },
+          {
+            "format": "webm",
+            "code": "ok",
+            "info": {
+              "container": "WebM",
+              "durationSeconds": 2.034,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp8",
+                  "width": 160,
+                  "height": 120
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "webm",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "video",
+                  "codec": "vp8",
+                  "width": 160,
+                  "height": 120,
+                  "bitrate": 300000
+                },
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "opus",
+                  "sampleRate": 48000,
+                  "channels": 2,
+                  "quality": "high"
+                }
+              ]
+            }
+          },
+          {
+            "format": "m4a",
+            "code": "CODEC_UNAVAILABLE"
+          },
+          {
+            "format": "wav",
+            "code": "ok",
+            "info": {
+              "container": "WAVE",
+              "durationSeconds": 2.0201458333333333,
+              "durationOrigin": "metadata",
+              "tracks": [
+                {
+                  "id": 1,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ],
+              "metadata": {
+                "title": "源标题",
+                "artist": "fixture"
+              },
+              "omittedSourceFields": ["raw"]
+            },
+            "resolved": {
+              "format": "wav",
+              "mode": "transcode",
+              "tracks": [
+                {
+                  "id": 2,
+                  "type": "audio",
+                  "codec": "pcm-s16",
+                  "sampleRate": 48000,
+                  "channels": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
