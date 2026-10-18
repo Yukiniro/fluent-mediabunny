@@ -19,13 +19,13 @@ test("real copy, track selection, immutable branches and metadata round trips", 
     const load = async (name: string) =>
       new Blob([await (await fetch(`/fixtures/${name}`)).arrayBuffer()]);
     const tags = {
-      title: "标题🎬",
-      artist: "艺术家",
-      album: "专辑",
-      albumArtist: "演奏者",
-      genre: "测试",
-      comment: "注释🙂",
-      description: "描述",
+      title: "\u6807\u9898🎬",
+      artist: "\u827a\u672f\u5bb6",
+      album: "\u4e13\u8f91",
+      albumArtist: "\u6f14\u594f\u8005",
+      genre: "\u6d4b\u8bd5",
+      comment: "\u6ce8\u91ca🙂",
+      description: "\u63cf\u8ff0",
       date: "2024-02-29",
     };
     const outputs = [];
@@ -81,13 +81,13 @@ test("real copy, track selection, immutable branches and metadata round trips", 
   });
   for (const output of results.outputs) {
     expect(output.tags).toEqual({
-      title: "标题🎬",
-      artist: "艺术家",
-      album: "专辑",
-      albumArtist: "演奏者",
-      genre: "测试",
-      comment: "注释🙂",
-      description: "描述",
+      title: "\u6807\u9898🎬",
+      artist: "\u827a\u672f\u5bb6",
+      album: "\u4e13\u8f91",
+      albumArtist: "\u6f14\u594f\u8005",
+      genre: "\u6d4b\u8bd5",
+      comment: "\u6ce8\u91ca🙂",
+      description: "\u63cf\u8ff0",
       date: "2024-02-29",
     });
     expect(output.deleted.title).toBeUndefined();
@@ -107,7 +107,7 @@ test("real copy, track selection, immutable branches and metadata round trips", 
       independent.format.tags.title ??
         independent.format.tags.TITLE ??
         independent.format.tags["MOVIE/TITLE"],
-    ).toBe("标题🎬");
+    ).toBe("\u6807\u9898🎬");
   }
   expect(results.base.title).toBeUndefined();
   expect(results.branch.title).toBe("branch");

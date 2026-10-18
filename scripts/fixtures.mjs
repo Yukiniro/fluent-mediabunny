@@ -22,7 +22,7 @@ run("av.mp4", [
   "-c:a",
   "aac",
   "-metadata",
-  "title=源标题",
+  "title=\u6e90\u6807\u9898",
   "-metadata",
   "artist=fixture",
 ]);

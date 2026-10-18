@@ -1,11 +1,14 @@
 <!doctype html>
-<html lang="zh-CN">
-  <meta charset="utf-8" /><title>fluent-mediabunny 原生文件验证</title>
+<html lang="en">
+  <meta charset="utf-8" /><title>fluent-mediabunny native file validation</title>
   <body>
-    <h1>原生文件提交验证</h1>
-    <p>仅选择专用测试文件 native-output.mp4。此测试将替换文件内容，再验证取消保留已提交结果。</p>
-    <button id="start">选择测试文件并验证</button>
-    <pre id="result">等待选择文件</pre>
+    <h1>Native file commit validation</h1>
+    <p>
+      Select only a dedicated native-output.mp4 test file. This check replaces its contents, then
+      verifies that cancellation preserves the committed result.
+    </p>
+    <button id="start">Select test file and validate</button>
+    <pre id="result">Waiting for a file</pre>
     <script type="module">
       import { media, probe } from "/src/index.ts";
       document.querySelector("#start").onclick = async () => {
@@ -15,7 +18,7 @@
             suggestedName: "native-output.mp4",
             types: [{ description: "Test MP4", accept: { "video/mp4": [".mp4"] } }],
           });
-          el.textContent = "运行中";
+          el.textContent = "Running";
           const source = await (await fetch("/fixtures/av.mp4")).blob();
           const originalSize = (await handle.getFile()).size;
           const result = await media(source)
