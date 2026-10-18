@@ -71,4 +71,15 @@ At this baseline, the GitHub workflow had not run. Consult the repository's Acti
 
 ## Reproduction
 
-Versions are pinned in package.json and pnpm-lock.yaml. Fixture origins/expectations are in public/fixtures/manifest.json; scripts/fixtures.mjs generates them from synthetic patterns, without third-party recordings. Follow the README's check, build, and browser-test commands. Live Playwright results are written to test-results; the JSON files here are the recorded local baseline snapshot.
+Versions are pinned in package.json and pnpm-lock.yaml. Fixture origins/expectations are in public/fixtures/manifest.json; scripts/fixtures.mjs generates them from synthetic patterns, without third-party recordings. Use Node 24, pnpm 12.14.0, and FFmpeg/ffprobe on PATH. Run:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm exec vp check
+pnpm exec vp test run
+pnpm exec vp pack
+pnpm exec playwright install chrome firefox webkit
+pnpm test:browser
+```
+
+`pnpm fixtures` regenerates the synthetic media. `pnpm dev` starts the browser test harness. Live Playwright results are written to test-results; the JSON files here are the recorded local baseline snapshot.

@@ -557,5 +557,10 @@ test("encoder matrix and explicit audio parameters use the requested configurati
       expect(r.code).toBe("CODEC_UNAVAILABLE");
     }
   }
-  if (testInfo.project.name === "chrome") expect(results.every((r) => r.code === "ok")).toBe(true);
+  // AAC encoding is platform-dependent even with the same Chrome version.
+  for (const format of ["webm", "wav"]) {
+    expect(results.find((r) => r.format === format)?.code).toBe("ok");
+  }
+  if (testInfo.project.name === "chrome" && process.platform === "darwin")
+    expect(results.every((r) => r.code === "ok")).toBe(true);
 });

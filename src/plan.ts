@@ -222,7 +222,8 @@ export async function prepare(input: Input, config: Config & { format: Format },
       for await (const sample of new VideoSampleSink(t).samples(trim?.start, trim?.end)) {
         try {
           scope.check();
-          const d = `${sample.displayWidth}x${sample.displayHeight}`;
+          // Decoders may retain display dimensions when coded frame dimensions change.
+          const d = `${sample.codedWidth}x${sample.codedHeight}/${sample.visibleRect.width}x${sample.visibleRect.height}/${sample.displayWidth}x${sample.displayHeight}`;
           if (dimensions && dimensions !== d)
             throw new MediaError("UNSUPPORTED_INPUT", "Variable frame dimensions are unsupported.");
           dimensions = d;
