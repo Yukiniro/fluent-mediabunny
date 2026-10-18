@@ -18,6 +18,7 @@ import type {
   VideoCodec,
   AudioCodec,
 } from "mediabunny";
+import { validateAvcConfiguration } from "./avc.ts";
 import { formats } from "./config.ts";
 import { MediaError, invalid } from "./errors.ts";
 import { trackInfo } from "./input.ts";
@@ -218,6 +219,7 @@ export async function prepare(input: Input, config: Config & { format: Format },
         ))
       )
         throw new MediaError("CODEC_UNAVAILABLE", "Resolved video encoding is unavailable.");
+      await validateAvcConfiguration(t, scope);
       let dimensions: string | undefined;
       for await (const sample of new VideoSampleSink(t).samples(trim?.start, trim?.end)) {
         try {
