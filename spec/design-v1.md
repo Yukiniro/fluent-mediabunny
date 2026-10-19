@@ -10,7 +10,7 @@ tags: [design, typescript, media, mediabunny, browser]
 
 # Introduction
 
-This specification defines a browser TypeScript wrapper around the official Mediabunny Conversion API. An immutable fluent builder describes one input and one output; `run()` executes the operation. The wrapper owns input/output adaptation, deterministic defaults, validation, track integrity, metadata projection, cancellation, and resource lifetimes.
+fluent-mediabunny aims to make Mediabunny easier to understand and use through a fluent TypeScript API. Its project scope can draw on all public Mediabunny capabilities, not only Conversion. This specification defines the first release: browser media conversion using Conversion together with the public input, output, track, packet, sample, metadata, and capability APIs. An immutable fluent builder describes one input and one output; `run()` executes the operation. The wrapper owns input/output adaptation, deterministic defaults, validation, track integrity, metadata projection, cancellation, and resource lifetimes.
 
 The v1 design excludes presets and uses an object-based metadata interface with merge, replace, and field deletion. This is the design baseline, not evidence that every acceptance criterion has passed. See [implementation validation](../docs/validation.md) for actual results and remaining gaps. Upstream behavior was reviewed against Mediabunny **1.61.6**; wrapper policies are not necessarily upstream defaults.
 
@@ -28,7 +28,7 @@ Hide the `Source → Input → Conversion → Output → Target` wiring while ke
 | Control  | Probe, progress, AbortSignal, structured errors, result reports, cleanup           |
 | Metadata | Copy, override, delete, or replace eight descriptive fields                        |
 
-Excluded: presets, concatenation, multi-input composition, overlays, subtitles, mixing, transitions, speed changes, filter collections, thumbnails, live/HLS streams, protocol conversion, Node adapters, automatic Workers, custom process callbacks, raw Input/Output injection, arbitrary FFmpeg arguments, and automatic WASM or server fallbacks. This is an ergonomic Conversion wrapper, not an FFmpeg compatibility layer.
+Excluded: presets, concatenation, multi-input composition, overlays, subtitles, mixing, transitions, speed changes, filter collections, thumbnails, live/HLS streams, protocol conversion, Node adapters, automatic Workers, custom process callbacks, raw Input/Output injection, arbitrary FFmpeg arguments, and automatic WASM or server fallbacks. These exclusions bound version 1; they do not restrict the overall project to Conversion. FFmpeg command-line compatibility is not a project goal.
 
 ## 2. Definitions
 

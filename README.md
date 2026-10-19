@@ -1,8 +1,10 @@
 # fluent-mediabunny
 
-A fluent TypeScript library for converting audio and video in the browser, powered by [Mediabunny](https://mediabunny.dev/).
+A simpler, more approachable fluent TypeScript API for [Mediabunny](https://mediabunny.dev/).
 
-Inspired by the approachable, chainable style of fluent-ffmpeg, fluent-mediabunny makes common media tasks easy to express. Prepare a video for upload, extract an audio track, or make a shorter clip — without running FFmpeg or sending local media to a conversion server.
+Inspired by the chainable style of fluent-ffmpeg, fluent-mediabunny aims to make Mediabunny easier to understand and use. It brings related media operations into a readable API, reducing the setup needed to turn an idea into a working media workflow.
+
+The project can draw on the full range of Mediabunny APIs, including input and output, tracks, packets, samples, metadata, and conversion. Conversion is one building block, not the limit of the project. The first version focuses on browser media conversion; it does not yet expose every Mediabunny capability.
 
 ```ts
 import { media } from "fluent-mediabunny";
@@ -16,7 +18,7 @@ const result = await media(file)
 const previewUrl = URL.createObjectURL(result.blob);
 ```
 
-## What you can do
+## What you can do today
 
 - Convert media to **MP4, WebM, M4A, or WAV**.
 - Trim, resize, crop, rotate, and change video frame rates.
@@ -29,9 +31,9 @@ The API is immutable, so one starting configuration can be reused for different 
 
 ## Where it fits
 
-fluent-mediabunny is for browser applications that need straightforward, **one-input, one-output conversion**: upload preparation, personal media tools, and audio or video utilities.
+The first version serves browser applications that need straightforward, **one-input, one-output conversion**: upload preparation, personal media tools, and audio or video utilities. Local media is processed in the browser without a conversion server or an FFmpeg runtime.
 
-It is not a full FFmpeg replacement or a timeline editor. Version 1 does not include concatenation, mixing, overlays, live streaming, or server-side processing. It builds on Mediabunny's official Conversion API and leaves more advanced media workflows to the underlying library.
+Version 1 does not include concatenation, mixing, overlays, live streaming, or server-side processing. These are current release boundaries, rather than a restriction to the Conversion API. The project does not aim to reproduce the FFmpeg command-line interface.
 
 ## Try it locally
 

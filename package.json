@@ -1,7 +1,7 @@
 {
   "name": "fluent-mediabunny",
   "version": "0.1.0",
-  "description": "Explicit, immutable browser media conversion powered by Mediabunny.",
+  "description": "A simpler, more approachable fluent TypeScript API for Mediabunny.",
   "homepage": "https://github.com/Yukiniro/fluent-mediabunny#readme",
   "bugs": {
     "url": "https://github.com/Yukiniro/fluent-mediabunny/issues"
