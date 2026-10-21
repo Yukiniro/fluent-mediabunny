@@ -102,6 +102,7 @@ export type ErrorCode =
   | "INVALID_OPTIONS"
   | "UNSUPPORTED_INPUT"
   | "UNSUPPORTED_OUTPUT_COMBINATION"
+  | "IMAGE_ENCODING_UNAVAILABLE"
   | "CODEC_UNAVAILABLE"
   | "COPY_NOT_POSSIBLE"
   | "NO_TRACKS"
@@ -130,3 +131,32 @@ export type Config = {
   tracks: TracksOptions;
   metadata?: { patch: MetadataPatch; mode: "merge" | "replace" };
 };
+
+export type ThumbnailImageOptions = {
+  track?: "primary" | number;
+  width?: number;
+  height?: number;
+  fit?: "contain" | "cover" | "fill";
+  type?: "image/jpeg" | "image/png";
+  quality?: number;
+  signal?: AbortSignal;
+};
+export type ThumbnailOptions = ThumbnailImageOptions & { time: number };
+export type ThumbnailsOptions = ThumbnailImageOptions &
+  (
+    | { times: readonly number[]; start?: never; end?: never; count?: never }
+    | { start: number; end: number; count: number; times?: never }
+  );
+export type ThumbnailImage = {
+  blob: Blob;
+  mimeType: "image/jpeg" | "image/png";
+  width: number;
+  height: number;
+  trackId: number;
+  requestedTime: number;
+  actualTime: number;
+  sourceTimestamp: number;
+  durationSeconds: number;
+  timeOriginSeconds: number;
+};
+export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };

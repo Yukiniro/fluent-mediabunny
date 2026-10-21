@@ -174,3 +174,5 @@ const rotated = JSON.parse(
 );
 if (rotated.streams[0].side_data_list?.[0]?.rotation !== 90)
   throw new Error("Rotation fixture lacks its display matrix.");
+
+await import("./thumbnail-fixtures.mjs");

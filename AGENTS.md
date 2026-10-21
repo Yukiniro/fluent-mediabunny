@@ -1,6 +1,6 @@
 # fluent-mediabunny
 
-A fluent API that makes Mediabunny easier to understand and use, drawing on its public capabilities beyond Conversion. The current v1 implementation is browser-only, immutable, and uses Mediabunny 1.61.6. Read spec/design-v1.md before changing public behavior. Keep one input, one output; no presets, FFmpeg runtime, timeline, server, or automatic permissions.
+A fluent API that makes Mediabunny easier to understand and use, drawing on its public capabilities beyond Conversion. The implementation is browser-only and uses Mediabunny 1.61.6. Read spec/design-v1.md for conversion and spec/spec-design-v0-2.md for video image extraction before changing public behavior. Keep conversion one input, one output; extraction supports bounded image batches; no presets, FFmpeg runtime, timeline, server, or automatic permissions.
 
 Use Vite+ for formatting, lint, types, tests, dev server and library packaging. Scripts: `vp check`, `vp test run`, `vp pack`; `pnpm test:browser` requires built dist and Playwright browsers. `pnpm fixtures` regenerates local synthetic media using FFmpeg (test-only dependency).
 

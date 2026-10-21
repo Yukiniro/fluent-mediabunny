@@ -148,3 +148,12 @@ export class MediaBuilder {
 export function media(source: MediaInput) {
   return new MediaBuilder(source);
 }
+
+export { thumbnail, thumbnails } from "./thumbnail.ts";
+export type {
+  ThumbnailImageOptions,
+  ThumbnailOptions,
+  ThumbnailsOptions,
+  ThumbnailImage,
+  ThumbnailItem,
+} from "./types.ts";

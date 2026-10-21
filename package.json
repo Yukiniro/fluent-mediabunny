@@ -1,6 +1,6 @@
 {
   "name": "fluent-mediabunny",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simpler, more approachable fluent TypeScript API for Mediabunny.",
   "homepage": "https://github.com/Yukiniro/fluent-mediabunny#readme",
   "bugs": {
@@ -34,7 +34,8 @@
     "format": "vp fmt",
     "type-check": "vp check",
     "test:browser": "playwright test",
-    "fixtures": "node scripts/fixtures.mjs"
+    "fixtures": "node scripts/fixtures.mjs",
+    "test:package": "vp exec tsc -p tsconfig.package.json"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",

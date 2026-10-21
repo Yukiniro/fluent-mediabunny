@@ -1,0 +1,251 @@
+{
+  "date": "2026-10-21",
+  "environment": "macOS",
+  "versions": {
+    "chrome": "155.0.8059.85",
+    "firefox": "146.0.1",
+    "webkit": "26.0"
+  },
+  "fullSuite": {
+    "startTime": "2026-10-21T15:02:07.567Z",
+    "duration": 29821.186,
+    "expected": 48,
+    "skipped": 6,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "extraction": [
+    {
+      "title": "JPEG/PNG, VFR and B-frame timestamps agree with independent ffprobe oracle",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "batch slots, primary/explicit tracks, intervals, lazy snapshots and retained Blobs",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "sample geometry, rotation/flip/SAR, fit modes and alpha padding",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "real cancellation, early exit, URL failure, repeated extraction and built package",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": [
+        {
+          "name": "repeated-extraction",
+          "data": {
+            "aborted": "ABORTED",
+            "stable": true,
+            "widths": [
+              33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33
+            ],
+            "elapsedMs": 60.400000005960464,
+            "errors": ["UNSUPPORTED_INPUT", "UNSUPPORTED_INPUT"]
+          }
+        }
+      ]
+    },
+    {
+      "title": "decoded VP9 transparency is preserved when supported",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": [
+        {
+          "name": "decoded-alpha-support",
+          "data": {
+            "pixels": [
+              [255, 26, 4, 129],
+              [129, 12, 2, 255]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "delayed video and video ending before audio retain missing positions",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "URL reads can be canceled without late delivery or unhandled rejection",
+      "project": "chrome",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "JPEG/PNG, VFR and B-frame timestamps agree with independent ffprobe oracle",
+      "project": "webkit",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "batch slots, primary/explicit tracks, intervals, lazy snapshots and retained Blobs",
+      "project": "webkit",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "sample geometry, rotation/flip/SAR, fit modes and alpha padding",
+      "project": "webkit",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "real cancellation, early exit, URL failure, repeated extraction and built package",
+      "project": "webkit",
+      "status": "passed",
+      "annotations": [],
+      "observations": [
+        {
+          "name": "repeated-extraction",
+          "data": {
+            "aborted": "ABORTED",
+            "stable": true,
+            "widths": [
+              33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33
+            ],
+            "elapsedMs": 370,
+            "errors": ["UNSUPPORTED_INPUT", "UNSUPPORTED_INPUT"]
+          }
+        }
+      ]
+    },
+    {
+      "title": "decoded VP9 transparency is preserved when supported",
+      "project": "webkit",
+      "status": "skipped",
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "VP9 alpha decoder unavailable: EncodingError: Decoder failure",
+          "location": {
+            "file": "/Users/zhanghao/Documents/Codex/2026-10-18/new-chat/outputs/fluent-mediabunny/tests/browser/thumbnails.spec.ts",
+            "line": 291,
+            "column": 10
+          }
+        }
+      ],
+      "observations": [
+        {
+          "name": "decoded-alpha-support",
+          "data": {
+            "code": "PROCESSING_FAILED",
+            "cause": "EncodingError: Decoder failure"
+          }
+        }
+      ]
+    },
+    {
+      "title": "delayed video and video ending before audio retain missing positions",
+      "project": "webkit",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "URL reads can be canceled without late delivery or unhandled rejection",
+      "project": "webkit",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "JPEG/PNG, VFR and B-frame timestamps agree with independent ffprobe oracle",
+      "project": "firefox",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "batch slots, primary/explicit tracks, intervals, lazy snapshots and retained Blobs",
+      "project": "firefox",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "sample geometry, rotation/flip/SAR, fit modes and alpha padding",
+      "project": "firefox",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "real cancellation, early exit, URL failure, repeated extraction and built package",
+      "project": "firefox",
+      "status": "passed",
+      "annotations": [],
+      "observations": [
+        {
+          "name": "repeated-extraction",
+          "data": {
+            "aborted": "ABORTED",
+            "stable": true,
+            "widths": [
+              33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33
+            ],
+            "elapsedMs": 146,
+            "errors": ["UNSUPPORTED_INPUT", "UNSUPPORTED_INPUT"]
+          }
+        }
+      ]
+    },
+    {
+      "title": "decoded VP9 transparency is preserved when supported",
+      "project": "firefox",
+      "status": "skipped",
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "VP9 alpha decoder unavailable: EncodingError: The given encoding is not supported.",
+          "location": {
+            "file": "/Users/zhanghao/Documents/Codex/2026-10-18/new-chat/outputs/fluent-mediabunny/tests/browser/thumbnails.spec.ts",
+            "line": 291,
+            "column": 10
+          }
+        }
+      ],
+      "observations": [
+        {
+          "name": "decoded-alpha-support",
+          "data": {
+            "code": "PROCESSING_FAILED",
+            "cause": "EncodingError: The given encoding is not supported."
+          }
+        }
+      ]
+    },
+    {
+      "title": "delayed video and video ending before audio retain missing positions",
+      "project": "firefox",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    },
+    {
+      "title": "URL reads can be canceled without late delivery or unhandled rejection",
+      "project": "firefox",
+      "status": "passed",
+      "annotations": [],
+      "observations": []
+    }
+  ]
+}

@@ -2,20 +2,27 @@
   "source": "Generated locally with FFmpeg lavfi testsrc/testsrc2 and sine. No third-party media.",
   "baseline": "2 seconds, 160x120, 15 fps, 440 Hz mono at 44100 Hz; exceptions visible in scripts/fixtures.mjs",
   "fixtures": [
+    "alpha.webm",
     "audio.mp3",
     "audio.wav",
     "av.mp4",
     "av.webm",
     "corrupt.mp4",
+    "delayed-video.mp4",
     "dynamic.mp4",
+    "geometry-oriented.mp4",
+    "geometry.mp4",
     "hevc.mp4",
     "long.mp4",
+    "markers-vfr.mp4",
+    "markers.mp4",
     "multi.mp4",
     "odd.webm",
     "offset.mp4",
     "rate.wav",
     "rotated.mp4",
     "silent.mp4",
+    "two-video.mp4",
     "vfr.mp4"
   ],
   "exceptions": {
@@ -26,5 +33,12 @@
     "vfr.mp4": "Frame selection retains frame indices divisible by 3 or 5",
     "odd.webm": "161x121, one second, VP9 yuv444p",
     "rate.wav": "12345 Hz mono, one second"
+  },
+  "thumbnailFixtures": {
+    "source": "FFmpeg lavfi generated colors; no third-party media",
+    "markers": "Red, green, blue in consecutive seconds; 4 fps with B frames; VFR omits frames 1, 5 and 9",
+    "geometry": "Red top-left, green bottom-left, blue right half, 80x40 coded, SAR 2:1; oriented copy rotated and flipped",
+    "alpha": "Half-transparent red VP9; alpha availability depends on decoder",
+    "delayed": "Video covers [1,4), audio continues to 5 seconds"
   }
 }

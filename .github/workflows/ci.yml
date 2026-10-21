@@ -18,6 +18,7 @@ jobs:
       - run: pnpm exec vp check
       - run: pnpm exec vp test run
       - run: pnpm exec vp pack
+      - run: pnpm test:package
       - run: pnpm test:browser
       - uses: actions/upload-artifact@v4
         if: always()
