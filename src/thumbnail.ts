@@ -231,10 +231,6 @@ function extract(
                 "Canvas 2D rendering is unavailable.",
                 { phase: scope.phase },
               );
-            if (opts.type === "image/jpeg") {
-              context.fillStyle = "black";
-              context.fillRect(0, 0, width, height);
-            }
             const scale =
               opts.fit === "contain"
                 ? Math.min(width / sw, height / sh)
@@ -242,6 +238,12 @@ function extract(
             const dw = !opts.fit || opts.fit === "fill" ? width : sw * scale;
             const dh = !opts.fit || opts.fit === "fill" ? height : sh * scale;
             sample.draw(context, (width - dw) / 2, (height - dh) / 2, dw, dh);
+            if (opts.type === "image/jpeg") {
+              context.globalCompositeOperation = "destination-over";
+              context.fillStyle = "black";
+              context.fillRect(0, 0, width, height);
+              context.globalCompositeOperation = "source-over";
+            }
             const timing = {
               sourceTimestamp: sample.timestamp,
               durationSeconds: sample.duration,

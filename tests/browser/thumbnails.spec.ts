@@ -151,6 +151,17 @@ test("batch slots, primary/explicit tracks, intervals, lazy snapshots and retain
 });
 
 test("sample geometry, rotation/flip/SAR, fit modes and alpha padding", async ({ page }, info) => {
+  const sampleMetadata = await page.evaluate(async () => {
+    const path = "/tests/browser/inspect-sample.ts";
+    const { inspectSample } = (await import(
+      /* @vite-ignore */ path
+    )) as typeof import("./inspect-sample.ts");
+    return Promise.all([inspectSample("geometry.mp4"), inspectSample("geometry-oriented.mp4")]);
+  });
+  await info.attach("sample-metadata", {
+    body: JSON.stringify(sampleMetadata),
+    contentType: "application/json",
+  });
   const result = await page.evaluate(async () => {
     const { thumbnail } = window.mediaAPI;
     const outputs = [];
@@ -186,7 +197,7 @@ test("sample geometry, rotation/flip/SAR, fit modes and alpha padding", async ({
     return outputs;
   });
   for (const item of result) {
-    expect(item.size).toEqual(
+    expect(item.size, JSON.stringify(sampleMetadata)).toEqual(
       item.fit ? [41, 41] : item.name === "geometry.mp4" ? [160, 40] : [40, 160],
     );
     if (item.fit === "contain") {
@@ -296,7 +307,7 @@ test("decoded VP9 transparency is preserved when supported", async ({ page }, in
   expect(png![3]).toBeLessThan(135);
   expect(jpeg![3]).toBe(255);
   expect(jpeg![0]).toBeGreaterThan(110);
-  expect(jpeg![0]).toBeLessThan(150);
+  expect(jpeg![0], JSON.stringify(result)).toBeLessThan(150);
 });
 
 test("delayed video and video ending before audio retain missing positions", async ({ page }) => {
