@@ -198,7 +198,15 @@ test("sample geometry, rotation/flip/SAR, fit modes and alpha padding", async ({
   });
   for (const item of result) {
     expect(item.size, JSON.stringify(sampleMetadata)).toEqual(
-      item.fit ? [41, 41] : item.name === "geometry.mp4" ? [160, 40] : [40, 160],
+      item.fit
+        ? [41, 41]
+        : sampleMetadata.find((v) => v.name === item.name)!.sample.coded[1] === 20
+          ? item.name === "geometry.mp4"
+            ? [80, 20]
+            : [20, 80]
+          : item.name === "geometry.mp4"
+            ? [160, 40]
+            : [40, 160],
     );
     if (item.fit === "contain") {
       if (item.type === "image/png") expect(item.corner[3]).toBe(0);

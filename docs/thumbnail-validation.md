@@ -5,7 +5,7 @@ Validated locally on 2026-10-21 against Mediabunny 1.61.6, Vite+ 1.3.0, TypeScri
 ## Results
 
 - Formatting, lint and source type checks passed.
-- 35 unit tests passed, including 14 extraction/capability tests and all 21 existing tests.
+- 37 unit tests passed, including 16 extraction/capability tests and all 21 existing tests.
 - ESM and declarations built; a separate TypeScript consumer checks the built functions, exported types and invalid option combinations.
 - Full browser suite: 48 passed, 6 skipped, 0 failed across Chrome 155.0.8059.85, Firefox 146.0.1 and Playwright WebKit 26.0.
 - Extraction contributes 19 passes and 2 capability skips. Every browser successfully decodes AVC and returns both JPEG and PNG. Existing conversion/file-safety tests contribute 29 passes and 4 pre-existing Chrome-only OPFS/resource-check skips.
@@ -43,7 +43,7 @@ Resource counters cover wrapper ownership, not browser decoder or source-cache m
 
 ## Compatibility clarification discovered during implementation
 
-The tested WebKit decoder returns square-pixel samples for a file declaring a 2:1 pixel ratio. Extraction now uses the public track ratio when a sample exposes square pixels; a non-square sample ratio takes precedence. Geometry remains sample-specific, and conversion preflight is not invoked. Both language specifications record this fallback and its limitation for unreported dynamic ratio changes. Rotation and flip content assertions pass in all three browsers.
+The tested WebKit decoder returns square-pixel samples for a file declaring a 2:1 pixel ratio. Extraction uses the public track ratio when a sample exposes square pixels and unchanged coded dimensions; a non-square sample ratio takes precedence. Linux WebKit instead materializes the same ratio as an 80x20 raster, which must retain its sample geometry rather than receive the ratio twice. Native dimensions can therefore differ while preserving the 4:1 display aspect ratio. Geometry remains sample-specific, and conversion preflight is not invoked. Both language specifications record this fallback and its limitation for unreported dynamic ratio changes. JPEG alpha composition uses explicit pixel multiplication for samples that can contain alpha, avoiding accelerated Canvas blending differences; this needs one temporary bounded ImageData buffer. Rotation and flip content assertions pass in all three browsers.
 
 No dependency or existing conversion/file-write contract changed. Automated WebKit is not Safari/iOS device acceptance. Additional codecs, HDR/color matching and arbitrary dynamic-resolution streams are not certified by this suite.
 

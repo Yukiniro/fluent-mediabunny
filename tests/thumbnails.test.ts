@@ -10,6 +10,9 @@ const fake = vi.hoisted(() => ({
   closed: 0,
   allocations: 0,
   encodes: 0,
+  ratio: 1,
+  alpha: false,
+  pixels: new Uint8ClampedArray([200, 100, 50, 128]),
   width: 80,
   height: 40,
   timestamp: 0,
@@ -43,7 +46,9 @@ vi.mock("../src/input.ts", () => ({
       isVideoTrack: () => true,
       getCodec: async () => fake.codec,
       canDecode: async () => fake.decodable,
-      getPixelAspectRatio: async () => ({ num: 1, den: 1 }),
+      getPixelAspectRatio: async () => ({ num: fake.ratio, den: 1 }),
+      getCodedWidth: async () => 80,
+      getCodedHeight: async () => 40,
     };
     const input = {
       getPrimaryVideoTrack: async () => (fake.primary ? track : null),
@@ -77,6 +82,9 @@ vi.mock("mediabunny", () => ({
           yield {
             timestamp: fake.timestamp,
             duration: fake.duration,
+            codedWidth: fake.width,
+            codedHeight: fake.height,
+            hasAlpha: fake.alpha,
             displayWidth: fake.width,
             displayHeight: fake.height,
             draw: () => {},
@@ -104,7 +112,12 @@ class Canvas {
     this.height = h;
   }
   getContext() {
-    return { fillStyle: "", fillRect() {} };
+    return {
+      fillStyle: "",
+      fillRect() {},
+      getImageData: () => ({ data: fake.pixels }),
+      putImageData() {},
+    };
   }
   async convertToBlob({ type }: { type: string }) {
     fake.encodes++;
@@ -121,6 +134,9 @@ beforeEach(() => {
     closed: 0,
     allocations: 0,
     encodes: 0,
+    ratio: 1,
+    alpha: false,
+    pixels: new Uint8ClampedArray([200, 100, 50, 128]),
     width: 80,
     height: 40,
     timestamp: 0,
@@ -388,4 +404,17 @@ test("HTML canvas null encoding and absent rendering context have distinct error
   await expect(thumbnail(source, { time: 0 })).rejects.toMatchObject({
     code: "IMAGE_ENCODING_UNAVAILABLE",
   });
+});
+
+test("pixel-ratio fallback does not stretch a decoder-normalized raster twice", async () => {
+  fake.ratio = 2;
+  expect(await thumbnail(source, { time: 0 })).toMatchObject({ width: 160, height: 40 });
+  fake.height = 20;
+  expect(await thumbnail(source, { time: 0 })).toMatchObject({ width: 80, height: 20 });
+});
+
+test("JPEG explicitly composites decoded alpha onto black pixels", async () => {
+  fake.alpha = true;
+  await thumbnail(source, { time: 0 });
+  expect(Array.from(fake.pixels)).toEqual([100, 50, 25, 255]);
 });

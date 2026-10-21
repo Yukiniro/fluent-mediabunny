@@ -180,6 +180,8 @@ function extract(
         throw new MediaError("CODEC_UNAVAILABLE", "Selected video decoder is unavailable.");
       const pixelAspect = await scope.wait(track.getPixelAspectRatio(), "READ_FAILED");
       const fallbackAspect = pixelAspect.num / pixelAspect.den;
+      const codedWidth = await scope.wait(track.getCodedWidth(), "READ_FAILED");
+      const codedHeight = await scope.wait(track.getCodedHeight(), "READ_FAILED");
       const origin = Math.max(0, await scope.wait(input.getFirstTimestamp(), "READ_FAILED"));
       const queries = opts.times.map((t) => micros(origin + t));
       samples = new VideoSampleSink(track).samplesAtTimestamps(queries.map((t) => t / 1_000_000));
@@ -201,7 +203,11 @@ function extract(
           if (start <= queries[index]! && queries[index]! < start + duration) {
             // Some decoders omit container pixel aspect ratio from their VideoFrame metadata.
             const aspect =
-              sample.pixelAspectRatio.num === sample.pixelAspectRatio.den ? fallbackAspect : 1;
+              sample.pixelAspectRatio.num === sample.pixelAspectRatio.den &&
+              sample.codedWidth === codedWidth &&
+              sample.codedHeight === codedHeight
+                ? fallbackAspect
+                : 1;
             const sw = sample.displayWidth * (sample.rotation % 180 === 0 ? aspect : 1),
               sh = sample.displayHeight * (sample.rotation % 180 === 0 ? 1 : aspect);
             if (!Number.isFinite(sw) || !Number.isFinite(sh) || sw <= 0 || sh <= 0)
@@ -239,10 +245,22 @@ function extract(
             const dh = !opts.fit || opts.fit === "fill" ? height : sh * scale;
             sample.draw(context, (width - dw) / 2, (height - dh) / 2, dw, dh);
             if (opts.type === "image/jpeg") {
-              context.globalCompositeOperation = "destination-over";
-              context.fillStyle = "black";
-              context.fillRect(0, 0, width, height);
-              context.globalCompositeOperation = "source-over";
+              if (sample.hasAlpha !== false) {
+                // CPU composition avoids accelerated VideoFrame alpha blending differences.
+                const pixels = context.getImageData(0, 0, width, height);
+                for (let i = 0; i < pixels.data.length; i += 4) {
+                  const alpha = pixels.data[i + 3]! / 255;
+                  for (let c = 0; c < 3; c++)
+                    pixels.data[i + c] = Math.round(pixels.data[i + c]! * alpha);
+                  pixels.data[i + 3] = 255;
+                }
+                context.putImageData(pixels, 0, 0);
+              } else {
+                context.globalCompositeOperation = "destination-over";
+                context.fillStyle = "black";
+                context.fillRect(0, 0, width, height);
+                context.globalCompositeOperation = "source-over";
+              }
             }
             const timing = {
               sourceTimestamp: sample.timestamp,

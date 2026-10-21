@@ -41,7 +41,7 @@ Times are relative to `max(0, input.getFirstTimestamp())`, shared across tracks.
 | Limits              | Each dimension 1..4096, area at most 16,000,000 pixels; odd sizes and upscaling allowed |
 | `signal`            | AbortSignal for cancellation                                                            |
 
-Source rotation, flip and pixel aspect ratio are applied. PNG preserves available decoded alpha and transparent padding; JPEG composites onto black. Browser codec/color handling still applies. A decoder that drops alpha cannot be repaired by image encoding. Decoder metadata missing a non-square pixel ratio falls back to the track ratio; unreported dynamic ratio changes cannot be guaranteed.
+Source rotation, flip and pixel aspect ratio are applied. PNG preserves available decoded alpha and transparent padding; JPEG composites onto black. Browser codec/color handling still applies. A decoder that drops alpha cannot be repaired by image encoding. Decoder metadata missing a non-square pixel ratio falls back to the track ratio only when coded dimensions are unchanged. A decoder that materializes the ratio into a different raster retains its sample dimensions; unreported dynamic ratio changes cannot be guaranteed.
 
 ## Errors and lifetime
 
