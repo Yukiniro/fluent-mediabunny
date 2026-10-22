@@ -29,13 +29,13 @@ Why: the barrier is a small discrete protocol already expressed in TypeScript; a
 
 ## Coverage record
 
-| Model action | Code |
-| --- | --- |
-| `userAbort` | `Scope.abort` — no-op when `phase === "committing"` |
-| `beginCommit` | `Scope.commit` — `check()` then `phase = "committing"` |
-| `runAbort` | `OutputSink.abort` — returns immediately while committing |
-| `close` | `OutputSink.commit` → `stream.close()` after `scope.commit()` |
-| `open` / `write` | `OutputSink.open` / writable `write` |
+| Model action     | Code                                                          |
+| ---------------- | ------------------------------------------------------------- |
+| `userAbort`      | `Scope.abort` — no-op when `phase === "committing"`           |
+| `beginCommit`    | `Scope.commit` — `check()` then `phase = "committing"`        |
+| `runAbort`       | `OutputSink.abort` — returns immediately while committing     |
+| `close`          | `OutputSink.commit` → `stream.close()` after `scope.commit()` |
+| `open` / `write` | `OutputSink.open` / writable `write`                          |
 
 **Last sync commit:** `5edd606bb2e4ecddaab677aa24ec608f5d4ebff9`
 

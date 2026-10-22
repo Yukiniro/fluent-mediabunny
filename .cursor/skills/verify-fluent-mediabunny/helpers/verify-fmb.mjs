@@ -5,14 +5,7 @@
  * Usage: node helpers/verify-fmb.mjs <launch|doctor|drive|cleanup> [feature-id]
  */
 import { spawn } from "node:child_process";
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  writeFileSync,
-  rmSync,
-  unlinkSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -488,9 +481,7 @@ async function cmdDrive(featureId) {
   };
   const driver = drivers[featureId];
   if (!driver) {
-    console.error(
-      `Unknown feature "${featureId}". Known: ${Object.keys(drivers).join(", ")}`,
-    );
+    console.error(`Unknown feature "${featureId}". Known: ${Object.keys(drivers).join(", ")}`);
     process.exitCode = 1;
     return;
   }

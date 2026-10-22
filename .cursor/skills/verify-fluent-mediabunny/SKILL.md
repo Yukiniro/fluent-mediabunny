@@ -68,12 +68,12 @@ Sends SIGTERM (then SIGKILL if needed) to the PID recorded at launch. Deletes la
 
 Executable entry: `.cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs`
 
-| Command | Purpose |
-| --- | --- |
-| `launch` | Start isolated Vite harness; print JSON state |
-| `doctor` | Read-only health check |
-| `drive <id>` | Run one mapped feature; write proof |
-| `cleanup` | Stop the launched PID; keep evidence |
+| Command      | Purpose                                       |
+| ------------ | --------------------------------------------- |
+| `launch`     | Start isolated Vite harness; print JSON state |
+| `doctor`     | Read-only health check                        |
+| `drive <id>` | Run one mapped feature; write proof           |
+| `cleanup`    | Stop the launched PID; keep evidence          |
 
 Optional env: `FMB_VERIFY_RUN_ID`, `FMB_VERIFY_PORT`, `FMB_VERIFY_STATE_DIR`, `FMB_VERIFY_EVIDENCE`.
 

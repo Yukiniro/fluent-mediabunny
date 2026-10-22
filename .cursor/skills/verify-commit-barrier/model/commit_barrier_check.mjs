@@ -91,7 +91,8 @@ function step(state, action) {
 
 /** Harm: cancel before commit must not close the real file. */
 function violates(state) {
-  const canceledBeforeCommit = state.trace.includes("userAbort") &&
+  const canceledBeforeCommit =
+    state.trace.includes("userAbort") &&
     state.trace.indexOf("userAbort") <
       (state.trace.includes("beginCommit") ? state.trace.indexOf("beginCommit") : Infinity);
   if (canceledBeforeCommit && state.stream === "closed") return "cancel-before-commit-closed-file";
