@@ -18,7 +18,7 @@
 
 ## 开始使用
 
-维护者发布之后，`pnpm add fluent-mediabunny` 会从 npm 安装这个包。请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建：
+请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建。维护者发布之后，`pnpm add fluent-mediabunny` 会从 npm 安装这个包。
 
 ```sh
 git clone https://github.com/Yukiniro/fluent-mediabunny.git

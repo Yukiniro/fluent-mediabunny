@@ -18,7 +18,7 @@ Mediabunny provides the underlying media processing capabilities. fluent-mediabu
 
 ## Get started
 
-After a maintainer publishes, `pnpm add fluent-mediabunny` installs the package from npm. Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source:
+Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source. After a maintainer publishes, `pnpm add fluent-mediabunny` installs the package from npm.
 
 ```sh
 git clone https://github.com/Yukiniro/fluent-mediabunny.git
