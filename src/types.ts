@@ -160,9 +160,4 @@ export type ThumbnailImage = {
   timeOriginSeconds: number;
 };
 export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };
-export type ArtworkOptions = { signal?: AbortSignal };
-export type ArtworkImage = {
-  blob: Blob;
-  mimeType: "image/jpeg" | "image/png" | "image/gif" | "image/webp" | "image/bmp";
-  kind: "front" | "back" | "unspecified";
-};
+export type EmbeddedPictureOptions = { signal?: AbortSignal };

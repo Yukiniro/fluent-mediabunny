@@ -6,7 +6,7 @@
 
 受 fluent-ffmpeg 链式风格的启发，fluent-mediabunny 在 Mediabunny 之上提供便捷的上层 API，将配置与执行组织成可读的调用，减少表达媒体处理任务所需的准备代码。
 
-底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、有数量上限的批量视频图像提取，以及一次内嵌封面读取。
+底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、有数量上限的批量视频图像提取，以及一次内嵌图片读取。
 
 ## 为什么使用它
 
@@ -68,19 +68,19 @@ if (poster) {
 
 请求时间没有帧覆盖时，结果为 `null`。需要一组预览图时，`thumbnails()` 会按需生成图像，并保留每个请求的位置，包括没有帧的位置。每批支持 1–1000 个请求，输出 JPEG 或 PNG；图像每边最多 4096 像素，总面积不超过 16,000,000 像素。
 
-### 读取内嵌封面
+### 读取内嵌图片
 
 ```ts
-import { artwork } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluent-mediabunny";
 
-const cover = await artwork(file);
-if (cover) {
-  const imageUrl = URL.createObjectURL(cover.blob);
+const picture = await getEmbeddedPicture(file);
+if (picture) {
+  const imageUrl = URL.createObjectURL(new Blob([picture]));
   // 在界面中使用 imageUrl，不再使用时释放它。
 }
 ```
 
-`artwork()` 返回播放器会当作该文件封面展示的内嵌图片；如果内嵌图片都不是 JPEG、PNG、GIF、WebP 或 BMP，则返回 `null`。`kind` 为 `front`、`back` 或 `unspecified`。返回的 Blob 是文件自带的图片字节，保留图片内部的元数据，不是从视频解码出来的帧。
+`getEmbeddedPicture()` 返回一张内嵌图片的字节；如果内嵌图片都不是 JPEG、PNG、GIF、WebP 或 BMP，则返回 `null`。有多张图片时按固定顺序选择：正面封面，然后是没有正背面标签的图片，最后是背面封面，同一类按文件顺序取第一张。这些字节是文件自带的图片，保留图片内部的元数据，不是从视频解码出来的帧。
 
 ## 输入与输出
 

@@ -150,13 +150,12 @@ export function media(source: MediaInput) {
 }
 
 export { thumbnail, thumbnails } from "./thumbnail.ts";
-export { artwork } from "./artwork.ts";
+export { getEmbeddedPicture } from "./embedded-picture.ts";
 export type {
   ThumbnailImageOptions,
   ThumbnailOptions,
   ThumbnailsOptions,
   ThumbnailImage,
   ThumbnailItem,
-  ArtworkImage,
-  ArtworkOptions,
+  EmbeddedPictureOptions,
 } from "./types.ts";
