@@ -1,11 +1,11 @@
 ---
 title: Video image extraction — fluent-mediabunny 0.2 design
-version: specification-2.1
+version: specification-2.2
 status: implemented
 date_created: 2026-10-19
-last_updated: 2026-10-21
+last_updated: 2026-10-22
 owner: fluent-mediabunny
-tags: [design, api, video, extraction]
+tags: [design, api, video, extraction, artwork]
 ---
 
 English | [简体中文](spec-design-v0-2.zh-CN.md)
@@ -32,7 +32,7 @@ The project aims to simplify Mediabunny's public capabilities beyond Conversion.
 
 ### Excluded
 
-No public reader/session API, conversion plan API, enhanced probe, embedded artwork extraction, PCM, waveforms, raw frames/packets, spritesheets, contact sheets, animated image formats, image-file inputs, scene detection, automatic best-poster selection, subtitle rendering, overlays, crop rectangles, additional rotation, or timeline editing. No new input containers, codecs, HLS/live input, stream adapters, server support, automatic Workers, file writing, pickers, downloads, uploads, or codec installation.
+No public reader/session API, conversion plan API, enhanced probe, embedded artwork beyond the single `artwork` read in section 12, PCM, waveforms, raw frames/packets, spritesheets, contact sheets, animated image formats, image-file inputs, scene detection, automatic best-poster selection, subtitle rendering, overlays, crop rectangles, additional rotation, or timeline editing. No new input containers, codecs, HLS/live input, stream adapters, server support, automatic Workers, file writing, pickers, downloads, uploads, or codec installation.
 
 Keep `media(source)...run()` and existing `probe()` behavior unchanged. Image extraction reads the source directly and does not inherit any conversion builder settings. Existing AVC sequence restrictions remain conversion-only; image extraction must not add a whole-file transcoding preflight.
 
@@ -48,7 +48,7 @@ Keep `media(source)...run()` and existing `probe()` behavior unchanged. Image ex
 
 ## 3. Requirements, Constraints & Guidelines
 
-- REQ-001: Export only two new runtime entry points, `thumbnail` and `thumbnails`, plus their documented TypeScript types. Do not add corresponding conversion-builder methods or aliases.
+- REQ-001: Export only `thumbnail`, `thumbnails`, and `artwork` as new runtime entry points, plus their documented TypeScript types, including `ArtworkImage` and `ArtworkOptions`. Do not add corresponding conversion-builder methods or aliases.
 - REQ-002: Reuse the existing MediaInput types, finite-file input format allowlist, URL normalization, anonymous CORS GET policy, and no-retry behavior. Caller-owned bytes and URLs must remain stable until termination.
 - REQ-003: Use public Mediabunny APIs for demuxing, track selection, decoding, timing, and geometry. Do not implement codecs or a replacement demuxer.
 - REQ-004: Validate and snapshot all caller-supplied options and the complete time list before any source read. Do not copy the media bytes. Unknown option keys fail consistently with the existing API.
@@ -311,6 +311,8 @@ Subsequent batches remain directions, without assigned release numbers or approv
 | Media creation                | Frames/Canvas/audio to files, timestamps, interleaving, backpressure           |
 | Conversion expansion          | Needed formats/codecs and per-track controls with compatibility evidence       |
 
+Section 12 delivers one embedded-artwork read ahead of that batch. It does not approve any other part of the row.
+
 Recording, HLS and server adapters require their own future scope decisions. Do not implicitly include them in any batch above.
 
 ## 11. Capability Inventory & References
@@ -355,3 +357,70 @@ Container support, codec recognition, decoding, encoding and successful executio
 - [Official Conversion guide](https://mediabunny.dev/guide/converting-media-files)
 - [Official HLS reading](https://mediabunny.dev/guide/reading-hls) and [writing](https://mediabunny.dev/guide/writing-hls)
 - [Official server extension](https://mediabunny.dev/guide/extensions/server)
+
+## 12. Embedded artwork read
+
+This addition delivers one read, the embedded picture a media player would show as a file's cover. It is a standalone function beside `probe` and `thumbnail`. It returns the file's own image bytes, not a decoded video frame. Implementation was authorized on 2026-10-22 under the operator's request to add an API.
+
+### 12.1 Scope
+
+Included: one function, `artwork`, plus its documented TypeScript types. It reads pictures that Mediabunny exposes as metadata images (ID3v2 APIC, MP4 `covr`, FLAC PICTURE, Ogg METADATA_BLOCK_PICTURE, Matroska image attachments), selects one, and returns an owned copy.
+
+Excluded: listing every picture, selecting by kind or index, picture name or description text, image dimensions, decoding, re-encoding, resizing, EXIF removal, pictures stored as video tracks, artwork writing, artwork passthrough in conversion, `metadata()` artwork fields, and probe changes. No picture-URL fetch and no link result. No new error code, option, cache, or builder method.
+
+### 12.2 Requirements
+
+- REQ-008: Export one new runtime entry point, `artwork`, and the types `ArtworkImage` and `ArtworkOptions`. No conversion-builder method or alias.
+- REQ-009: Reuse the existing MediaInput types, input format allowlist, URL normalization, anonymous CORS GET policy, and no-retry behavior. Use public Mediabunny APIs only.
+- REQ-010: Validate the options object (plain object, only `signal`, an AbortSignal when present) and the source type before observing the signal or reading the source.
+- REQ-011: Determine the MIME type from the picture's leading bytes, using the WHATWG MIME Sniffing image type patterns for JPEG, PNG, GIF, WebP, and BMP. Never use the declared type. A picture whose bytes match none of these patterns is not eligible. The pattern table is keyed by the public `mimeType` union, so the two cannot drift.
+- REQ-012: Among eligible pictures, select the first front cover in file order. Otherwise select the first picture with no front/back label. Otherwise select the first back cover. Otherwise resolve null. Selection receives only `{ data: Uint8Array; kind: AttachedImage["kind"] }` values built at the metadata boundary. It cannot see the declared MIME type, name, or description. Labels are an exhaustive table keyed by Mediabunny's picture `kind`.
+- REQ-013: Return an owned Blob holding exactly the selected picture's bytes, with `blob.type` equal to `mimeType`. Later changes to caller-owned input bytes must not affect it. Copy only the selected picture. Selection returns the chosen view, the sniffed MIME type, and the public `kind`, or null. The only Blob is built afterward from `data.slice()`. Do not pass `data.buffer`, which can extend past the picture.
+- REQ-014: Each call opens and disposes its own Input. Repeated calls on an unchanged source return equal bytes in distinct Blobs and never mutate the source.
+- CON-003: `resolveMetadata`, `ProbeResult`, conversion metadata stripping, and `metadata()` patch validation are unchanged. `probe().omittedSourceFields` keeps listing `"images"` when the source exposes pictures. That entry means the field is outside the text projection, not that it is unreadable. Converted outputs still carry no artwork. `metadata({ images })` still rejects with UNSUPPORTED_METADATA_FIELD.
+- SEC-002: Return embedded bytes unchanged, including any metadata inside the image such as EXIF. These are source contents returned to the caller who supplied the source, not library-generated output, so SEC-001 does not apply. Never label bytes with a type their content does not match, and never return SVG or another script-capable type.
+
+### 12.3 Interface
+
+```ts
+type ArtworkOptions = { signal?: AbortSignal };
+
+type ArtworkImage = {
+  blob: Blob;
+  mimeType: "image/jpeg" | "image/png" | "image/gif" | "image/webp" | "image/bmp";
+  kind: "front" | "back" | "unspecified";
+};
+
+artwork(source: MediaInput, options?: ArtworkOptions): Promise<ArtworkImage | null>;
+```
+
+`kind` is `front` or `back` only when the file labels the picture that way (ID3 and FLAC picture types 3 and 4, MP4 `covr` as front, Matroska attachments named `cover.*` or `back.*`). Every other label is `unspecified`. Null means no eligible picture was found. It is not proof of absence. WAV has no pictures, and Mediabunny skips Matroska tags when the source size is unknown. Aborting a read that would have resolved null rejects `ABORTED`. Null is not a cancellation result.
+
+### 12.4 Errors and lifecycle
+
+| Condition                                                                                                                | Outcome            |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| Options not a plain object, unknown key, non-AbortSignal `signal`, empty bytes                                           | INVALID_OPTIONS    |
+| Unsupported source type or URL, unrecognized container                                                                   | UNSUPPORTED_INPUT  |
+| Source fetch/read failure or tag parsing failure                                                                         | READ_FAILED        |
+| Cancellation observed before resolution, including a pre-aborted signal and a tag read that would otherwise resolve null | ABORTED            |
+| No eligible embedded picture                                                                                             | null, not an error |
+
+All errors use phase `preparing`. Static validation errors take precedence over a pre-aborted signal. No result is delivered after an observed abort. As with `probe`, an Input cleanup failure after a successful read does not reject, and after a failure it is attached as a diagnostic. The returned Blob is already an owned copy, so cleanup cannot affect it.
+
+### 12.5 Acceptance criteria
+
+| ID     | Given / when                                                                                                                                              | Required result                                                                              |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| AC-021 | Generated MP3 with a back APIC before a front APIC                                                                                                        | Front picture, exact source bytes, content MIME, `kind` front                                |
+| AC-022 | Unlabeled plus back pictures; back only; two unlabeled pictures                                                                                           | Unlabeled chosen; back chosen; first in file order                                           |
+| AC-023 | Declared `image/*`, `image/jpg`, mislabeled type, ID3 `-->` URL, SVG, empty data                                                                          | MIME from content or picture skipped; only ineligible pictures resolve null                  |
+| AC-024 | WAV, or a container with no pictures                                                                                                                      | null                                                                                         |
+| AC-025 | Byte input mutated after resolution; picture stored at a nonzero offset in the source buffer                                                              | Blob unchanged; Blob size equals the picture length                                          |
+| AC-026 | Invalid options or an unsupported source with a pre-aborted signal; a valid pre-aborted signal; abort during a tag read that would otherwise resolve null | INVALID_OPTIONS or UNSUPPORTED_INPUT with no input opened; ABORTED, not null; Input disposed |
+| AC-027 | Two calls on one source; `probe` before and after                                                                                                         | Equal bytes, distinct Blobs; identical probe results still listing `"images"`                |
+| AC-028 | `metadata({ images })`                                                                                                                                    | UNSUPPORTED_METADATA_FIELD                                                                   |
+| AC-029 | Import from the built package                                                                                                                             | `artwork`, `ArtworkImage`, `ArtworkOptions` usable; an unknown option fails typecheck        |
+| AC-030 | Run existing conversion, probe, metadata, and extraction suites                                                                                           | No behavior or default regression                                                            |
+
+Unit tests use synthetic Mediabunny pictures behind a mocked input, plus one small generated fixture read by `artwork()` and `probe()`. This path does not use canvas or a browser encoder, so it adds no Playwright spec. Touchpoints are `src/artwork.ts`, `src/types.ts`, `src/index.ts`, the unit test, the package type test, the fixture script, both READMEs, and both spec files.
