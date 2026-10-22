@@ -1,5 +1,9 @@
 # Agent Guidelines
 
+## Language
+
+- Use English for commit messages, pull request titles and descriptions, code comments, identifiers, test descriptions, and documentation, except explicitly localized content.
+
 ## Understand the Task
 
 - Before making changes, read the relevant code, callers, and tests to understand the requirements and impact.
