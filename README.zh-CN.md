@@ -18,20 +18,20 @@
 
 ## 开始使用
 
-项目仍处于早期开发阶段，**目前尚未在 npm 上提供安装包**。请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建：
+维护者发布之后，`pnpm add fluent-mediabunny` 会从 npm 安装这个包。请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建：
 
 ```sh
 git clone https://github.com/Yukiniro/fluent-mediabunny.git
 cd fluent-mediabunny
 pnpm install --frozen-lockfile
 pnpm build
-pnpm pack
+pnpm pack --out fluent-mediabunny.tgz
 ```
 
 然后进入你的应用目录，安装生成的压缩包和固定版本的 Mediabunny 对等依赖：
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
 ```
 
 将压缩包路径替换为实际位置。应用需要使用浏览器打包工具。
@@ -90,6 +90,8 @@ pnpm test:browser
 ```
 
 浏览器测试需要先构建 `dist`、安装 Playwright 浏览器，并在 `PATH` 中提供 FFmpeg/ffprobe。仓库已提交合成测试素材；`pnpm fixtures` 使用 FFmpeg 重新生成这些素材，FFmpeg 仅为测试依赖。自动化 WebKit 和 OPFS 测试不能证明原生文件选择器或 Safari/iOS 的实际支持情况。
+
+如果 Pull Request 修改了 `src/`，请运行 `pnpm changeset`，并提交它在 `.changeset/` 下生成的文件。版本低于 1.0 时，破坏性变更选择 `minor`，其他变更选择 `patch`。摘要会成为更新日志条目，请用英文填写。如果 `src/` 的改动不需要发布，请改为运行 `pnpm changeset --empty`。维护者的发布流程见 [RELEASING.md](RELEASING.md)。
 
 ## 许可证
 

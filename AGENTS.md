@@ -32,3 +32,8 @@
 - Review the full diff before committing and exclude unrelated changes, temporary files, and debugging code.
 - Use Conventional Commits: `type(scope): description`, with an optional scope. Describe the concrete change; explain the reason and compatibility impact in the body when needed.
 - Commit, push, and publish only within the user's authorization. Preserve the user's existing uncommitted work.
+
+## Release
+
+- Contributors with a `src/` change run `pnpm changeset` and commit the file it adds under `.changeset/`.
+- Maintainers follow [RELEASING.md](RELEASING.md). The publish command is `pnpm release:publish`.

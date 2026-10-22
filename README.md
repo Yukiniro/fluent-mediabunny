@@ -18,20 +18,20 @@ Mediabunny provides the underlying media processing capabilities. fluent-mediabu
 
 ## Get started
 
-The package is in early development and **is not currently available on npm**. Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source:
+After a maintainer publishes, `pnpm add fluent-mediabunny` installs the package from npm. Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source:
 
 ```sh
 git clone https://github.com/Yukiniro/fluent-mediabunny.git
 cd fluent-mediabunny
 pnpm install --frozen-lockfile
 pnpm build
-pnpm pack
+pnpm pack --out fluent-mediabunny.tgz
 ```
 
 Then install the generated tarball and the exact Mediabunny peer dependency from your application's directory:
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
 ```
 
 Replace the tarball path with its actual location. Your application needs a browser bundler.
@@ -90,6 +90,8 @@ pnpm test:browser
 ```
 
 Browser tests require the built `dist`, the Playwright browsers, and FFmpeg/ffprobe on `PATH`. Synthetic fixtures are committed; `pnpm fixtures` regenerates them using FFmpeg, which is a test-only dependency. Automated WebKit and OPFS tests do not establish native picker or Safari/iOS support.
+
+If your pull request changes `src/`, run `pnpm changeset` and commit the file it adds under `.changeset/`. While the version is below 1.0, choose `minor` for a breaking change and `patch` for anything else. Write the summary in English, because it becomes the changelog entry. If a `src/` change needs no release, run `pnpm changeset --empty` instead. [RELEASING.md](RELEASING.md) describes how maintainers publish.
 
 ## License
 
