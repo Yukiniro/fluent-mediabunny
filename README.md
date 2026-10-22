@@ -1,10 +1,42 @@
 # fluent-mediabunny
 
+English | [简体中文](README.zh-CN.md)
+
 A simpler, more approachable fluent TypeScript API for [Mediabunny](https://mediabunny.dev/).
 
-Inspired by the chainable style of fluent-ffmpeg, fluent-mediabunny aims to make Mediabunny easier to understand and use. It brings related media operations into a readable API, reducing the setup needed to turn an idea into a working media workflow.
+Inspired by the chainable style of fluent-ffmpeg, fluent-mediabunny provides a convenient higher-level API over Mediabunny. It organizes configuration and execution into readable calls, reducing the setup needed to express a media task.
 
-The project can draw on the full range of Mediabunny APIs, including input and output, tracks, packets, samples, metadata, and conversion. Conversion is one building block, not the limit of the project. The current release covers browser media conversion and video image extraction; it does not yet expose every Mediabunny capability.
+Mediabunny provides the underlying media processing capabilities. fluent-mediabunny focuses on making those public capabilities easier to understand and use through API design. The current release covers media conversion with one input and one output, and video image extraction with bounded batches.
+
+## Why use it
+
+**Keep the task readable.** A chain expresses the output you want, from its format to its time range and size. Configuration is immutable, so you can reuse a starting point for different outputs without changing the original builder.
+
+**Reduce integration code.** Input setup, execution, cancellation, and cleanup are coordinated through the task API, reducing the lifecycle wiring you need to write around Mediabunny.
+
+**Keep decisions visible.** Conversion results report resolved settings, selected and excluded tracks, metadata, and warnings. If a selected track cannot be preserved or the requested encoding is unavailable, the operation fails rather than silently dropping that track or substituting encoding parameters.
+
+## Get started
+
+The package is in early development and **is not currently available on npm**. Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source:
+
+```sh
+git clone https://github.com/Yukiniro/fluent-mediabunny.git
+cd fluent-mediabunny
+pnpm install --frozen-lockfile
+pnpm build
+pnpm pack
+```
+
+Then install the generated tarball and the exact Mediabunny peer dependency from your application's directory:
+
+```sh
+pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+```
+
+Replace the tarball path with its actual location. Your application needs a browser bundler.
+
+### Prepare a video
 
 ```ts
 import { media } from "fluent-mediabunny";
@@ -18,63 +50,46 @@ const result = await media(file)
 const previewUrl = URL.createObjectURL(result.blob);
 ```
 
-## What you can do today
+Here, `file` is a browser `File` supplied by your application, long enough to contain the requested 2–12 second range. Revoke `previewUrl` with `URL.revokeObjectURL()` when the preview is no longer needed.
 
-- Convert media to **MP4, WebM, M4A, or WAV**.
-- Trim, resize, crop, rotate, and change video frame rates.
-- Extract audio, adjust its sample rate and channels, and select tracks.
-- Extract posters, screenshots, and batches of timeline previews as JPEG or PNG.
-- Inspect media information and edit descriptive metadata.
-- Copy compatible tracks without re-encoding, or transcode when needed.
-- Follow conversion progress, cancel work, and save to a Blob or an application-provided file handle.
+Conversion outputs can be MP4, WebM, M4A, or WAV. All audio/video tracks are selected by default; audio-only M4A and WAV require explicitly selecting one audio track and excluding video. The default mode copies tracks when compatible with the resolved settings and transcodes when needed; an explicit trim transcodes every selected track.
 
-The API is immutable, so one starting configuration can be reused for different outputs. Processing uses browser media capabilities; available codecs vary by browser, operating system, and device.
+### Create a video preview
 
 ```ts
-import { thumbnail, thumbnails } from "fluent-mediabunny";
+import { thumbnail } from "fluent-mediabunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
-
-for await (const item of thumbnails(file, { start: 0, end: 10, count: 5, width: 160 })) {
-  if (item.image) showPreview(item.index, item.image.blob);
+if (poster) {
+  const imageUrl = URL.createObjectURL(poster.blob);
+  // Use imageUrl in your UI, then revoke it when no longer needed.
 }
 ```
 
-Image batches preserve request positions, support cancellation, and release resources on early loop exit. See the [image extraction guide](docs/thumbnails.md) for time selection and output options.
+A request returns `null` when no frame covers that time. For a strip of previews, `thumbnails()` yields images on demand and preserves each requested position, including positions without a frame. Batches accept 1–1000 requests; output images are JPEG or PNG, with at most 4096 pixels per dimension and 16,000,000 pixels in area.
 
-## Where it fits
+## Input and output
 
-The project serves browser applications that need straightforward media conversion and video previews: upload preparation, personal media tools, and audio or video utilities. Local media is processed in the browser without a conversion server or an FFmpeg runtime.
+Inputs can be a `File`/`Blob`, `ArrayBuffer`, `Uint8Array` backed by an `ArrayBuffer`, or an absolute HTTP(S) URL. Remote sources must allow CORS; requests omit credentials. Codec availability depends on the browser, operating system, and device, so recognizing a container does not guarantee decoding or encoding support.
 
-The current release does not include concatenation, mixing, overlays, live streaming, or server-side processing. These are current release boundaries, rather than a restriction to the Conversion API. The project does not aim to reproduce the FFmpeg command-line interface.
-
-## Try it locally
-
-The package is in early development and **has not been published to npm**. Use Node 24 and pnpm 12.14.0 to build it from source:
-
-```sh
-git clone https://github.com/Yukiniro/fluent-mediabunny.git
-cd fluent-mediabunny
-pnpm install --frozen-lockfile
-pnpm build
-pnpm pack
-```
-
-Install the generated tarball in your browser application alongside `mediabunny@1.61.6`. A browser bundler is required.
-
-## Learn more
-
-- [Version 1 specification](spec/design-v1.md): API reference, supported formats, and behavior guarantees.
-- [Video image extraction specification](spec/spec-design-v0-2.md) ([中文](spec/spec-design-v0-2.zh-CN.md)).
-- [Image extraction validation](docs/thumbnail-validation.md): acceptance criteria and browser limitations.
-- [Validation report](docs/validation.md): tested browsers, reproduction commands, and known limits.
-- [GitHub Actions](https://github.com/Yukiniro/fluent-mediabunny/actions): current automated checks.
+Conversion returns an in-memory Blob result by default. Applications can instead provide a distinct output file handle with read/write permission already granted. The library never opens a picker or requests permission. Cancellation aborts any opened file stream before commit; once commit starts, the run waits for the actual file close result. Processing progress alone does not mean the file has been saved.
 
 ## Contributing
 
 Bug reports and focused improvements are welcome through [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) and pull requests. For browser-specific issues, include your browser, operating system, and a small reproducible example using shareable media.
 
-The project uses [Vite+](https://viteplus.dev/) for development, checks, tests, and packaging. See the validation report for the local test setup, and keep changes within the approved conversion and video image extraction scopes.
+The project uses [Vite+](https://viteplus.dev/) for development, checks, tests, and packaging. Run `pnpm dev` to open the local validation harness, or use these commands to check a change:
+
+```sh
+pnpm check
+pnpm test
+pnpm build
+pnpm test:package
+pnpm exec playwright install chrome firefox webkit
+pnpm test:browser
+```
+
+Browser tests require the built `dist`, the Playwright browsers, and FFmpeg/ffprobe on `PATH`. Synthetic fixtures are committed; `pnpm fixtures` regenerates them using FFmpeg, which is a test-only dependency. Automated WebKit and OPFS tests do not establish native picker or Safari/iOS support.
 
 ## License
 
