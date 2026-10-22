@@ -38,6 +38,7 @@
     "test:package": "vp exec tsc -p tsconfig.package.json"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@playwright/test": "1.58.2",
     "@types/node": "^26.6.5",
     "@types/wicg-file-system-access": "2023.10.7",

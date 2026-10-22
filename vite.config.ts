@@ -22,5 +22,9 @@ export default defineConfig({
       typeCheck: true,
     },
   },
-  fmt: {},
+  fmt: {
+    // `changeset add --empty` writes front matter that Oxfmt rewrites, and
+    // `changeset version` deletes every changeset when it writes CHANGELOG.md.
+    ignorePatterns: [".changeset/*.md"],
+  },
 });
