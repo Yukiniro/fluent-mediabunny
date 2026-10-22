@@ -67,8 +67,7 @@ function version() {
   console.log("Review with git show, push with git push origin main, then wait for Validate.");
 }
 
-// `prepublishOnly` runs this again so a hand-run `pnpm publish` hits the same gate.
-// `release:publish` runs it first because Changesets hides lifecycle script stderr.
+// `release:publish` runs this first because Changesets hides lifecycle script stderr.
 async function preflight() {
   assertCleanTree();
   const { version, repoPath } = readPackage();
