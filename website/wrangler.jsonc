@@ -4,7 +4,6 @@
   "compatibility_date": "2026-10-22",
   "assets": {
     "directory": "./doc_build",
-    // Pairs with route.cleanUrls in rspress.config.ts.
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
   },
