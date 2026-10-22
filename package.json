@@ -29,7 +29,9 @@
     "dev": "vp dev --host 127.0.0.1",
     "test": "vp test run",
     "check": "vp check",
-    "prepublishOnly": "vp run build",
+    "prepublishOnly": "node scripts/release.mjs preflight && vp run build",
+    "release:version": "node scripts/release.mjs version",
+    "release:publish": "node scripts/release.mjs publish",
     "test:watch": "vp test",
     "format": "vp fmt",
     "type-check": "vp check",
@@ -38,6 +40,7 @@
     "test:package": "vp exec tsc -p tsconfig.package.json"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@playwright/test": "1.58.2",
     "@types/node": "^26.6.5",
     "@types/wicg-file-system-access": "2023.10.7",
