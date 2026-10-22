@@ -16,7 +16,7 @@ export default defineConfig({
   },
   lint: {
     // Built declarations are checked separately after packaging.
-    ignorePatterns: ["type-tests/**"],
+    ignorePatterns: ["type-tests/**", "website/**"],
     options: {
       typeAware: true,
       typeCheck: true,
