@@ -197,3 +197,21 @@ export type ThumbnailImage = {
 };
 export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };
 export type EmbeddedPictureOptions = { signal?: AbortSignal };
+export type WaveformOptions = {
+  track?: "primary" | number;
+  pointsPerSecond?: number;
+  start?: number;
+  end?: number;
+  signal?: AbortSignal;
+};
+export type WaveformData = {
+  trackId: number;
+  sampleRate: number;
+  channels: number;
+  pointsPerSecond: number;
+  startSeconds: number;
+  endSeconds: number;
+  timeOriginSeconds: number;
+  min: Float32Array[];
+  max: Float32Array[];
+};
