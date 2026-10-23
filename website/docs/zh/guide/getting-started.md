@@ -1,6 +1,6 @@
 # 开始使用
 
-fluent-mediabunny 目前尚未在 npm 上提供安装包。请使用 Node 24 和 pnpm 12.14.0 从源码构建，连同 `mediabunny@1.61.6` 安装压缩包，然后各跑一次转换、缩略图和内嵌图片读取。
+fluent-mediabunny 目前尚未在 npm 上提供安装包。请使用 Node 24 和 pnpm 12.14.0 从源码构建，连同 `mediabunny@1.62.1` 安装压缩包，然后各跑一次转换、缩略图和内嵌图片读取。
 
 ## 从源码构建
 
@@ -21,7 +21,7 @@ pnpm pack
 在应用目录安装该压缩包和对等依赖。
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.62.1
 ```
 
 把压缩包路径换成 `pnpm pack` 写出的文件。应用需要使用浏览器打包工具。

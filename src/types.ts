@@ -43,7 +43,12 @@ export type RunOptions = {
   signal?: AbortSignal;
   onProgress?: (event: ProgressEvent) => void;
 };
-export type ProbeOptions = { signal?: AbortSignal; duration?: "metadata" | "scan" };
+export type ProbeOptions = {
+  signal?: AbortSignal;
+  duration?: "metadata" | "scan";
+  tracks?: TracksOptions;
+  frameRate?: "estimate";
+};
 export type Warning = { code: string; message: string; fields?: readonly string[] };
 export type TrackInfo = {
   id: number;
@@ -53,6 +58,22 @@ export type TrackInfo = {
   height?: number;
   sampleRate?: number;
   channels?: number;
+};
+export type ProbeTrackInfo = TrackInfo & {
+  language: string | null;
+  name: string | null;
+  isDefault: boolean;
+  peakBitrate: number | null;
+  averageBitrate: number | null;
+  startTimestamp: number | null;
+  endTimestamp: number | null;
+  durationSeconds: number | null;
+  durationOrigin: "metadata" | "scanned" | "unknown";
+  codedWidth?: number;
+  codedHeight?: number;
+  rotation?: number;
+  frameRate?: number | null;
+  frameRateOrigin?: "estimated" | "unknown";
 };
 export type ResolvedTrack = TrackInfo & {
   codec: string;
@@ -94,7 +115,7 @@ export type ProbeResult = {
   container: string;
   durationSeconds: number | null;
   durationOrigin: "metadata" | "scanned" | "unknown";
-  tracks: TrackInfo[];
+  tracks: ProbeTrackInfo[];
   metadata: MetadataValues;
   omittedSourceFields: string[];
 };
@@ -161,3 +182,36 @@ export type ThumbnailImage = {
 };
 export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };
 export type EmbeddedPictureOptions = { signal?: AbortSignal };
+export type WaveformOptions = {
+  track?: "primary" | number;
+  start?: number;
+  end?: number;
+  pointsPerSecond?: number;
+  signal?: AbortSignal;
+};
+export type WaveformChannel = { min: Float32Array<ArrayBuffer>; max: Float32Array<ArrayBuffer> };
+export type WaveformData = {
+  trackId: number;
+  timeOriginSeconds: number;
+  start: number;
+  end: number;
+  pointsPerSecond: number;
+  channels: WaveformChannel[];
+};
+export type WaveformImageOptions = {
+  width: number;
+  height: number;
+  start?: number;
+  end?: number;
+  color?: string;
+  backgroundColor?: string;
+  signal?: AbortSignal;
+};
+export type WaveformImage = {
+  blob: Blob;
+  mimeType: "image/png";
+  width: number;
+  height: number;
+  start: number;
+  end: number;
+};

@@ -4,6 +4,8 @@ import { normalizeSource, number, object, oneOf } from "./config.ts";
 import { invalid, MediaError } from "./errors.ts";
 import { openInput, readable, signalOption } from "./input.ts";
 import { Scope } from "./scope.ts";
+import { canvas, encode } from "./image.ts";
+import type { Canvas } from "./image.ts";
 import type {
   MediaInput,
   ThumbnailImage,
@@ -80,30 +82,6 @@ function options(value: unknown, single: boolean) {
     quality: number;
     times: number[];
   };
-}
-
-type Canvas = OffscreenCanvas | HTMLCanvasElement;
-function canvas(width: number, height: number): Canvas {
-  if (
-    typeof OffscreenCanvas !== "undefined" &&
-    typeof OffscreenCanvas.prototype.convertToBlob === "function"
-  )
-    return new OffscreenCanvas(width, height);
-  if (typeof document !== "undefined") {
-    const result = document.createElement("canvas");
-    if (typeof result.toBlob === "function") {
-      result.width = width;
-      result.height = height;
-      return result;
-    }
-  }
-  throw new MediaError("IMAGE_ENCODING_UNAVAILABLE", "Canvas image encoding is unavailable.", {
-    phase: "processing",
-  });
-}
-function encode(canvas: Canvas, type: string, quality: number): Promise<Blob | null> {
-  if ("convertToBlob" in canvas) return canvas.convertToBlob({ type, quality });
-  return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
 }
 
 function extract(

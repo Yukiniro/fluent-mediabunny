@@ -14,6 +14,9 @@
 - 选项须为普通对象，未知键会失败。提供 `signal` 时须为 AbortSignal。
 - `probe(source, options?)` 返回源容器、时长、音视频轨、筛选后的元数据和省略字段。轨道 ID 是源 ID，不是索引。未知值不以 0 表示，不适用的轨道字段可以省略。
 - Probe 默认使用 `duration: "metadata"`；`"scan"` 显式扫描时长。未知时长为 `null`，对应 `durationOrigin: "unknown"`。Probe 报告源信息，不代表编解码能力，在结束前释放输入。
+- `tracks` 沿用下文转换的选择规则，结果保留源顺序；非法 ID 返回 `INVALID_OPTIONS`，选择为空返回 `NO_TRACKS`。仅筛选轨道列表，容器、顶层时长和元数据仍描述完整输入。顶层时长继续使用上游最大结束时间戳的口径，不改为所选轨道的持续时间。
+- 仅供 probe 的 `ProbeTrackInfo` 在 `TrackInfo` 基础上增加语言（und 记为 null）、名称、默认标记、元数据峰值/平均码率、源 startTimestamp/endTimestamp、持续时间 `durationSeconds = max(0, end - start)` 及 durationOrigin。空轨道的时间未知；`duration: "scan"` 同时扫描所选轨道结束时间。视频增加编码尺寸、旋转及可选帧率估算。转换报告的 TrackInfo 保持不变。
+- `frameRate: "estimate"` 显式按不同显示时间戳估算视频平均帧率，以 256 个包的前缀为采样目标，不解码；重排序可能需要额外读取。有效值的 frameRateOrigin 为 estimated，否则为 unknown；默认不估算，时间戳不足也返回 null。估算不证明全片恒定帧率。不暴露包数、关键帧列表或 probe 时间区间。接口调研核对 Mediabunny 1.62.1 的轨道接口和 FFprobe 流选择，保留本库源 ID 选择规则与独立调用生命周期。
 
 ## 配置
 

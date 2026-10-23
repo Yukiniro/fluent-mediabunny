@@ -1,6 +1,6 @@
 # Get started
 
-fluent-mediabunny is not on npm. Build it from source with Node 24 and pnpm 12.14.0, install the tarball with `mediabunny@1.61.6`, then run one conversion, one thumbnail, and one embedded-picture read.
+fluent-mediabunny is not on npm. Build it from source with Node 24 and pnpm 12.14.0, install the tarball with `mediabunny@1.62.1`, then run one conversion, one thumbnail, and one embedded-picture read.
 
 ## Build from source
 
@@ -21,7 +21,7 @@ pnpm pack
 From your application directory, install that tarball and the peer dependency.
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.62.1
 ```
 
 Replace the tarball path with the file `pnpm pack` wrote. The application needs a browser bundler.

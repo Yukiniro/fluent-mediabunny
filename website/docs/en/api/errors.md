@@ -1,6 +1,6 @@
 # Errors
 
-`MediaError` is the error class thrown by conversion, probe, thumbnail extraction, and `getEmbeddedPicture`. It extends `Error`. `name` is `"MediaError"`.
+`MediaError` is the error class thrown by conversion, probe, thumbnail extraction, `getEmbeddedPicture`, and waveform data/rendering. It extends `Error`. `name` is `"MediaError"`.
 
 ```ts
 class MediaError extends Error {
@@ -42,9 +42,11 @@ class MediaError extends Error {
 | `PERMISSION_REQUIRED`            | The file handle does not already have read and write permission.                                                                                                                                                                                                     |
 | `READ_FAILED`                    | Reading the input failed.                                                                                                                                                                                                                                            |
 | `WRITE_FAILED`                   | Opening, writing, or closing the output failed.                                                                                                                                                                                                                      |
-| `OUTPUT_TOO_LARGE`               | The output length is not a safe nonnegative integer, WAV exceeds 4294967295 bytes, or a resolved thumbnail exceeds 4096 pixels on a side or 16000000 pixels in area.                                                                                                 |
+| `OUTPUT_TOO_LARGE`               | The output length is not a safe nonnegative integer, WAV exceeds 4294967295 bytes, a resolved thumbnail exceeds 4096 pixels on a side or 16000000 pixels in area, or waveform arrays exceed 64 MiB.                                                                  |
 | `PROCESSING_FAILED`              | An operation failed without a more specific code, including an image encoder that returned no bytes.                                                                                                                                                                 |
 | `ABORTED`                        | The `AbortSignal` fired before commit.                                                                                                                                                                                                                               |
+
+Waveform operations also reject malformed extrema/ranges with `INVALID_OPTIONS`, changing channel counts or non-finite PCM with `UNSUPPORTED_INPUT`, and absent/empty audio with `NO_TRACKS`. Their cleanup-only failures reject `PROCESSING_FAILED`.
 
 ## Warning
 

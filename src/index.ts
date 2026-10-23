@@ -1,4 +1,12 @@
-import { encoding, mergeEncoding, normalizeSource, object, oneOf, number } from "./config.ts";
+import {
+  encoding,
+  mergeEncoding,
+  normalizeSource,
+  object,
+  oneOf,
+  number,
+  tracksOptions,
+} from "./config.ts";
 import { invalid } from "./errors.ts";
 import { metadataPatch } from "./metadata.ts";
 import { run } from "./run.ts";
@@ -47,6 +55,7 @@ export type {
   ProbeOptions,
   Warning,
   TrackInfo,
+  ProbeTrackInfo,
   ResolvedTrack,
   MetadataReport,
   MediaReport,
@@ -115,22 +124,7 @@ export class MediaBuilder {
     return this.with({ audio: mergeEncoding(this.#config.audio, encoding(value, "audio")) });
   }
   tracks(value: TracksOptions) {
-    const p = object(value, ["video", "audio"]);
-    for (const v of Object.values(p)) {
-      if (Array.isArray(v)) {
-        if (!v.length || new Set(v).size !== v.length)
-          invalid("Track IDs must be nonempty and unique.");
-        for (const id of v) number(id, "track ID", { integer: true, zero: true });
-      } else oneOf(v, ["all", "primary", false], "track selection");
-    }
-    return this.with({
-      tracks: {
-        ...this.#config.tracks,
-        ...Object.fromEntries(
-          Object.entries(p).map(([k, v]) => [k, Array.isArray(v) ? [...v] : v]),
-        ),
-      },
-    });
+    return this.with({ tracks: { ...this.#config.tracks, ...tracksOptions(value) } });
   }
   metadata(value: MetadataPatch, options: MetadataOptions = {}) {
     const p = object(options, ["mode"]);
@@ -151,6 +145,7 @@ export function media(source: MediaInput) {
 
 export { thumbnail, thumbnails } from "./thumbnail.ts";
 export { getEmbeddedPicture } from "./embedded-picture.ts";
+export { getWaveformData, renderWaveform } from "./waveform.ts";
 export type {
   ThumbnailImageOptions,
   ThumbnailOptions,
@@ -158,4 +153,9 @@ export type {
   ThumbnailImage,
   ThumbnailItem,
   EmbeddedPictureOptions,
+  WaveformOptions,
+  WaveformData,
+  WaveformChannel,
+  WaveformImage,
+  WaveformImageOptions,
 } from "./types.ts";

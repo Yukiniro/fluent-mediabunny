@@ -6,7 +6,7 @@ A simpler, more approachable fluent TypeScript API for [Mediabunny](https://medi
 
 Inspired by the chainable style of fluent-ffmpeg, fluent-mediabunny provides a convenient higher-level API over Mediabunny. It organizes configuration and execution into readable calls, reducing the setup needed to express a media task.
 
-Mediabunny provides the underlying media processing capabilities. fluent-mediabunny focuses on making those public capabilities easier to understand and use through API design. The current release covers media conversion with one input and one output, video image extraction with bounded batches, and one embedded-picture read.
+Mediabunny provides the underlying media processing capabilities. fluent-mediabunny focuses on making those public capabilities easier to understand and use through API design. The current release covers media conversion with one input and one output, source probing with track selection, audio waveform data and PNG rendering, video image extraction with bounded batches, and one embedded-picture read.
 
 ## Why use it
 
@@ -31,7 +31,7 @@ pnpm pack --out fluent-mediabunny.tgz
 Then install the generated tarball and the exact Mediabunny peer dependency from your application's directory:
 
 ```sh
-pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.62.1
 ```
 
 Replace the tarball path with its actual location. Your application needs a browser bundler.
@@ -82,6 +82,18 @@ if (picture) {
 
 `getEmbeddedPicture()` returns the bytes of one embedded picture, or `null` when none of the embedded pictures is a JPEG, PNG, GIF, WebP, or BMP. Several pictures resolve in a fixed order: front cover, then an unlabeled picture, then back cover, each in file order. The bytes are the file's own image, including any metadata inside the image, not a frame decoded from the video.
 
+### Build an audio waveform
+
+```ts
+import { getWaveformData, renderWaveform } from "fluent-mediabunny";
+
+const data = await getWaveformData(file, { pointsPerSecond: 50 });
+const image = await renderWaveform(data, { width: 800, height: 160, color: "#4477ee" });
+const imageUrl = URL.createObjectURL(image.blob);
+```
+
+Data retains per-channel Float32 min/max at 20 ms by default, without normalization, and uses the same source time origin as thumbnails. Image rendering reuses the data; optional start/end select a range. Applications manage Workers, saving and object URLs; revoke imageUrl when finished. Result arrays are capped at 64 MiB, excluding decoder and temporary buffers. See [waveforms](spec/waveforms.md) for timing, limits and cancellation.
+
 ## Input and output
 
 Inputs can be a `File`/`Blob`, `ArrayBuffer`, `Uint8Array` backed by an `ArrayBuffer`, or an absolute HTTP(S) URL. Remote sources must allow CORS; requests omit credentials. Codec availability depends on the browser, operating system, and device, so recognizing a container does not guarantee decoding or encoding support.
@@ -90,7 +102,7 @@ Conversion returns an in-memory Blob result by default. Applications can instead
 
 ## Contributing
 
-Developer contracts: [conversion](spec/conversion.md), [thumbnails](spec/thumbnails.md), and [embedded pictures](spec/embedded-picture.md).
+Developer contracts: [conversion and probe](spec/conversion.md), [waveforms](spec/waveforms.md), [thumbnails](spec/thumbnails.md), and [embedded pictures](spec/embedded-picture.md).
 
 Bug reports and focused improvements are welcome through [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) and pull requests. For browser-specific issues, include your browser, operating system, and a small reproducible example using shareable media.
 

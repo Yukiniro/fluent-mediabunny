@@ -6,7 +6,7 @@
 
 受 fluent-ffmpeg 链式风格的启发，fluent-mediabunny 在 Mediabunny 之上提供便捷的上层 API，将配置与执行组织成可读的调用，减少表达媒体处理任务所需的准备代码。
 
-底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、有数量上限的批量视频图像提取，以及一次内嵌图片读取。
+底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、带轨道选择的源信息探测、音频波形数据与 PNG 渲染、有数量上限的批量视频图像提取，以及一次内嵌图片读取。
 
 ## 为什么使用它
 
@@ -31,7 +31,7 @@ pnpm pack --out fluent-mediabunny.tgz
 然后进入你的应用目录，安装生成的压缩包和固定版本的 Mediabunny 对等依赖：
 
 ```sh
-pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.62.1
 ```
 
 将压缩包路径替换为实际位置。应用需要使用浏览器打包工具。
@@ -81,6 +81,18 @@ if (picture) {
 ```
 
 `getEmbeddedPicture()` 返回一张内嵌图片的字节；如果内嵌图片都不是 JPEG、PNG、GIF、WebP 或 BMP，则返回 `null`。有多张图片时按固定顺序选择：正面封面，然后是没有正背面标签的图片，最后是背面封面，同一类按文件顺序取第一张。这些字节是文件自带的图片，保留图片内部的元数据，不是从视频解码出来的帧。
+
+### 生成音频波形
+
+```ts
+import { getWaveformData, renderWaveform } from "fluent-mediabunny";
+
+const data = await getWaveformData(file, { pointsPerSecond: 50 });
+const image = await renderWaveform(data, { width: 800, height: 160, color: "#4477ee" });
+const imageUrl = URL.createObjectURL(image.blob);
+```
+
+默认每 20ms 输出各声道 Float32 min/max，不归一化，与缩略图使用同一源时间原点。图片复用数据，可用 start/end 指定区间。Worker、保存、对象 URL 由应用管理，使用结束后释放 imageUrl。结果数组最多 64 MiB，不含解码器或临时缓冲。完整时间、限制和取消契约见[波形](spec/waveforms.zh-CN.md)。Probe 同时增加轨道选择、源媒体信息和显式帧率估算，详见[转换与探测](spec/conversion.zh-CN.md)。
 
 ## 输入与输出
 

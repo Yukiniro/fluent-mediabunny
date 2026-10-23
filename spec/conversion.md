@@ -14,6 +14,9 @@ Processing uses public Mediabunny APIs. Applications manage Workers and codec in
 - Options are plain objects; unknown keys fail. `signal`, when supplied, is an AbortSignal.
 - `probe(source, options?)` returns source container, duration, audio/video tracks, projected metadata, and omitted fields. Track IDs are source IDs, not indices. Unknown values are not represented as zero; inapplicable track fields may be absent.
 - Probe defaults to `duration: "metadata"`; `"scan"` explicitly scans duration. Unknown duration is `null`, with `durationOrigin: "unknown"`. Probe reports source facts, not codec availability, and disposes its input before settling.
+- `tracks` uses the conversion selection rules below, preserving source order. Invalid IDs fail `INVALID_OPTIONS`; an empty selection fails `NO_TRACKS`. Selection only filters `tracks`: container, top-level duration and projected metadata still describe the complete input. Top-level duration keeps the backend's maximum-end-timestamp semantics, not selected-track elapsed time.
+- Probe-only `ProbeTrackInfo` extends `TrackInfo` with language (`und` becomes null), name, default disposition, metadata peak/average bitrates, source `startTimestamp`/`endTimestamp`, elapsed `durationSeconds = max(0, end - start)` and `durationOrigin`. Empty tracks have unknown timing; `duration: "scan"` also scans selected track ends. Video adds coded dimensions, rotation and optional frame-rate estimation. Conversion reports keep `TrackInfo` unchanged.
+- `frameRate: "estimate"` explicitly estimates average video rate from distinct presentation timestamps, targeting a 256-packet prefix without decoding; reordering may require extra packets. `frameRateOrigin` is `estimated` for a finite estimate or `unknown`; default probing and insufficient distinct timestamps return null. This is not proof of a constant frame rate across the source. No packet counts, keyframe lists or probe time ranges are exposed.
 
 ## Configuration
 
@@ -116,4 +119,4 @@ Cancellation is cooperative with no fixed latency. Input disposal and owned clea
 | `READ_FAILED`, `WRITE_FAILED`, `OUTPUT_TOO_LARGE`          | Read, write/close, or logical size failure                               |
 | `PROCESSING_FAILED`, `ABORTED`                             | Execution failure or accepted cancellation                               |
 
-Related contracts: [thumbnails](thumbnails.md), [embedded pictures](embedded-picture.md).
+Related contracts: [thumbnails](thumbnails.md), [embedded pictures](embedded-picture.md), [waveforms](waveforms.md). Probe interface comparisons checked Mediabunny 1.62.1 public tracks and FFprobe's stream selection; this library retains its existing source-ID selectors and owned call lifetime rather than exposing raw backend objects.

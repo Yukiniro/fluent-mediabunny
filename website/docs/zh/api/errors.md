@@ -46,6 +46,8 @@ class MediaError extends Error {
 | `PROCESSING_FAILED`              | 操作失败且没有更具体的码，包括图像编码器没有返回字节。                                                                                                                                 |
 | `ABORTED`                        | `AbortSignal` 在提交前触发。                                                                                                                                                           |
 
+波形接口也使用现有错误码：畸形极值或区间为 `INVALID_OPTIONS`，声道数量变化或 PCM 非有限值为 `UNSUPPORTED_INPUT`，无音轨或空音轨为 `NO_TRACKS`，结果数组超过 64 MiB 为 `OUTPUT_TOO_LARGE`，仅清理失败为 `PROCESSING_FAILED`。
+
 ## Warning
 
 `Warning` 不是 `MediaError`。它的 `code` 是 `string`，不是 `ErrorCode`。

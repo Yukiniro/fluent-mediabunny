@@ -44,12 +44,12 @@
     "@playwright/test": "1.58.2",
     "@types/node": "^26.6.5",
     "@types/wicg-file-system-access": "2023.10.7",
-    "mediabunny": "1.61.6",
+    "mediabunny": "1.62.1",
     "typescript": "^7.0.2",
     "vite-plus": "catalog:"
   },
   "peerDependencies": {
-    "mediabunny": "1.61.6"
+    "mediabunny": "1.62.1"
   },
   "packageManager": "pnpm@12.14.0"
 }

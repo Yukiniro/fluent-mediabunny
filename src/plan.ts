@@ -21,10 +21,10 @@ import type {
 import { validateAvcConfiguration } from "./avc.ts";
 import { formats } from "./config.ts";
 import { MediaError, invalid } from "./errors.ts";
-import { trackInfo } from "./input.ts";
+import { trackInfo, selectTracks } from "./input.ts";
 import { checkSize } from "./target.ts";
 import { Scope } from "./scope.ts";
-import type { Config, Format, TrackSelection, ResolvedTrack } from "./types.ts";
+import type { Config, Format, ResolvedTrack } from "./types.ts";
 export function outputFormat(format: Format) {
   return format === "webm"
     ? new WebMOutputFormat({ appendOnly: false })
@@ -32,30 +32,11 @@ export function outputFormat(format: Format) {
       ? new WavOutputFormat({ metadataFormat: "id3", large: false })
       : new Mp4OutputFormat({ fastStart: false, metadataFormat: "mdir" });
 }
-async function select(
-  input: Input,
-  tracks: InputTrack[],
-  kind: "video" | "audio",
-  selection: TrackSelection = "all",
-) {
-  const matching = tracks.filter((t) => (kind === "video" ? t.isVideoTrack() : t.isAudioTrack()));
-  if (selection === false) return [];
-  if (selection === "all") return matching;
-  if (selection === "primary") {
-    const t = await (kind === "video"
-      ? input.getPrimaryVideoTrack()
-      : input.getPrimaryAudioTrack());
-    return t ? [t] : [];
-  }
-  if (selection.some((id) => !matching.some((t) => t.id === id)))
-    invalid("Selected track ID does not exist for its media type.");
-  return matching.filter((t) => selection.includes(t.id));
-}
 export async function prepare(input: Input, config: Config & { format: Format }, scope: Scope) {
   const all = await scope.wait(input.getTracks(), "READ_FAILED");
   const selected = [
-    ...(await select(input, all, "video", config.tracks.video)),
-    ...(await select(input, all, "audio", config.tracks.audio)),
+    ...(await selectTracks(input, all, "video", config.tracks.video)),
+    ...(await selectTracks(input, all, "audio", config.tracks.audio)),
   ];
   if (!selected.length) throw new MediaError("NO_TRACKS", "No tracks selected.");
   const videos = selected.filter((t) => t.isVideoTrack()).length,
