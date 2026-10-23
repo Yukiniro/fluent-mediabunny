@@ -7,4 +7,7 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
   },
+  // `wrangler preview` refuses to run unless this block exists. Assets and
+  // compatibility settings stay at the top level; an empty block is valid.
+  "previews": {},
 }
