@@ -22,5 +22,8 @@ export default defineConfig({
       typeCheck: true,
     },
   },
-  fmt: {},
+  fmt: {
+    // `changeset add --empty` writes front matter that Oxfmt rewrites.
+    ignorePatterns: [".changeset/*.md"],
+  },
 });

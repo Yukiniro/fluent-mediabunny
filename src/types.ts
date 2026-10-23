@@ -160,3 +160,4 @@ export type ThumbnailImage = {
   timeOriginSeconds: number;
 };
 export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };
+export type EmbeddedPictureOptions = { signal?: AbortSignal };

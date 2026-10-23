@@ -142,6 +142,42 @@ run("dynamic.mp4", [
   "copy",
 ]);
 for (const size of ["160x120", "96x64", "dynamic"]) unlinkSync(`public/fixtures/${size}.h264`);
+run("artwork-front.jpg", ["-f", "lavfi", "-i", "color=c=red:s=2x2", "-frames:v", "1", "-q:v", "8"]);
+run("artwork-back.png", ["-f", "lavfi", "-i", "color=c=blue:s=2x2", "-frames:v", "1"]);
+run("artwork.mp3", [
+  "-f",
+  "lavfi",
+  "-i",
+  "sine=frequency=440:sample_rate=8000:duration=0.1",
+  "-i",
+  "public/fixtures/artwork-back.png",
+  "-i",
+  "public/fixtures/artwork-front.jpg",
+  "-map",
+  "0:a",
+  "-map",
+  "1:v",
+  "-map",
+  "2:v",
+  "-c:a",
+  "libmp3lame",
+  "-b:a",
+  "8k",
+  "-c:v",
+  "copy",
+  "-id3v2_version",
+  "3",
+  "-metadata:s:v:0",
+  "comment=Cover (back)",
+  "-metadata:s:v:1",
+  "comment=Cover (front)",
+  "-disposition:v:0",
+  "attached_pic",
+  "-disposition:v:1",
+  "attached_pic",
+]);
+unlinkSync("public/fixtures/artwork-front.jpg");
+unlinkSync("public/fixtures/artwork-back.png");
 const manifest = JSON.parse(readFileSync("public/fixtures/manifest.json", "utf8"));
 manifest.fixtures = readdirSync("public/fixtures").filter((name) => name !== "manifest.json");
 manifest.exceptions = {
@@ -152,6 +188,7 @@ manifest.exceptions = {
   "vfr.mp4": "Frame selection retains frame indices divisible by 3 or 5",
   "odd.webm": "161x121, one second, VP9 yuv444p",
   "rate.wav": "12345 Hz mono, one second",
+  "artwork.mp3": "Short 8 kHz mono sine with a PNG back cover before a JPEG front cover",
 };
 writeFileSync("public/fixtures/manifest.json", JSON.stringify(manifest, null, 2));
 

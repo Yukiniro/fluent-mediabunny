@@ -3,6 +3,7 @@
   "baseline": "2 seconds, 160x120, 15 fps, 440 Hz mono at 44100 Hz; exceptions visible in scripts/fixtures.mjs",
   "fixtures": [
     "alpha.webm",
+    "artwork.mp3",
     "audio.mp3",
     "audio.wav",
     "av.mp4",
@@ -32,7 +33,8 @@
     "rotated.mp4": "90 degree rotation metadata",
     "vfr.mp4": "Frame selection retains frame indices divisible by 3 or 5",
     "odd.webm": "161x121, one second, VP9 yuv444p",
-    "rate.wav": "12345 Hz mono, one second"
+    "rate.wav": "12345 Hz mono, one second",
+    "artwork.mp3": "Short 8 kHz mono sine with a PNG back cover before a JPEG front cover"
   },
   "thumbnailFixtures": {
     "source": "FFmpeg lavfi generated colors; no third-party media",

@@ -6,7 +6,7 @@
 
 受 fluent-ffmpeg 链式风格的启发，fluent-mediabunny 在 Mediabunny 之上提供便捷的上层 API，将配置与执行组织成可读的调用，减少表达媒体处理任务所需的准备代码。
 
-底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换，以及有数量上限的批量视频图像提取。
+底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、有数量上限的批量视频图像提取，以及一次内嵌图片读取。
 
 ## 为什么使用它
 
@@ -18,20 +18,20 @@
 
 ## 开始使用
 
-项目仍处于早期开发阶段，**目前尚未在 npm 上提供安装包**。请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建：
+请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建。维护者发布之后，`pnpm add fluent-mediabunny` 会从 npm 安装这个包。
 
 ```sh
 git clone https://github.com/Yukiniro/fluent-mediabunny.git
 cd fluent-mediabunny
 pnpm install --frozen-lockfile
 pnpm build
-pnpm pack
+pnpm pack --out fluent-mediabunny.tgz
 ```
 
 然后进入你的应用目录，安装生成的压缩包和固定版本的 Mediabunny 对等依赖：
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
 ```
 
 将压缩包路径替换为实际位置。应用需要使用浏览器打包工具。
@@ -68,6 +68,20 @@ if (poster) {
 
 请求时间没有帧覆盖时，结果为 `null`。需要一组预览图时，`thumbnails()` 会按需生成图像，并保留每个请求的位置，包括没有帧的位置。每批支持 1–1000 个请求，输出 JPEG 或 PNG；图像每边最多 4096 像素，总面积不超过 16,000,000 像素。
 
+### 读取内嵌图片
+
+```ts
+import { getEmbeddedPicture } from "fluent-mediabunny";
+
+const picture = await getEmbeddedPicture(file);
+if (picture) {
+  const imageUrl = URL.createObjectURL(new Blob([picture]));
+  // 在界面中使用 imageUrl，不再使用时释放它。
+}
+```
+
+`getEmbeddedPicture()` 返回一张内嵌图片的字节；如果内嵌图片都不是 JPEG、PNG、GIF、WebP 或 BMP，则返回 `null`。有多张图片时按固定顺序选择：正面封面，然后是没有正背面标签的图片，最后是背面封面，同一类按文件顺序取第一张。这些字节是文件自带的图片，保留图片内部的元数据，不是从视频解码出来的帧。
+
 ## 输入与输出
 
 输入可以是 `File`/`Blob`、`ArrayBuffer`、基于 `ArrayBuffer` 的 `Uint8Array`，或绝对 HTTP(S) URL。远程资源需要允许 CORS，网络请求不携带凭据。编解码能力取决于浏览器、操作系统和设备，因此能够识别容器并不代表能够解码或编码其中的内容。
@@ -90,6 +104,8 @@ pnpm test:browser
 ```
 
 浏览器测试需要先构建 `dist`、安装 Playwright 浏览器，并在 `PATH` 中提供 FFmpeg/ffprobe。仓库已提交合成测试素材；`pnpm fixtures` 使用 FFmpeg 重新生成这些素材，FFmpeg 仅为测试依赖。自动化 WebKit 和 OPFS 测试不能证明原生文件选择器或 Safari/iOS 的实际支持情况。
+
+如果 Pull Request 修改了 `src/`，请运行 `pnpm changeset`，并提交它在 `.changeset/` 下生成的文件。版本低于 1.0 时，破坏性变更选择 `minor`，其他变更选择 `patch`。摘要会成为更新日志条目，请用英文填写。如果 `src/` 的改动不需要发布，请改为运行 `pnpm changeset --empty`。维护者的发布流程见 [RELEASING.md](RELEASING.md)。
 
 ## 许可证
 

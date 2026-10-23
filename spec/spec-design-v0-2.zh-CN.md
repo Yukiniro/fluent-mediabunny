@@ -1,11 +1,11 @@
 ---
 title: 视频图像提取 — fluent-mediabunny 0.2 设计
-version: specification-2.1
+version: specification-2.3
 status: implemented
 date_created: 2026-10-19
-last_updated: 2026-10-21
+last_updated: 2026-10-22
 owner: fluent-mediabunny
-tags: [design, api, video, extraction]
+tags: [design, api, video, extraction, artwork]
 ---
 
 [English](spec-design-v0-2.md) | 简体中文
@@ -32,7 +32,7 @@ tags: [design, api, video, extraction]
 
 ### 本批不包含
 
-不提供公共 reader/会话 API、转换计划 API、增强 probe、内嵌封面提取、PCM、波形、原始帧/编码包、精灵图、拼贴缩略图、动图格式、图片文件输入、场景检测、自动最佳封面选择、字幕渲染、叠加图层、裁剪矩形、额外旋转或时间线编辑。不增加输入容器、编码、HLS/直播输入、流适配器、服务端支持、自动 Worker、文件写入、文件选择器、下载、上传或编码器安装能力。
+不提供公共 reader/会话 API、转换计划 API、增强 probe、超出第 12 节单次 `getEmbeddedPicture` 读取的内嵌图片、PCM、波形、原始帧/编码包、精灵图、拼贴缩略图、动图格式、图片文件输入、场景检测、自动最佳封面选择、字幕渲染、叠加图层、裁剪矩形、额外旋转或时间线编辑。不增加输入容器、编码、HLS/直播输入、流适配器、服务端支持、自动 Worker、文件写入、文件选择器、下载、上传或编码器安装能力。
 
 保持 `media(source)...run()` 和现有 `probe()` 的行为不变。图像提取直接读取源媒体，不继承任何转换构建器设置。现有 AVC 序列限制仍只用于转换；图像提取不得增加整文件转码预检。
 
@@ -48,7 +48,7 @@ tags: [design, api, video, extraction]
 
 ## 3. 需求、约束与准则
 
-- REQ-001：仅新增 `thumbnail` 和 `thumbnails` 两个运行时导出入口，以及文档约定的 TypeScript 类型。不添加对应的转换构建器方法或别名。
+- REQ-001：仅新增 `thumbnail`、`thumbnails` 和 `getEmbeddedPicture` 这三个运行时导出入口，以及文档约定的 TypeScript 类型，其中包括 `EmbeddedPictureOptions`。不添加对应的转换构建器方法或别名。
 - REQ-002：复用现有 MediaInput 类型、有限文件输入格式白名单、URL 规范化、匿名 CORS GET 策略和不重试行为。调用者拥有的媒体字节及 URL 内容在操作终止前必须保持稳定。
 - REQ-003：使用 Mediabunny 公开 API 完成解复用、轨道选择、解码、时间处理和几何变换。不自行实现编解码器或替代解复用器。
 - REQ-004：在任何源数据读取前，验证并保存调用者全部选项和完整时间列表的快照。不复制媒体字节。未知选项键应按现有 API 的一致规则报错。
@@ -311,6 +311,8 @@ for await (const entry of thumbnails(file, {
 | 媒体创建       | 从帧/Canvas/音频生成文件、时间戳、交错写入、背压  |
 | 转换能力扩展   | 有兼容性证据支撑的所需格式/编码及逐轨控制         |
 
+第 12 节先于该批次交付一次内嵌图片读取。这并不批准该行的其余范围。
+
 录制、HLS 和服务端适配器需要以后单独确定范围，不得隐式纳入上述批次。
 
 ## 11. 能力清单与参考资料
@@ -355,3 +357,80 @@ for await (const entry of thumbnails(file, {
 - [官方 Conversion 指南](https://mediabunny.dev/guide/converting-media-files)
 - [官方 HLS 读取](https://mediabunny.dev/guide/reading-hls)及[写入](https://mediabunny.dev/guide/writing-hls)
 - [官方 server 扩展](https://mediabunny.dev/guide/extensions/server)
+
+## 12. 内嵌图片读取
+
+本节增加一次内嵌图片字节读取。它是与 `probe` 和 `thumbnail` 并列的独立函数。返回的是文件自带的图片字节，不是解码后的视频帧。操作者于 2026-10-22 要求增加该 API，并在同一天改为遵循已有库的操作。
+
+操作名和结果基数遵循 Android [`MediaMetadataRetriever.getEmbeddedPicture()`](<https://developer.android.com/reference/android/media/MediaMetadataRetriever#getEmbeddedPicture()>)，该方法返回一个 `byte[]` 或 null。同一次调研还核对了 music-metadata 的 [`selectCover`](https://github.com/Borewit/music-metadata)（一张图片或 null）、jsmediatags 的 `tags.picture`、Mediabunny 的 `MetadataTags.images`、FFmpeg 的附加图片、fluent-ffmpeg 的 `disposition.attached_pic`，以及 AndroidTagLib 的 `getArtwork()`（`Artwork[]`）。本库采用 Android 的单张图片字节结果。
+
+与该方法的差异只保留本库已经具备的契约：
+
+- 源是 `MediaInput` 参数，并可附带 `AbortSignal`。没有 retriever 会话，也没有 `setDataSource`。
+- 有多张图片时，选择是确定的。Android 文档允许返回其中任意一张。下面的固定顺序让重复调用保持稳定。
+- 开头字节必须匹配 JPEG、PNG、GIF、WebP 或 BMP 签名。匹配只用于内部资格判断。函数不返回 MIME 类型。SVG、ID3 `-->` URL、HEIC、AVIF、TIFF 和截断的签名结果为 null。
+- 结果是用 `slice()` 复制的独立 `Uint8Array<ArrayBuffer>`，之后修改源视图不会影响它。
+
+### 12.1 范围
+
+包含：一个函数 `getEmbeddedPicture`，以及类型 `EmbeddedPictureOptions`。它读取 Mediabunny 作为 metadata 图片暴露的画面（ID3v2 APIC、MP4 `covr`、FLAC PICTURE、Ogg METADATA_BLOCK_PICTURE、Matroska 图片附件），从中选择一张，并返回独立的字节副本。
+
+不包含：列出全部图片、按角色或索引选择、图片名称或描述文本、公开的 MIME 类型或图片角色、图像尺寸、解码、重新编码、缩放、去除 EXIF、存成视频轨的图片、图片写入、转换时的图片透传、`metadata()` 的图片字段，以及 probe 行为变更。不抓取图片 URL，也不返回链接。不新增错误码、选项、缓存或构建器方法。
+
+### 12.2 需求
+
+- REQ-008：新增一个运行时导出入口 `getEmbeddedPicture`，以及类型 `EmbeddedPictureOptions`。不添加转换构建器方法或别名。
+- REQ-009：复用现有 MediaInput 类型、输入格式白名单、URL 规范化、匿名 CORS GET 策略和不重试行为。只使用 Mediabunny 公开 API。
+- REQ-010：在观察 signal 或读取源之前，验证选项对象（普通对象、仅允许 `signal`、提供时必须是 AbortSignal）和源类型。
+- REQ-011：根据图片开头字节判断是否合格，使用 WHATWG MIME Sniffing 中 JPEG、PNG、GIF、WebP 和 BMP 的图片类型模式。绝不使用声明类型。字节不匹配这些模式的图片不合格。这些模式是内部的，不是返回的 MIME 类型。
+- REQ-012：在合格图片中，按文件顺序选择第一张正面封面。否则选择第一张没有正/背面标签的图片。否则选择第一张背面封面。否则结果为 null。选择只接收在 metadata 边界上构造的 `{ data: Uint8Array; kind: AttachedImage["kind"] }`。它看不到声明的 MIME 类型、名称或描述。标签是一张以 Mediabunny 图片 `kind` 为键的穷尽表。公开结果不包含该标签。
+- REQ-013：返回 `Uint8Array<ArrayBuffer> | null`。数组中恰好是所选图片的字节。之后对调用者拥有的输入字节的修改不得影响它。只复制所选图片，使用 `data.slice()`。不要复制 `data.buffer`，该缓冲区可能延伸到图片之外。不返回 Blob、MIME 类型或图片角色。
+- REQ-014：每次调用打开并释放自己的 Input。对未改变的源重复调用会返回字节相同、彼此不同的 `Uint8Array`，且绝不修改源。
+- CON-003：`resolveMetadata`、`ProbeResult`、转换时的 metadata 剥离，以及 `metadata()` 的补丁校验保持不变。源暴露图片时，`probe().omittedSourceFields` 仍列出 `"images"`。该条目表示该字段在文本投影之外，不是表示它不可读。转换输出仍然不携带内嵌图片。`metadata({ images })` 仍以 UNSUPPORTED_METADATA_FIELD 拒绝。
+- SEC-002：原样返回内嵌字节，包括图片内部的元数据，例如 EXIF。这些是返回给提供该源的调用者的源内容，不是库生成的输出，因此 SEC-001 不适用。绝不返回 SVG 或其他可执行脚本的类型。不匹配合格图片签名的字节不会返回。
+
+### 12.3 接口
+
+类型名、字段名和示例代码与英文版保持一致。
+
+```ts
+type EmbeddedPictureOptions = { signal?: AbortSignal };
+
+getEmbeddedPicture(
+  source: MediaInput,
+  options?: EmbeddedPictureOptions,
+): Promise<Uint8Array<ArrayBuffer> | null>;
+```
+
+Null 表示没有找到合格图片。它不能证明文件里没有图片。WAV 没有图片，源大小未知时 Mediabunny 会跳过 Matroska 标签。中止一次本来会得到 null 的读取时，Promise 以 `ABORTED` 拒绝。Null 不是取消结果。
+
+用于排序的内部标签只有在文件把图片标成正面或背面时才是正面或背面（ID3 和 FLAC 图片类型 3 和 4，MP4 `covr` 为正面，名为 `cover.*` 或 `back.*` 的 Matroska 附件）。其他标签都视为无标签。调用者拿不到该标签。
+
+### 12.4 错误与生命周期
+
+| 条件                                                                              | 结果              |
+| --------------------------------------------------------------------------------- | ----------------- |
+| 选项不是普通对象、未知键、`signal` 不是 AbortSignal、空字节                       | INVALID_OPTIONS   |
+| 不支持的源类型或 URL、无法识别的容器                                              | UNSUPPORTED_INPUT |
+| 源获取/读取失败，或标签解析失败                                                   | READ_FAILED       |
+| 在得到结果前观察到取消，包括预先取消的 signal，以及一次本来会得到 null 的标签读取 | ABORTED           |
+| 没有合格的内嵌图片                                                                | null，不是错误    |
+
+所有错误的阶段都是 `preparing`。静态校验错误优先于已取消的 signal。观察到取消之后不再交付结果。与 `probe` 一样，成功读取之后的 Input 清理失败不会使 Promise 拒绝，失败之后则作为诊断信息附上。返回的数组已经是独立副本，清理不能影响它。
+
+### 12.5 验收标准
+
+| ID     | 给定 / 当                                                                                                             | 要求结果                                                                                    |
+| ------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| AC-021 | 生成的 MP3 中背面 APIC 位于正面 APIC 之前                                                                             | 正面图片字节，与源图片一致                                                                  |
+| AC-022 | 无标签图片加背面图片；只有背面；两张无标签图片；两张正面图片；不合格的正面加合格的背面                                | 选无标签；选背面；按文件顺序选第一张；选第一张正面；选合格的背面                            |
+| AC-023 | 声明为 `image/*`、`image/jpg`、标错的类型、ID3 `-->` URL、SVG、空数据、截断 JPEG、HEIC、TIFF、AVIF、缺少 `VP` 的 WebP | 合格字节原样返回；只有不合格图片时结果为 null                                               |
+| AC-024 | WAV，或容器中没有图片                                                                                                 | null                                                                                        |
+| AC-025 | 得到结果后修改字节输入；图片位于源缓冲区的非零偏移处                                                                  | 数组不变；长度等于图片长度                                                                  |
+| AC-026 | 无效选项或不支持的源带有预先取消的 signal；有效且预先取消；中止一次本来会得到 null 的标签读取                         | 不打开输入即返回 INVALID_OPTIONS 或 UNSUPPORTED_INPUT；返回 ABORTED 而不是 null；释放 Input |
+| AC-027 | 对同一源调用两次；前后各做一次 `probe`                                                                                | 字节相同、数组不同；probe 结果相同且仍列出 `"images"`                                       |
+| AC-028 | `metadata({ images })`                                                                                                | UNSUPPORTED_METADATA_FIELD                                                                  |
+| AC-029 | 从构建后的包导入                                                                                                      | 可以使用 `getEmbeddedPicture` 和 `EmbeddedPictureOptions`；未知选项无法通过类型检查         |
+| AC-030 | 运行现有的转换、probe、metadata 和图像提取测试                                                                        | 行为与默认值没有回退                                                                        |
+
+单元测试在模拟输入后面使用合成的 Mediabunny 图片，并用 `getEmbeddedPicture()` 和 `probe()` 读取一个小型生成素材。这条路径不使用 canvas 或浏览器编码器，因此不增加 Playwright 规格。触及点为 `src/embedded-picture.ts`、`src/types.ts`、`src/index.ts`、单元测试、包类型测试、素材脚本、两份 README、`AGENTS.md` 和两份规格。
