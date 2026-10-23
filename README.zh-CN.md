@@ -90,6 +90,8 @@ if (picture) {
 
 ## 参与贡献
 
+开发契约：[媒体转换](spec/conversion.zh-CN.md)、[缩略图](spec/thumbnails.zh-CN.md)、[内嵌图片](spec/embedded-picture.zh-CN.md)。
+
 欢迎通过 [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) 或 Pull Request 提交问题和范围明确的改进。反馈浏览器相关问题时，请附上浏览器、操作系统，以及使用可分享媒体的最小复现示例。
 
 项目使用 [Vite+](https://viteplus.dev/) 进行开发、检查、测试和打包。运行 `pnpm dev` 可打开本地验证页面，也可以使用以下命令检查改动：

@@ -39,7 +39,7 @@ A passing result applies only to the tested machine, fixtures, and parameters. A
 | 003 | HEVC auto to AVC, HEVC copy, copy in Node without WebCodecs, explicit Firefox refusal                                                     | No HEVC encoding claim                                     |
 | 004 | Invalid AVC/WebM, WAV parameters, and copy+trim rejected early                                                                            | No real writable opened                                    |
 | 005 | Controlled 12345 Hz refusal performs one exact capability query despite available 48000 Hz fallback; real 48000 Hz/stereo output checked  | Mock refusal and actual encoding are separate evidence     |
-| 006 | M4A with selected video returns TRACK_LOSS; explicit video exclusion succeeds                                                             | Track-count errors follow specification section 4.6        |
+| 006 | M4A with selected video returns TRACK_LOSS; explicit video exclusion succeeds                                                             | See [track selection][track-selection]                     |
 | 007 | Multi-audio WAV rejected; primary M4A succeeds; silent HEVC MP4 copy/auto exercised                                                       | Invalid, duplicate, and empty ID selections validated      |
 | 008 | Merge/null/replace and repeated metadata instructions; deleted title stays absent after same-container round-trip                         | No raw passthrough                                         |
 | 009 | Eight fields across four formats and three browsers; CJK, emoji, leap date, and invalid values                                            | Independent title check; all fields reread with Mediabunny |
@@ -54,6 +54,8 @@ A passing result applies only to the tested machine, fixtures, and parameters. A
 | 018 | Nonzero timestamps, display-matrix rotation, VFR, crop/rotate/resize/frame rate; independent decode and start-time difference below 80 ms | No subjective lip-sync or pixel-perfect fidelity claim     |
 | 019 | Write failure survives abort-cleanup failure; cancellation first remains ABORTED                                                          | Secondary errors stay in diagnostics                       |
 | 020 | Estimated PCM bounds, pre-write positioned size guard, and boundary arithmetic injection                                                  | No physical file above 4 GB generated                      |
+
+[track-selection]: ../spec/conversion.md#formats-and-tracks
 
 ## Resource observations
 
