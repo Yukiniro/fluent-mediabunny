@@ -1,10 +1,15 @@
+---
+title: 提取缩略图
+description: 正确处理帧时间、图片尺寸与资源清理，提取视频海报和预览序列。
+---
+
 # 提取缩略图
 
 `thumbnail(source, options)` 返回一张 `ThumbnailImage` 或 `null`。`thumbnails(source, options)` 返回 `ThumbnailItem` 的异步迭代器。两者接受的输入与转换相同，可以是 Blob、字节，或 HTTP 或 HTTPS URL。转换设置在这里不起作用。
 
-选项字段在 [thumbnail](/api/thumbnails)。没有帧时结果是 `null`。非法选项、缺少解码器、不支持的输入、读取失败、图像过大和编码失败都会拒绝，不会变成 `null`。
+选项字段在 [thumbnail](/zh/api/thumbnails)。没有帧时结果是 `null`。非法选项、缺少解码器、不支持的输入、读取失败、图像过大和编码失败都会拒绝，不会变成 `null`。
 
-内嵌封面是另一条读取。[getEmbeddedPicture](/api/embedded-picture) 返回文件自带的 JPEG、PNG、GIF、WebP 或 BMP 字节。
+内嵌封面是另一条读取。[getEmbeddedPicture](/zh/api/embedded-picture) 返回文件自带的 JPEG、PNG、GIF、WebP 或 BMP 字节。
 
 ## 请求一个时间点
 
@@ -47,7 +52,7 @@ for await (const item of thumbnails(file, {
 
 ## 读取时间
 
-时间相对于 `max(0, input.getFirstTimestamp())`，各轨道共用。默认使用主视频轨道。把 `track` 设成 [probe](/api/probe) 返回的视频轨道 id。
+时间相对于 `max(0, input.getFirstTimestamp())`，各轨道共用。默认使用主视频轨道。把 `track` 设成 [probe](/zh/api/probe) 返回的视频轨道 id。
 
 视频开始前、空隙里，或最后一帧结束及之后，返回 `null`。最后一帧不会被无限延长。比较使用四舍五入后的微秒。返回的时间保留源采样值。帧跨过零点时，`actualTime` 可以为负。
 

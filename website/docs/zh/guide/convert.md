@@ -1,8 +1,13 @@
+---
+title: 转换文件
+description: 配置格式、复制或转码、时间与画面裁剪、缩放、轨道和元数据。
+---
+
 # 转换文件
 
-`media(source)` 返回 `MediaBuilder`。每个方法都返回新的构建器，不会改你调用的那一个。`run` 之前要调用 `format`。默认模式是 `"auto"`，视频和音频默认选中全部轨道。
+`media(source)` 返回 `MediaBuilder`。每个方法都返回新的构建器，不会修改原构建器。`run` 之前要调用 `format`。默认模式是 `"auto"`，视频和音频默认选中全部轨道。
 
-字段列表在 [media](/api/media)。失败时以 [MediaError](/api/errors) 拒绝。
+字段列表在 [media](/zh/api/media)。失败时以 [MediaError](/zh/api/errors) 拒绝。
 
 ## 设置格式
 
@@ -20,7 +25,7 @@ MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A �
 media(file).format("mp4").mode("copy");
 ```
 
-`"auto"` 在源编解码器可以复制进目标格式时复制轨道，否则转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、`rotate` 以及视频或音频选项。
+`"auto"` 先解析显式或格式默认编解码器，再在处理配置允许时复制兼容轨道，其余轨道转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、非零 `rotate` 以及非空视频或音频选项。允许 `rotate(0)`。
 
 复制可以在 MP4 中保留 `avc` 和 `hevc`，在 MP4 或 M4A 中保留 `aac`，在 WebM 中保留 `vp8`、`vp9` 和 `av1`，在 WebM 中保留 `opus` 和 `vorbis`，在 WAV 中保留 `pcm-s16`、`pcm-s24` 和 `pcm-f32`。复制模式遇到其余编解码器时抛出 `COPY_NOT_POSSIBLE`。
 
@@ -38,7 +43,7 @@ media(file).format("webm").trim({ start: 2, end: 12 });
 
 ## 调整画面尺寸
 
-`width` 和 `height` 是正的偶数。至少传一个。`fit` 是 `"contain"`、`"cover"` 或 `"fill"`，只有两个尺寸都给出时才有效。只给一个尺寸时保持宽高比，并把另一个尺寸向上取整到偶数。
+`width` 和 `height` 是正的偶数。至少传一个。`fit` 是 `"contain"`、`"cover"` 或 `"fill"`，两个尺寸都给出时必填，只给一个尺寸时禁止。只给一个尺寸时保持宽高比，并把另一个尺寸向上取整到偶数。
 
 ```ts
 media(file).format("mp4").resize({ width: 1280 });
@@ -145,6 +150,6 @@ await media(file)
 
 `onProgress` 必须是函数。它抛错或返回 Promise 时，后续进度会被跳过，报告里出现 `CALLBACK_FAILED` 警告。
 
-文件目标失败时，错误上的 `targetState` 是 `"untouched"`、`"aborted"` 或 `"unknown"`。[选择输入与输出](/guide/inputs-and-outputs) 说明这些状态。
+文件目标失败时，错误上的 `targetState` 是 `"untouched"`、`"aborted"` 或 `"unknown"`。[选择输入与输出](/zh/guide/inputs-and-outputs) 说明这些状态。
 
 非音频、非视频轨道会被略去，并可能加上 `NON_AV_CONTENT_NOT_PRESERVED` 警告。文件名不以该格式结尾时，可能加上 `FILENAME_EXTENSION_MISMATCH`。

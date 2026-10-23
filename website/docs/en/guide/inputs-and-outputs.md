@@ -1,3 +1,8 @@
+---
+title: Choose inputs and outputs
+description: Choose media sources and output targets, handle file permissions, and understand cancellation and commit states.
+---
+
 # Choose inputs and outputs
 
 Pass a `File` or `Blob`, an `ArrayBuffer`, a `Uint8Array` backed by an `ArrayBuffer`, or an absolute HTTP or HTTPS URL. Remote sources must allow CORS. Requests omit credentials and do not retry. A URL with a username or password throws `UNSUPPORTED_INPUT`. An empty `ArrayBuffer` throws `INVALID_OPTIONS`. An empty `Uint8Array` throws `UNSUPPORTED_INPUT`.
@@ -20,7 +25,7 @@ await media(file)
 
 `handle` is a `FileSystemFileHandle` for a file, with `queryPermission`, `createWritable`, and `isSameEntry`. Grant read and write permission before `run`. This library does not open a picker and does not ask for permission. A missing grant throws `PERMISSION_REQUIRED`. A handle that cannot do those operations throws `TARGET_UNSUPPORTED`.
 
-Two tasks cannot own the same file. The second throws `TARGET_BUSY`. The writable stream is created with `keepExistingData: false`, so a successful open replaces the file contents.
+Within one module instance, two tasks cannot own the same output file. The second throws `TARGET_BUSY`. Choose an output distinct from the input. The writable stream is created with `keepExistingData: false`; successfully closing it replaces the file contents. Opening the stream alone is not a successful commit.
 
 ## Cancel and read progress
 

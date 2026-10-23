@@ -1,12 +1,17 @@
 [
   {
+    "text": "Home",
+    "link": "/",
+    "activeMatch": "^(/zh)?/$"
+  },
+  {
     "text": "Guide",
-    "link": "/guide/getting-started",
+    "link": "/guide/",
     "activeMatch": "^(/zh)?/guide/"
   },
   {
-    "text": "API",
-    "link": "/api/media",
+    "text": "API reference",
+    "link": "/api/",
     "activeMatch": "^(/zh)?/api/"
   }
 ]

@@ -1,3 +1,8 @@
+---
+title: Extract thumbnails
+description: Extract single video posters or preview strips with correct timing, image sizing, and cleanup.
+---
+
 # Extract thumbnails
 
 `thumbnail(source, options)` returns one `ThumbnailImage` or `null`. `thumbnails(source, options)` returns an async iterator of `ThumbnailItem` values. Both take the same Blob, bytes, and HTTP or HTTPS URL inputs as conversion. Conversion settings do not apply.
