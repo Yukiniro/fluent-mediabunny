@@ -154,6 +154,7 @@ export function media(source: MediaInput) {
 
 export { thumbnail, thumbnails } from "./thumbnail.ts";
 export { getWaveformData } from "./waveform.ts";
+export { renderWaveform } from "./waveform-image.ts";
 export { getEmbeddedPicture } from "./embedded-picture.ts";
 export type {
   ThumbnailImageOptions,
@@ -164,4 +165,6 @@ export type {
   EmbeddedPictureOptions,
   WaveformOptions,
   WaveformData,
+  WaveformRenderOptions,
+  WaveformImage,
 } from "./types.ts";

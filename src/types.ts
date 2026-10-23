@@ -215,3 +215,20 @@ export type WaveformData = {
   min: Float32Array[];
   max: Float32Array[];
 };
+export type WaveformRenderOptions = {
+  width: number;
+  height: number;
+  start?: number;
+  end?: number;
+  color?: string;
+  background?: string;
+  signal?: AbortSignal;
+};
+export type WaveformImage = {
+  blob: Blob;
+  mimeType: "image/png";
+  width: number;
+  height: number;
+  startSeconds: number;
+  endSeconds: number;
+};
