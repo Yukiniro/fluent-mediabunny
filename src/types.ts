@@ -43,7 +43,13 @@ export type RunOptions = {
   signal?: AbortSignal;
   onProgress?: (event: ProgressEvent) => void;
 };
-export type ProbeOptions = { signal?: AbortSignal; duration?: "metadata" | "scan" };
+export type ProbeOptions = {
+  signal?: AbortSignal;
+  duration?: "metadata" | "scan";
+  video?: TrackSelection;
+  audio?: TrackSelection;
+  frameRate?: "estimate";
+};
 export type Warning = { code: string; message: string; fields?: readonly string[] };
 export type TrackInfo = {
   id: number;
@@ -54,6 +60,36 @@ export type TrackInfo = {
   sampleRate?: number;
   channels?: number;
 };
+export type ProbeFrameRate =
+  | { hertz: number; origin: "estimated" }
+  | { hertz: null; origin: "unknown" };
+export type ProbeTiming = {
+  startSeconds: number | null;
+  endSeconds: number | null;
+  elapsedSeconds: number | null;
+  default: boolean;
+  averageBitrate: number | null;
+  peakBitrate: number | null;
+};
+export type ProbeVideoTrack = TrackInfo &
+  ProbeTiming & {
+    type: "video";
+    width: number;
+    height: number;
+    codedWidth: number;
+    codedHeight: number;
+    rotation: 0 | 90 | 180 | 270;
+    frameRate: ProbeFrameRate;
+  };
+export type ProbeAudioTrack = TrackInfo &
+  ProbeTiming & {
+    type: "audio";
+    sampleRate: number;
+    channels: number;
+    language: string | null;
+    name: string | null;
+  };
+export type ProbeTrack = ProbeVideoTrack | ProbeAudioTrack;
 export type ResolvedTrack = TrackInfo & {
   codec: string;
   quality?: Quality;
@@ -94,7 +130,7 @@ export type ProbeResult = {
   container: string;
   durationSeconds: number | null;
   durationOrigin: "metadata" | "scanned" | "unknown";
-  tracks: TrackInfo[];
+  tracks: ProbeTrack[];
   metadata: MetadataValues;
   omittedSourceFields: string[];
 };
@@ -161,3 +197,38 @@ export type ThumbnailImage = {
 };
 export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };
 export type EmbeddedPictureOptions = { signal?: AbortSignal };
+export type WaveformOptions = {
+  track?: "primary" | number;
+  pointsPerSecond?: number;
+  start?: number;
+  end?: number;
+  signal?: AbortSignal;
+};
+export type WaveformData = {
+  trackId: number;
+  sampleRate: number;
+  channels: number;
+  pointsPerSecond: number;
+  startSeconds: number;
+  endSeconds: number;
+  timeOriginSeconds: number;
+  min: Float32Array[];
+  max: Float32Array[];
+};
+export type WaveformRenderOptions = {
+  width: number;
+  height: number;
+  start?: number;
+  end?: number;
+  color?: string;
+  background?: string;
+  signal?: AbortSignal;
+};
+export type WaveformImage = {
+  blob: Blob;
+  mimeType: "image/png";
+  width: number;
+  height: number;
+  startSeconds: number;
+  endSeconds: number;
+};

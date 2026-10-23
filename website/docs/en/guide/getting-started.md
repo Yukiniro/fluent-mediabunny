@@ -12,7 +12,7 @@ Install a local build, then run a conversion in your browser application. This g
 | Requirement     | Version or capability                                   |
 | --------------- | ------------------------------------------------------- |
 | Build runtime   | Node 24.11.1 and pnpm 12.14.0                           |
-| Peer dependency | Exactly `mediabunny@1.61.6`                             |
+| Peer dependency | Exactly `mediabunny@1.62.1`                             |
 | Application     | A browser bundler and an application-supplied `File`    |
 | Transcoding     | Browser decoder/encoder support for the selected codecs |
 
@@ -37,7 +37,7 @@ pnpm pack
 From your application directory, install that tarball and the peer dependency.
 
 ```sh
-pnpm add /path/to/fluentbunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny-0.2.0.tgz mediabunny@1.62.1
 ```
 
 Replace the tarball path with the file `pnpm pack` wrote. The application needs a browser bundler.

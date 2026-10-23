@@ -1,11 +1,11 @@
 ---
 title: 简介
-description: 使用 fluentbunny 在浏览器中转换媒体、提取视频帧和读取内嵌图片。
+description: 使用 fluentbunny 在浏览器中转换媒体、检查轨道、绘制音频波形、提取视频帧和读取内嵌图片。
 ---
 
 # fluentbunny
 
-在浏览器中转换媒体、提取视频帧和读取内嵌图片的 TypeScript 链式 API，底层由 [Mediabunny](https://mediabunny.dev/) 提供媒体处理能力。
+在浏览器中转换媒体、检查轨道、绘制音频波形、提取视频帧和读取内嵌图片的 TypeScript 链式 API，底层由 [Mediabunny](https://mediabunny.dev/) 提供媒体处理能力。
 
 ## 从一个媒体任务开始
 
@@ -31,6 +31,8 @@ const previewUrl = URL.createObjectURL(result.blob);
 | -------------------------- | ------------------------------------------------ | ------------------------------------------ |
 | 转换、裁剪、缩放或提取音频 | [media()](/zh/api/media)                         | 构建器；`run()` 返回 Blob 或文件结果       |
 | 查看时长、轨道与元数据     | [probe()](/zh/api/probe)                         | `Promise<ProbeResult>`                     |
+| 读取一条音频波形           | [getWaveformData()](/zh/api/waveforms)           | `Promise<WaveformData>`                    |
+| 把该波形画成一张 PNG       | [renderWaveform()](/zh/api/waveforms)            | `Promise<WaveformImage>`                   |
 | 解码一帧视频               | [thumbnail()](/zh/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`          |
 | 生成视频预览序列           | [thumbnails()](/zh/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`            |
 | 读取文件内嵌的封面图片     | [getEmbeddedPicture()](/zh/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>` |
@@ -47,6 +49,6 @@ const previewUrl = URL.createObjectURL(result.blob);
 
 容器支持与编解码器支持是两回事。能识别 MP4，不代表当前设备能解码或编码其中的轨道。转码依赖浏览器的媒体能力，不提供自动服务器或 WASM 回退。
 
-转换支持输出 MP4、WebM、M4A 和 WAV；缩略图输出 JPEG 或 PNG；内嵌图片直接返回原始图片字节，不进行解码。
+转换支持输出 MP4、WebM、M4A 和 WAV。波形图片输出 PNG。缩略图输出 JPEG 或 PNG。内嵌图片直接返回原始图片字节，不进行解码。
 
 继续阅读[使用指南](/zh/guide/)，或查阅 [API 参考](/zh/api/)。

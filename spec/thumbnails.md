@@ -12,7 +12,7 @@ Both read the original source using the shared [input contract](conversion.md#in
 - Single extraction requires `time`. Batch extraction accepts either `times` or all of `start`, `end`, and `count`.
 - Times are finite, nonnegative seconds; `-0` becomes 0. An explicit list contains 1–1000 nondecreasing entries. Duplicates retain their positions; requests are neither sorted nor deduplicated.
 - Intervals require `end > start` before and after microsecond rounding, and integer count 1–1000. Request `i` is `start + i * (end - start) / count`, including start and excluding end. Count 1 selects start. End is explicit; extraction does not scan duration automatically.
-- Time origin is `max(0, input.getFirstTimestamp())`, shared across all input tracks. Lookups use presentation timestamps, including VFR and B frames.
+- Time origin is `max(0, input.getFirstTimestamp())`, shared across all input tracks. Waveform data uses the same origin. Lookups use presentation timestamps, including VFR and B frames.
 - Lookup and coverage comparisons use `Math.round(seconds * 1_000_000)`. Request-plus-origin arithmetic, frame starts, durations, and frame ends stay within safe integer microseconds; frame duration rounds to a positive value.
 - A frame covers a request only within `[frame start, frame start + duration)`. Gaps and requests outside video coverage return `null`; frames are not clamped or extended. Equal frame starts follow the upstream lookup's selection.
 - Results retain requested seconds and source sample timestamps/durations. `actualTime = sourceTimestamp - timeOriginSeconds` can be negative for a frame overlapping zero.
@@ -64,3 +64,5 @@ Errors use `MediaError` with phase `preparing` or `processing`, without a file t
 | `ABORTED`                    | Cancellation observed before completion                                 |
 
 Missing frame coverage is a null image, not an error.
+
+Related contracts: [conversion](conversion.md), [waveforms](waveforms.md).

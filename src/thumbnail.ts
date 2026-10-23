@@ -2,6 +2,7 @@ import { EncodedPacketSink, VideoSampleSink } from "mediabunny";
 import type { Input, VideoSample } from "mediabunny";
 import { normalizeSource, number, object, oneOf } from "./config.ts";
 import { invalid, MediaError } from "./errors.ts";
+import { createCanvas, encodeCanvas } from "./image.ts";
 import { openInput, readable, signalOption } from "./input.ts";
 import { Scope } from "./scope.ts";
 import type {
@@ -82,30 +83,6 @@ function options(value: unknown, single: boolean) {
   };
 }
 
-type Canvas = OffscreenCanvas | HTMLCanvasElement;
-function canvas(width: number, height: number): Canvas {
-  if (
-    typeof OffscreenCanvas !== "undefined" &&
-    typeof OffscreenCanvas.prototype.convertToBlob === "function"
-  )
-    return new OffscreenCanvas(width, height);
-  if (typeof document !== "undefined") {
-    const result = document.createElement("canvas");
-    if (typeof result.toBlob === "function") {
-      result.width = width;
-      result.height = height;
-      return result;
-    }
-  }
-  throw new MediaError("IMAGE_ENCODING_UNAVAILABLE", "Canvas image encoding is unavailable.", {
-    phase: "processing",
-  });
-}
-function encode(canvas: Canvas, type: string, quality: number): Promise<Blob | null> {
-  if ("convertToBlob" in canvas) return canvas.convertToBlob({ type, quality });
-  return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
-}
-
 function extract(
   source: MediaInput,
   opts: ReturnType<typeof options>,
@@ -115,7 +92,7 @@ function extract(
     let input: Input | undefined;
     let samples: AsyncGenerator<VideoSample | null, void, unknown> | undefined;
     let sample: VideoSample | null = null;
-    let surface: Canvas | undefined;
+    let surface: ReturnType<typeof createCanvas> | undefined;
     let working = true;
     let cleaning: Promise<void> | undefined;
     const closeSample = () => {
@@ -224,7 +201,7 @@ function extract(
               throw new MediaError("OUTPUT_TOO_LARGE", "Resolved image exceeds output limits.", {
                 phase: scope.phase,
               });
-            surface ??= canvas(width, height);
+            surface ??= createCanvas(width, height);
             surface.width = width;
             surface.height = height;
             const context = surface.getContext("2d") as
@@ -268,7 +245,7 @@ function extract(
               actualTime: sample.timestamp - origin,
             };
             closeSample();
-            const blob = await scope.wait(encode(surface, opts.type, opts.quality));
+            const blob = await scope.wait(encodeCanvas(surface, opts.type, opts.quality));
             if (!blob || !blob.size)
               throw new MediaError("PROCESSING_FAILED", "Image encoder returned no data.", {
                 phase: scope.phase,

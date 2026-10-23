@@ -33,7 +33,7 @@ pnpm pack --out fluentbunny.tgz
 然后进入你的应用目录，安装生成的压缩包和固定版本的 Mediabunny 对等依赖：
 
 ```sh
-pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.62.1
 ```
 
 将压缩包路径替换为实际位置。应用需要使用浏览器打包工具。
@@ -84,6 +84,20 @@ if (picture) {
 
 `getEmbeddedPicture()` 返回一张内嵌图片的字节；如果内嵌图片都不是 JPEG、PNG、GIF、WebP 或 BMP，则返回 `null`。有多张图片时按固定顺序选择：正面封面，然后是没有正背面标签的图片，最后是背面封面，同一类按文件顺序取第一张。这些字节是文件自带的图片，保留图片内部的元数据，不是从视频解码出来的帧。
 
+### 绘制音频波形
+
+```ts
+import { getWaveformData, probe, renderWaveform } from "fluentbunny";
+
+const info = await probe(file);
+const audio = info.tracks.find((track) => track.type === "audio");
+const data = await getWaveformData(file, audio ? { track: audio.id } : {});
+const image = await renderWaveform(data, { width: 800, height: 160 });
+const imageUrl = URL.createObjectURL(image.blob);
+```
+
+`probe()` 报告轨道时间、尺寸和码率，不进行解码。`getWaveformData()` 再把一条音轨读成各声道的 min 与 max 数组，默认每秒 50 个点。`renderWaveform()` 只根据这些数组绘制一张 PNG，不会再次打开 `file`。图片不再使用时，请释放 `imageUrl`。
+
 ## 输入与输出
 
 输入可以是 `File`/`Blob`、`ArrayBuffer`、基于 `ArrayBuffer` 的 `Uint8Array`，或绝对 HTTP(S) URL。远程资源需要允许 CORS，网络请求不携带凭据。编解码能力取决于浏览器、操作系统和设备，因此能够识别容器并不代表能够解码或编码其中的内容。
@@ -92,7 +106,7 @@ if (picture) {
 
 ## 参与贡献
 
-开发契约：[媒体转换](spec/conversion.zh-CN.md)、[缩略图](spec/thumbnails.zh-CN.md)、[内嵌图片](spec/embedded-picture.zh-CN.md)。
+开发契约：[媒体转换](spec/conversion.zh-CN.md)、[波形](spec/waveforms.zh-CN.md)、[缩略图](spec/thumbnails.zh-CN.md)、[内嵌图片](spec/embedded-picture.zh-CN.md)。
 
 欢迎通过 [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) 或 Pull Request 提交问题和范围明确的改进。反馈浏览器相关问题时，请附上浏览器、操作系统，以及使用可分享媒体的最小复现示例。
 

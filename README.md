@@ -33,7 +33,7 @@ pnpm pack --out fluentbunny.tgz
 Then install the generated tarball and the exact Mediabunny peer dependency from your application's directory:
 
 ```sh
-pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.62.1
 ```
 
 Replace the tarball path with its actual location. Your application needs a browser bundler.
@@ -84,6 +84,20 @@ if (picture) {
 
 `getEmbeddedPicture()` returns the bytes of one embedded picture, or `null` when none of the embedded pictures is a JPEG, PNG, GIF, WebP, or BMP. Several pictures resolve in a fixed order: front cover, then an unlabeled picture, then back cover, each in file order. The bytes are the file's own image, including any metadata inside the image, not a frame decoded from the video.
 
+### Draw an audio waveform
+
+```ts
+import { getWaveformData, probe, renderWaveform } from "fluentbunny";
+
+const info = await probe(file);
+const audio = info.tracks.find((track) => track.type === "audio");
+const data = await getWaveformData(file, audio ? { track: audio.id } : {});
+const image = await renderWaveform(data, { width: 800, height: 160 });
+const imageUrl = URL.createObjectURL(image.blob);
+```
+
+`probe()` reports track timing, size, and bitrate without decoding. `getWaveformData()` then reads one audio track into per-channel min and max arrays. The default is 50 points per second. `renderWaveform()` draws one PNG from those arrays and does not open `file` again. Revoke `imageUrl` when the image is no longer needed.
+
 ## Input and output
 
 Inputs can be a `File`/`Blob`, `ArrayBuffer`, `Uint8Array` backed by an `ArrayBuffer`, or an absolute HTTP(S) URL. Remote sources must allow CORS; requests omit credentials. Codec availability depends on the browser, operating system, and device, so recognizing a container does not guarantee decoding or encoding support.
@@ -92,7 +106,7 @@ Conversion returns an in-memory Blob result by default. Applications can instead
 
 ## Contributing
 
-Developer contracts: [conversion](spec/conversion.md), [thumbnails](spec/thumbnails.md), and [embedded pictures](spec/embedded-picture.md).
+Developer contracts: [conversion](spec/conversion.md), [waveforms](spec/waveforms.md), [thumbnails](spec/thumbnails.md), and [embedded pictures](spec/embedded-picture.md).
 
 Bug reports and focused improvements are welcome through [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) and pull requests. For browser-specific issues, include your browser, operating system, and a small reproducible example using shareable media.
 
