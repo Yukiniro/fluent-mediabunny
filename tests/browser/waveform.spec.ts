@@ -107,6 +107,66 @@ test("packaged waveform decodes real PCM and renders through the DOM canvas fall
   expect(result.mime).toBe("image/png");
 });
 
+test("compressed audio, source offsets and a secondary track decode in this browser", async ({
+  page,
+}) => {
+  const result = await page.evaluate(async () => {
+    const api = window.mediaAPI;
+    const load = (name: string) => new URL(`/fixtures/${name}`, location.href);
+    const shape = async (name: string, track?: number) => {
+      const data = await api.getWaveformData(load(name), track === undefined ? {} : { track });
+      const channel = data.channels[0]!;
+      let min = Infinity;
+      let max = -Infinity;
+      for (let i = 0; i < channel.min.length; i++) {
+        min = Math.min(min, channel.min[i]!);
+        max = Math.max(max, channel.max[i]!);
+      }
+      return {
+        trackId: data.trackId,
+        origin: data.timeOriginSeconds,
+        end: data.end,
+        points: channel.min.length,
+        channels: data.channels.length,
+        min,
+        max,
+      };
+    };
+    const probed = await api.probe(load("multi.mp4"));
+    const audio = probed.tracks.filter((track) => track.type === "audio");
+    return {
+      wav: await shape("audio.wav"),
+      mp3: await shape("audio.mp3"),
+      aac: await shape("av.mp4"),
+      opus: await shape("av.webm"),
+      offset: await shape("offset.mp4"),
+      secondary: await shape("multi.mp4", audio[1]!.id),
+      audioIds: audio.map((track) => track.id),
+    };
+  });
+  expect(result.wav).toMatchObject({ end: 2, points: 100, channels: 1 });
+  expect(result.wav.min).toBeLessThan(-0.12);
+  expect(result.wav.max).toBeGreaterThan(0.12);
+  expect(result.mp3.end).toBeCloseTo(2.037551, 3);
+  expect(result.mp3.points).toBe(102);
+  expect(result.mp3.min).toBeLessThan(-0.1);
+  expect(result.aac.end).toBeCloseTo(2.020136, 3);
+  expect(result.aac.points).toBe(102);
+  expect(result.aac.min).toBeLessThan(-0.12);
+  expect(result.opus.points).toBe(101);
+  expect(result.opus.end).toBeGreaterThan(2);
+  expect(result.opus.end).toBeLessThan(2.05);
+  expect(result.opus.min).toBeLessThan(-0.12);
+  expect(result.offset.origin).toBeCloseTo(4.976, 2);
+  expect(result.offset.end).toBeGreaterThan(2);
+  expect(result.offset.points).toBeGreaterThanOrEqual(100);
+  expect(result.audioIds).toHaveLength(2);
+  expect(result.secondary.trackId).toBe(result.audioIds[1]);
+  expect(result.secondary.trackId).not.toBe(result.audioIds[0]);
+  expect(result.secondary.end).toBeCloseTo(result.aac.end, 3);
+  expect(result.secondary.min).toBeLessThan(-0.12);
+});
+
 test("rendering keeps channel lanes, clips only pixels and retains peaks when downsampling", async ({
   page,
 }) => {

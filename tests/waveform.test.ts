@@ -159,6 +159,33 @@ test("cancellation awaits a pending decoder and closes its late sample before re
   expect(decoder).not.toHaveBeenCalled();
 });
 
+test("an impulse at 10000.05s stays in its own 20ms bin", async () => {
+  const frames = 4800;
+  const plane = new Float32Array(frames);
+  plane[2400] = 0.8;
+  const data = new Float32Array(frames * 2);
+  data.set(plane, 0);
+  data.set(
+    plane.map((value) => -value),
+    frames,
+  );
+  vi.spyOn(AudioSampleSink.prototype, "samples").mockImplementation(async function* () {
+    yield new AudioSample({
+      data,
+      format: "f32-planar",
+      sampleRate: 48000,
+      numberOfChannels: 2,
+      timestamp: 10000,
+    });
+  });
+  const result = await getWaveformData(source(), { start: 10000, end: 10000.1 });
+  const index = result.channels[0]!.max.findIndex((value) => value > 0.5);
+  expect(index).toBe(2);
+  expect(result.channels[0]!.max[index]).toBeCloseTo(0.8, 6);
+  expect(result.channels[1]!.min[index]).toBeCloseTo(-0.8, 6);
+  expect(result.channels[0]!.max.filter((value) => value > 0.5)).toHaveLength(1);
+});
+
 test("four hours of timestamped chunks produce bounded-size envelopes without retaining PCM", async () => {
   vi.spyOn(AudioSampleSink.prototype, "samples").mockImplementation(async function* () {
     for (let minute = 0; minute < 240; minute++)
