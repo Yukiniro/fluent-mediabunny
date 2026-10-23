@@ -10,7 +10,7 @@ Execute a configured `MediaBuilder`. The default target returns a blob; a file t
 ## Example
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const controller = new AbortController();
 const result = await media(file)

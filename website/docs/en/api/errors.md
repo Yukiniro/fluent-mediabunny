@@ -10,7 +10,7 @@ description: Handle MediaError codes, processing phases, file target states, dia
 ## Handle an error
 
 ```ts
-import { media, MediaError } from "fluent-mediabunny";
+import { media, MediaError } from "fluentbunny";
 
 try {
   const result = await media(file).format("webm").run();

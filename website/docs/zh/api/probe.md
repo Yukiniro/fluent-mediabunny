@@ -10,7 +10,7 @@ description: 无需转换即可检查媒体容器、时长、音视频轨道与�
 ## 示例 {#example}
 
 ```ts
-import { probe } from "fluent-mediabunny";
+import { probe } from "fluentbunny";
 
 const info = await probe(file, { duration: "scan" });
 console.log(info.container, info.durationSeconds);

@@ -18,9 +18,9 @@ Preconditions:
 - Doctor `ok: true`.
 - `/fixtures/av.mp4` available.
 
-- **Run probe.** `node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs drive probe-media`.
+- **Run probe.** `node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs drive probe-media`.
 - **Observe tracks.** `proof.json.result` has `hasVideo` and `hasAudio` true and `trackCount >= 2`.
-- **Proof.** `proof.ok === true` under `artifacts/verify-fluent-mediabunny/<run>/probe-media/`.
+- **Proof.** `proof.ok === true` under `artifacts/verify-fluentbunny/<run>/probe-media/`.
 
 ## Gotchas
 

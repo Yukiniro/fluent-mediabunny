@@ -1,6 +1,6 @@
 ---
 title: Get started
-description: Build and install fluent-mediabunny, then convert a video and extract images in a browser.
+description: Build and install fluentbunny, then convert a video and extract images in a browser.
 ---
 
 # Get started
@@ -23,21 +23,21 @@ Codec support varies by browser, operating system, and device. A recognized cont
 Node 24 is pinned in `.node-version` as 24.11.1. The package manager is pnpm 12.14.0.
 
 ```sh
-git clone https://github.com/Yukiniro/fluent-mediabunny.git
-cd fluent-mediabunny
+git clone https://github.com/Yukiniro/fluent-mediabunny.git fluentbunny
+cd fluentbunny
 pnpm install --frozen-lockfile
 pnpm build
 pnpm pack
 ```
 
-`pnpm pack` writes `fluent-mediabunny-0.2.0.tgz` in the repository directory.
+`pnpm pack` writes `fluentbunny-0.2.0.tgz` in the repository directory.
 
 ## Install the tarball
 
 From your application directory, install that tarball and the peer dependency.
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny-0.2.0.tgz mediabunny@1.61.6
 ```
 
 Replace the tarball path with the file `pnpm pack` wrote. The application needs a browser bundler.
@@ -47,7 +47,7 @@ Replace the tarball path with the file `pnpm pack` wrote. The application needs 
 `file` is a browser `File` long enough to cover seconds 2 to 12.
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")
@@ -63,7 +63,7 @@ Call `URL.revokeObjectURL(previewUrl)` when the preview is no longer on screen. 
 ## Extract one thumbnail
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 if (poster) {
@@ -76,7 +76,7 @@ if (poster) {
 ## Read an embedded picture
 
 ```ts
-import { getEmbeddedPicture } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluentbunny";
 
 const picture = await getEmbeddedPicture(file);
 if (picture) {

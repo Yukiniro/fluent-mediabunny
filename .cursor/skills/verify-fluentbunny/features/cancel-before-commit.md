@@ -20,10 +20,10 @@ Preconditions:
 - Doctor `ok: true`.
 - `/fixtures/audio.wav` available.
 
-- **Run cancel recipes.** `node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs drive cancel-before-commit`.
+- **Run cancel recipes.** `node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs drive cancel-before-commit`.
 - **Observe pre-abort.** `result.preAborted.code === "ABORTED"` and events do not include `close`.
 - **Observe mid-write.** `result.midWrite.code === "ABORTED"`, events include `abort`, and do not include `close`.
-- **Proof.** `proof.ok === true` under `artifacts/verify-fluent-mediabunny/<run>/cancel-before-commit/`.
+- **Proof.** `proof.ok === true` under `artifacts/verify-fluentbunny/<run>/cancel-before-commit/`.
 
 ## Gotchas
 

@@ -16,7 +16,7 @@ An embedded cover is a different read. [getEmbeddedPicture](/api/embedded-pictur
 `time` is seconds and may be zero. `width` or `height` is a positive integer up to 4096.
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 if (poster) {
@@ -31,7 +31,7 @@ Revoke the object URL when the image is gone. The returned blob keeps its bytes 
 Pass `times`, or pass `start`, `end`, and `count`. Do not pass both. Each list holds 1 to 1000 times. `times` is nondecreasing. Duplicates keep separate positions.
 
 ```ts
-import { thumbnails } from "fluent-mediabunny";
+import { thumbnails } from "fluentbunny";
 
 const controller = new AbortController();
 for await (const item of thumbnails(file, {

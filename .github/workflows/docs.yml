@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --filter fluent-mediabunny-docs
+      - run: pnpm install --frozen-lockfile --filter fluentbunny-docs
       - run: pnpm -C website build
   deploy:
     needs: build
@@ -36,5 +36,5 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --filter fluent-mediabunny-docs
+      - run: pnpm install --frozen-lockfile --filter fluentbunny-docs
       - run: pnpm -C website run deploy

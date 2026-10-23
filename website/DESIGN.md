@@ -8,9 +8,9 @@ References reviewed: [Vite](https://vite.dev/guide/) for its restrained three-co
 
 ## Palette
 
-The palette follows Mediabunny's pink accent and soft neutral surfaces, with a distinct muted rose identity. Its live site was reviewed on 2026-10-23: light-mode brand tokens were `#f65586` and `#eb47a1`, with white and neutral gray surfaces; the dark-mode link accent was `#ff8aad`.
+The palette follows Mediabunny's pink accent and soft neutral surfaces. Its live site was reviewed on 2026-10-23: light-mode brand tokens were `#f65586` and `#eb47a1`, with white and neutral gray surfaces; the dark-mode link accent was `#ff8aad`. Use bright pink `#f65586` for the large fluentbunny wordmark and the mascot accents, with a soft pink glow behind the homepage illustration. Keep the darker rose for accessible links and primary buttons.
 
-Use pure white `#ffffff` for the light-mode reading surface, neutral grays `#f5f5f5` and `#fafafa` for secondary surfaces and code blocks, and `#242424` for headings. Keep body text, dividers, and ordinary surfaces neutral. Reserve the muted rose `#b23862` for emphasis such as links, active navigation, focus rings, syntax highlighting, and the second hero line. Primary buttons use white text on rose; hover darkens to `#8f274d`. Keep the existing layout and typography rather than reproducing Mediabunny's illustration or glow.
+Use pure white `#ffffff` for the light-mode reading surface, neutral grays `#f5f5f5` and `#fafafa` for secondary surfaces and code blocks, and `#242424` for headings. Keep body text, dividers, and ordinary surfaces neutral. Reserve the muted rose `#b23862` for emphasis such as links, active navigation, focus rings, and syntax highlighting. Primary buttons use white text on rose; hover darkens to `#8f274d`.
 
 Dark mode uses plum charcoal `#1b161c`, raised surfaces `#28202a`, and a softer rose link color `#f0a0ba`. Inline code and build-time syntax highlighting follow the same palette. Check text and button contrast in both modes. Semantic callouts keep the original Rspress colors.
 
@@ -24,13 +24,21 @@ Reuse Rspress navigation, search, language switcher, outline, code copy controls
 
 ## Layout
 
-Use a standalone homepage with a split introduction/code example, four task rows, and concise API principles. Keep one primary setup entry point. Omit repeated brand labels, format lists, decorative section captions, obvious flow labels, and duplicate setup calls to action. Put compatibility details in the guides; keep the example's input requirements visible. Reuse the documentation palette, type, navigation, and build-time code highlighting. Use the first-class `custom` page type for static MDX content, without a new runtime component.
+Use a standalone homepage with a split introduction/mascot hero, followed by a conversion example, four task rows, and concise API principles. The hero shows the pink fluentbunny wordmark above the neutral headline, rounded action buttons, and a cream-colored outlined rabbit against a soft pink glow, following the user's Mediabunny reference. Keep one primary setup entry point. Put compatibility details in the guides; keep the example's input requirements visible. Reuse the documentation palette, type, navigation, and build-time code highlighting. Use the first-class `custom` page type for static MDX content, without a new runtime component.
 
 Use one persistent sidebar across guides and API reference, with localized directory titles. At desktop widths, use a 264px sidebar, a bounded reading column, and a 224px outline. Tables and code scroll inside their containers. Narrow screens use the original Rspress menu and outline controls.
 
 ## Depth and motion
 
-Use separators and surface steps instead of decorative shadows. Radius scale: 4px inline code, 8px code blocks and tables. A thin brand-colored rail marks the active sidebar item. Keep interactions to native theme transitions and focus rings; honor reduced motion.
+Use separators and surface steps for documentation, with a pink radial glow reserved for the hero illustration. Radius scale: 4px inline code, 8px code blocks and tables, pill-shaped homepage actions. A thin brand-colored rail marks the active sidebar item. Keep interactions to native theme transitions and focus rings; honor reduced motion.
+
+## Brand assets and rename
+
+The product and npm package are named `fluentbunny`. Existing runtime API names remain unchanged. The user's request to follow Mediabunny's visual style supersedes the previous restrictions against a homepage illustration, glow, and brand label. The original rabbit has a folded ear and a pink play symbol, distinct from Mediabunny's butterfly mascot.
+
+Use `docs/public/logo.png` for navigation and READMEs, `favicon.png` for browser tabs, `mascot.webp` for the homepage, and the 1200 × 630 `og.png` for social previews. Transparent logo and mascot assets work on both themes. [Brand generation prompts](BRAND.md) record the built-in imagegen prompts and reference roles.
+
+GitHub links retain the actual repository path `Yukiniro/fluent-mediabunny`; renaming the remote repository is a separate hosting operation. The social image uses that repository's absolute raw asset URL, which becomes available after these assets reach `main`. Wrangler targets `fluentbunny-docs`; deploying it creates or updates that Worker, and does not migrate the previous Worker's domain or routes. Historical validation reports retain their original filesystem paths.
 
 ## Do and don't
 

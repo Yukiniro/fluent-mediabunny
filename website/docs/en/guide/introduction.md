@@ -1,16 +1,16 @@
 ---
 title: Introduction
-description: Convert media, extract video frames, and read embedded pictures in a browser with fluent-mediabunny.
+description: Convert media, extract video frames, and read embedded pictures in a browser with fluentbunny.
 ---
 
-# fluent-mediabunny
+# fluentbunny
 
 A fluent TypeScript API for converting media, extracting video frames, and reading embedded pictures in the browser. Powered by [Mediabunny](https://mediabunny.dev/).
 
 ## Start with a media task
 
 ```ts title="Convert a video"
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")

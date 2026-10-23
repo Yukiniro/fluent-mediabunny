@@ -1,5 +1,5 @@
 {
-  "name": "fluent-mediabunny",
+  "name": "fluentbunny",
   "version": "0.2.0",
   "description": "A simpler, more approachable fluent TypeScript API for Mediabunny.",
   "homepage": "https://github.com/Yukiniro/fluent-mediabunny#readme",

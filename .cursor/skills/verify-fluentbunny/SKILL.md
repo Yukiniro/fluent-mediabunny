@@ -1,9 +1,9 @@
 ---
-name: verify-fluent-mediabunny
-description: Drive the fluent-mediabunny browser validation harness (window.mediaAPI) to prove conversion, thumbnails, probe, and cancel-before-commit behavior. Use when verifying library changes against real browser media APIs, or when a task needs user-path evidence beyond Vitest.
+name: verify-fluentbunny
+description: Drive the fluentbunny browser validation harness (window.mediaAPI) to prove conversion, thumbnails, probe, and cancel-before-commit behavior. Use when verifying library changes against real browser media APIs, or when a task needs user-path evidence beyond Vitest.
 ---
 
-# Verify fluent-mediabunny
+# Verify fluentbunny
 
 Primary surface is the **browser library API** loaded by the local validation page (`index.html` → `window.mediaAPI`). There is no product UI. Agents prove behavior by launching that harness and evaluating the public API the way an integrating app would. Secondary surfaces: Vitest (`pnpm test`), package build (`pnpm build` / `vp pack`). Native save-picker flows are out of automated scope (see `docs/validation.md`).
 
@@ -14,10 +14,10 @@ From the repo root:
 ```sh
 export FMB_VERIFY_RUN_ID="${FMB_VERIFY_RUN_ID:-$(date +%s)}"
 export FMB_VERIFY_PORT="${FMB_VERIFY_PORT:-4173}"
-node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs launch
+node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs launch
 ```
 
-Ready when `GET http://127.0.0.1:$FMB_VERIFY_PORT/` returns 200 and the page title contains `fluent-mediabunny`. The helper starts `vp dev --host 127.0.0.1 --port <port>` as a detached process owned by this run. Fixtures are served from `public/fixtures/` (already in the tree; regenerate with `pnpm fixtures` only if missing).
+Ready when `GET http://127.0.0.1:$FMB_VERIFY_PORT/` returns 200 and the page title contains `fluentbunny`. The helper starts `vp dev --host 127.0.0.1 --port <port>` as a detached process owned by this run. Fixtures are served from `public/fixtures/` (already in the tree; regenerate with `pnpm fixtures` only if missing).
 
 Two instances need different `FMB_VERIFY_PORT` and `FMB_VERIFY_RUN_ID` values. Do not attach to a harness you did not launch.
 
@@ -26,7 +26,7 @@ Teardown: see Cleanup.
 ## Doctor
 
 ```sh
-node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs doctor
+node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs doctor
 ```
 
 Requires exit code 0 and JSON with `ok: true`, `harnessProcess.alive: true`, `mediaAPI: true`, `fixtureAvMp4: true`. Run doctor first whenever a drive fails or the page looks wrong.
@@ -34,7 +34,7 @@ Requires exit code 0 and JSON with `ok: true`, `harnessProcess.alive: true`, `me
 ## Drive
 
 ```sh
-node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs drive <feature-id>
+node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs drive <feature-id>
 ```
 
 Feature IDs match `features/*.md` (without `.md`): `convert-copy`, `thumbnails-batch`, `probe-media`, `cancel-before-commit`.
@@ -47,7 +47,7 @@ Read `features/README.md` before choosing a feature. A proof that only exercises
 
 Proof files land under:
 
-`artifacts/verify-fluent-mediabunny/<FMB_VERIFY_RUN_ID>/<feature-id>/`
+`artifacts/verify-fluentbunny/<FMB_VERIFY_RUN_ID>/<feature-id>/`
 
 Each drive writes `proof.json` plus any binary outputs (e.g. `output.mp4`, JPEG frames). Standards:
 
@@ -59,14 +59,14 @@ Each drive writes `proof.json` plus any binary outputs (e.g. `output.mp4`, JPEG 
 ## Cleanup
 
 ```sh
-node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs cleanup
+node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs cleanup
 ```
 
-Sends SIGTERM (then SIGKILL if needed) to the PID recorded at launch. Deletes launch state under `/tmp/fmb-verify-<RUN_ID>/`. **Does not delete** `artifacts/verify-fluent-mediabunny/...` proof files. Never `pkill` by process name.
+Sends SIGTERM (then SIGKILL if needed) to the PID recorded at launch. Deletes launch state under `/tmp/fmb-verify-<RUN_ID>/`. **Does not delete** `artifacts/verify-fluentbunny/...` proof files. Never `pkill` by process name.
 
 ## Helpers
 
-Executable entry: `.cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs`
+Executable entry: `.cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs`
 
 | Command      | Purpose                                       |
 | ------------ | --------------------------------------------- |

@@ -1,6 +1,6 @@
 # Releasing
 
-A maintainer releases fluent-mediabunny from a local clone. No workflow versions or publishes the package. A release takes two commands, and you can stop after the first one.
+A maintainer releases fluentbunny from a local clone. No workflow versions or publishes the package. A release takes two commands, and you can stop after the first one.
 
 ## Before you start
 
@@ -67,4 +67,4 @@ The Changeset check looks only at `src/`, so ask for a changeset when a pull req
 
 ## The first release
 
-fluent-mediabunny has never been published to npm. The first published version is whatever the first real changeset produces, for example 0.2.1 from a `patch` changeset. Version 0.2.0 is not backfilled into `CHANGELOG.md`.
+fluentbunny has never been published to npm. The first published version is whatever the first real changeset produces, for example 0.2.1 from a `patch` changeset. Version 0.2.0 is not backfilled into `CHANGELOG.md`.

@@ -41,7 +41,7 @@ function assertCleanTree() {
 }
 
 function plannedReleases() {
-  const dir = mkdtempSync(join(tmpdir(), "fluent-mediabunny-release-"));
+  const dir = mkdtempSync(join(tmpdir(), "fluentbunny-release-"));
   run("changeset", ["status", `--output=${join(dir, "plan.json")}`]);
   const { releases } = JSON.parse(readFileSync(join(dir, "plan.json"), "utf8"));
   rmSync(dir, { recursive: true });

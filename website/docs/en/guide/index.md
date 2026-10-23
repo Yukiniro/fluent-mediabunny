@@ -1,6 +1,6 @@
 ---
 title: Guides
-description: Task-oriented guides for installing fluent-mediabunny and working with browser media.
+description: Task-oriented guides for installing fluentbunny and working with browser media.
 ---
 
 # Guides

@@ -1,21 +1,14 @@
 ---
 title: API reference
-description: Public functions, conversion builder methods, result types, and errors exported by fluent-mediabunny.
+description: Public functions, conversion builder methods, result types, and errors exported by fluentbunny.
 ---
 
 # API reference
 
-Import public functions and types from `fluent-mediabunny`. Every operation reads one source; conversion produces one output.
+Import public functions and types from `fluentbunny`. Every operation reads one source; conversion produces one output.
 
 ```ts
-import {
-  media,
-  probe,
-  thumbnail,
-  thumbnails,
-  getEmbeddedPicture,
-  MediaError,
-} from "fluent-mediabunny";
+import { media, probe, thumbnail, thumbnails, getEmbeddedPicture, MediaError } from "fluentbunny";
 ```
 
 ## Conversion

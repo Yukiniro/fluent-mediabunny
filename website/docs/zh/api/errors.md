@@ -10,7 +10,7 @@ description: 处理 MediaError 错误码、执行阶段、文件目标状态、�
 ## 处理错误
 
 ```ts
-import { media, MediaError } from "fluent-mediabunny";
+import { media, MediaError } from "fluentbunny";
 
 try {
   const result = await media(file).format("webm").run();

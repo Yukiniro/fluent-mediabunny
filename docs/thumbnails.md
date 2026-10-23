@@ -3,7 +3,7 @@
 `thumbnail(source, options)` returns one `ThumbnailImage` or null. `thumbnails(source, options)` returns an async iterator of `ThumbnailItem` values. Both accept the same Blob, bytes, and HTTP(S) URL inputs as conversion. No conversion builder settings apply to extraction.
 
 ```ts
-import { thumbnail, thumbnails } from "fluent-mediabunny";
+import { thumbnail, thumbnails } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 const controller = new AbortController();

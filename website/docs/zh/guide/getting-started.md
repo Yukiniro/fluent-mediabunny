@@ -1,6 +1,6 @@
 ---
 title: 开始使用
-description: 构建并安装 fluent-mediabunny，在浏览器中完成视频转换与图片提取。
+description: 构建并安装 fluentbunny，在浏览器中完成视频转换与图片提取。
 ---
 
 # 开始使用
@@ -23,21 +23,21 @@ description: 构建并安装 fluent-mediabunny，在浏览器中完成视频转�
 Node 24 固定在 `.node-version`，具体版本是 24.11.1。包管理器是 pnpm 12.14.0。
 
 ```sh
-git clone https://github.com/Yukiniro/fluent-mediabunny.git
-cd fluent-mediabunny
+git clone https://github.com/Yukiniro/fluent-mediabunny.git fluentbunny
+cd fluentbunny
 pnpm install --frozen-lockfile
 pnpm build
 pnpm pack
 ```
 
-`pnpm pack` 在仓库目录写出 `fluent-mediabunny-0.2.0.tgz`。
+`pnpm pack` 在仓库目录写出 `fluentbunny-0.2.0.tgz`。
 
 ## 安装压缩包
 
 在应用目录安装该压缩包和对等依赖。
 
 ```sh
-pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny-0.2.0.tgz mediabunny@1.61.6
 ```
 
 把压缩包路径换成 `pnpm pack` 写出的文件。应用需要使用浏览器打包工具。
@@ -47,7 +47,7 @@ pnpm add /path/to/fluent-mediabunny-0.2.0.tgz mediabunny@1.61.6
 `file` 是应用提供的浏览器 `File`，时长要覆盖第 2 秒到第 12 秒。
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")
@@ -63,7 +63,7 @@ const previewUrl = URL.createObjectURL(result.blob);
 ## 提取一张缩略图
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 if (poster) {
@@ -76,7 +76,7 @@ if (poster) {
 ## 读取内嵌图片
 
 ```ts
-import { getEmbeddedPicture } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluentbunny";
 
 const picture = await getEmbeddedPicture(file);
 if (picture) {
