@@ -1,11 +1,11 @@
 ---
 title: Introduction
-description: Convert media, extract video frames, and read embedded pictures in a browser with fluentbunny.
+description: Convert media, inspect tracks, draw audio waveforms, extract video frames, and read embedded pictures in a browser with fluentbunny.
 ---
 
 # fluentbunny
 
-A fluent TypeScript API for converting media, extracting video frames, and reading embedded pictures in the browser. Powered by [Mediabunny](https://mediabunny.dev/).
+A fluent TypeScript API for converting media, inspecting tracks, drawing audio waveforms, extracting video frames, and reading embedded pictures in the browser. Powered by [Mediabunny](https://mediabunny.dev/).
 
 ## Start with a media task
 
@@ -31,6 +31,8 @@ New to the package? Follow [Get started](/guide/getting-started) to build and in
 | --------------------------------------- | --------------------------------------------- | ------------------------------------------------ |
 | Convert, trim, resize, or extract audio | [media()](/api/media)                         | A builder; `run()` returns a blob or file result |
 | Inspect duration, tracks, and metadata  | [probe()](/api/probe)                         | `Promise<ProbeResult>`                           |
+| Read one audio waveform                 | [getWaveformData()](/api/waveforms)           | `Promise<WaveformData>`                          |
+| Draw that waveform as one PNG           | [renderWaveform()](/api/waveforms)            | `Promise<WaveformImage>`                         |
 | Decode one video frame                  | [thumbnail()](/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`                |
 | Build a strip of video previews         | [thumbnails()](/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`                  |
 | Read a file's embedded cover image      | [getEmbeddedPicture()](/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>`       |
@@ -47,6 +49,6 @@ New to the package? Follow [Get started](/guide/getting-started) to build and in
 
 Container support and codec support are separate. Recognizing an MP4 does not prove that a device can decode or encode its tracks. Transcoding uses the browser's media capabilities; there is no automatic server or WASM fallback.
 
-Conversion writes MP4, WebM, M4A, or WAV. Thumbnails use JPEG or PNG. Embedded pictures return the original image bytes without decoding.
+Conversion writes MP4, WebM, M4A, or WAV. Waveform images are PNG. Thumbnails use JPEG or PNG. Embedded pictures return the original image bytes without decoding.
 
 Continue with the [task guides](/guide/) or browse the [API reference](/api/).

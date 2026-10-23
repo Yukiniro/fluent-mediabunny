@@ -12,8 +12,14 @@
 - 支持的输入容器为 MP4/M4A/MOV、WebM/MKV、MP3、WAV、Ogg、FLAC 和 ADTS。编解码能力取决于运行环境。
 - URL 对象保存为字符串快照。有限静态 URL 资源通过匿名 CORS GET 读取，不重试，也不要求支持范围请求。调用者须在完成前保持源字节和远程内容稳定；库不复制或修改媒体字节。
 - 选项须为普通对象，未知键会失败。提供 `signal` 时须为 AbortSignal。
-- `probe(source, options?)` 返回源容器、时长、音视频轨、筛选后的元数据和省略字段。轨道 ID 是源 ID，不是索引。未知值不以 0 表示，不适用的轨道字段可以省略。
-- Probe 默认使用 `duration: "metadata"`；`"scan"` 显式扫描时长。未知时长为 `null`，对应 `durationOrigin: "unknown"`。Probe 报告源信息，不代表编解码能力，在结束前释放输入。
+- `probe(source, options?)` 返回源容器、顶层时长、选中的音视频轨、筛选后的元数据和省略字段。轨道 ID 是源 ID，不是索引。未知值保持 `null`，不写成 0，也不用估算值填补。
+- Probe 默认包含全部音轨和全部视频轨。`video` 与 `audio` 复用转换的轨道选择，即 `all`、`primary`、非空且唯一的源轨道 ID 列表，或 `false`。选择只改变 `tracks`。容器、顶层时长和文件元数据的含义不变。空选择返回 `tracks: []`，不抛出 `NO_TRACKS`。缺失或重复的 ID 为 `INVALID_OPTIONS`。
+- 每条选中轨道报告 `startSeconds`、`endSeconds`、`elapsedSeconds`、`default`、`averageBitrate` 和 `peakBitrate`。起点是首个包的时间戳；没有包时为 `null`。终点是该轨的元数据或扫描结束时间戳。起止都已知时，经过时长为 `endSeconds - startSeconds`，否则为 `null`。顶层时长仍遵循下面的元数据或扫描语义。
+- 视频轨还报告编码尺寸、显示尺寸、旋转角度 `0 | 90 | 180 | 270` 和 `frameRate`。音频轨还报告采样率、声道数、`language` 和 `name`。容器省略语言或写入 ISO 639-2 `und` 时，`language` 为 `null`。
+- `frameRate` 默认为 `{ hertz: null, origin: "unknown" }`。`frameRate: "estimate"` 最多读取前 256 个包；至少两个不同时间戳且间隔为正时，返回 `{ hertz, origin: "estimated" }`，否则保持未知。该估算不是恒定帧率证明，256 个包也不是字节或耗时上限。Mediabunny 在时间戳不足时代入的 timebase 不作为帧率报告。
+- 平均码率和峰值码率都是元数据值。缺失值保持 `null`。
+- Probe 默认 `duration: "metadata"`。`"scan"` 同时扫描顶层时长和每条选中轨道的终点。未知顶层时长为 `null`，`durationOrigin` 为 `"unknown"`。Probe 报告源事实，不判断编解码能力，并在结束前释放输入。
+- Probe 事实留在 `ProbeTrack` 上，不进入转换用的 `TrackInfo` 或转换报告。
 
 ## 配置
 
@@ -116,4 +122,4 @@ MP4/M4A 使用 mdir 标签，WebM 使用 SimpleTags，WAV 使用 ID3v2.4。删�
 | `READ_FAILED`、`WRITE_FAILED`、`OUTPUT_TOO_LARGE`          | 读取、写入/关闭或逻辑大小失败             |
 | `PROCESSING_FAILED`、`ABORTED`                             | 执行失败或已接受取消                      |
 
-相关契约：[缩略图](thumbnails.zh-CN.md)、[内嵌图片](embedded-picture.zh-CN.md)。
+相关契约：[缩略图](thumbnails.zh-CN.md)、[波形](waveforms.zh-CN.md)、[内嵌图片](embedded-picture.zh-CN.md)。

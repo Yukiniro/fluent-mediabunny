@@ -19,7 +19,7 @@ Build a browser media workflow, then use the API reference for exact types and v
 
 [Extract thumbnails](/guide/thumbnails) covers a single poster, batches, frame timing, image sizing, and iterator cleanup.
 
-For duration and track inspection, start with the [probe example](/api/probe#example). For cover art, use [getEmbeddedPicture](/api/embedded-picture#example). A cover image and a decoded video frame are separate operations.
+For duration and track inspection, start with the [probe example](/api/probe#example). For an audio peak image, follow [probe, then waveform data, then one PNG](/api/waveforms#example). For cover art, use [getEmbeddedPicture](/api/embedded-picture#example). A cover image, a waveform PNG, and a decoded video frame are separate operations.
 
 ## Handle failures
 

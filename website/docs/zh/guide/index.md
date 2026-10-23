@@ -19,7 +19,7 @@ description: 安装 fluentbunny 并构建浏览器媒体工作流的任务指南
 
 [提取缩略图](/zh/guide/thumbnails)介绍单张海报、批量提取、帧时间、图片尺寸和迭代器清理。
 
-查看时长和轨道时，从 [probe 示例](/zh/api/probe#example)开始；读取封面时，使用 [getEmbeddedPicture](/zh/api/embedded-picture#example)。封面图片与解码的视频帧是两种独立操作。
+查看时长和轨道时，从 [probe 示例](/zh/api/probe#example)开始。绘制音频峰值图时，按 [probe、波形数据、一张 PNG](/zh/api/waveforms#example) 的顺序调用。读取封面时，使用 [getEmbeddedPicture](/zh/api/embedded-picture#example)。封面图片、波形 PNG 和解码后的视频帧是彼此独立的操作。
 
 ## 处理失败
 

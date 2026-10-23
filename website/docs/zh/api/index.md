@@ -8,7 +8,16 @@ description: fluentbunny 导出的公开函数、转换构建器方法、结果�
 从 `fluentbunny` 导入公开函数与类型。每次操作读取一个来源，转换生成一个输出。
 
 ```ts
-import { media, probe, thumbnail, thumbnails, getEmbeddedPicture, MediaError } from "fluentbunny";
+import {
+  media,
+  probe,
+  getWaveformData,
+  renderWaveform,
+  thumbnail,
+  thumbnails,
+  getEmbeddedPicture,
+  MediaError,
+} from "fluentbunny";
 ```
 
 ## 媒体转换
@@ -24,13 +33,15 @@ import { media, probe, thumbnail, thumbnails, getEmbeddedPicture, MediaError } f
 
 | 函数                                           | 返回类型                                   | 用途                               |
 | ---------------------------------------------- | ------------------------------------------ | ---------------------------------- |
-| [probe](/zh/api/probe)                         | `Promise<ProbeResult>`                     | 容器、时长、音视频轨道与文本元数据 |
-| [thumbnail](/zh/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`          | 一帧解码后的视频图片               |
+| [probe](/zh/api/probe)                         | `Promise<ProbeResult>`                     | 容器、时长、所选轨道、时间与文本元数据 |
+| [getWaveformData](/zh/api/waveforms#getwaveformdata) | `Promise<WaveformData>`              | 一条音轨的各声道 min 与 max 数组       |
+| [renderWaveform](/zh/api/waveforms#renderwaveform) | `Promise<WaveformImage>`               | 由波形数据绘制的一张 PNG               |
+| [thumbnail](/zh/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`          | 一帧解码后的视频图片                   |
 | [thumbnails](/zh/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`            | 每个请求时间对应一项，包含缺帧位置 |
 | [getEmbeddedPicture](/zh/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>` | 一张内嵌原图，返回独立字节副本     |
 
 ## 共用约定
 
-所有操作都接受 [MediaInput](/zh/api/probe#mediainput)。选项必须是普通对象，未知字段会导致校验失败。通过 `AbortSignal` 取消工作，并在任务结束前保持输入字节和远程内容稳定。
+读取来源的操作接受 [MediaInput](/zh/api/probe#mediainput)。`renderWaveform` 接受 `WaveformData`，不再打开来源。选项必须是普通对象，未知字段会导致校验失败。通过 `AbortSignal` 取消工作，并在任务结束前保持输入字节和远程内容稳定。
 
 失败使用 [MediaError](/zh/api/errors)。图片结果为 `null` 表示读取成功但没有匹配图片，不代表解码或网络失败。

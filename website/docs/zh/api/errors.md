@@ -5,7 +5,7 @@ description: 处理 MediaError 错误码、执行阶段、文件目标状态、�
 
 # 错误
 
-`MediaError` 是转换、探测、缩略图提取和 `getEmbeddedPicture` 抛出的错误类。它继承 `Error`。`name` 是 `"MediaError"`。
+`MediaError` 是转换、探测、缩略图、波形和 `getEmbeddedPicture` 抛出的错误类。它继承 `Error`。`name` 是 `"MediaError"`。
 
 ## 处理错误
 
@@ -58,12 +58,12 @@ class MediaError extends Error {
 | 码                               | 何时使用                                                                                                                                                                               |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `INVALID_OPTIONS`                | 选项对象、数字、枚举、trim、crop、resize、元数据值或缩略图请求没有通过校验。                                                                                                           |
-| `UNSUPPORTED_INPUT`              | 源不是 `File`、`Blob`、`ArrayBuffer`、`Uint8Array`，或没有凭据的绝对 HTTP 或 HTTPS URL。也包括无法识别的容器、交给轨道信息的非音频或非视频轨道、不安全的时间戳，或无效的帧覆盖与几何。 |
+| `UNSUPPORTED_INPUT`              | 源不是 `File`、`Blob`、`ArrayBuffer`、`Uint8Array`，或没有凭据的绝对 HTTP 或 HTTPS URL。也包括无法识别的容器、交给轨道信息的非音频或非视频轨道、不安全的时间戳、无效的帧覆盖与几何、波形读取中声道数变化，或无效的音频采样时间。 |
 | `UNSUPPORTED_OUTPUT_COMBINATION` | 该编解码器没有为所选格式启用。                                                                                                                                                         |
 | `IMAGE_ENCODING_UNAVAILABLE`     | 缺少 Canvas 图像编码或 2D 渲染，或编码器替换了请求的 MIME 类型。                                                                                                                       |
 | `CODEC_UNAVAILABLE`              | 选中的轨道不能解码，或解析出的视频或音频编码器不可用。                                                                                                                                 |
 | `COPY_NOT_POSSIBLE`              | 复制模式不能把选中轨道复制进该格式。                                                                                                                                                   |
-| `NO_TRACKS`                      | 没有选中轨道，缩略图输入没有视频轨道，或所选视频轨道为空。                                                                                                                             |
+| `NO_TRACKS`                      | 没有选中轨道，缩略图输入没有视频轨道，波形输入没有音轨，或所选视频轨或音轨为空。                                                                                                                             |
 | `TRACK_LOSS`                     | 输出装不下全部选中轨道，或转换没有保留全部选中轨道。                                                                                                                                   |
 | `UNSUPPORTED_METADATA_FIELD`     | 元数据补丁使用了 `title`、`artist`、`album`、`albumArtist`、`genre`、`comment`、`description` 和 `date` 以外的字段。                                                                   |
 | `TARGET_UNSUPPORTED`             | 文件目标不是带权限查询和可写流的文件句柄。                                                                                                                                             |
@@ -71,7 +71,7 @@ class MediaError extends Error {
 | `PERMISSION_REQUIRED`            | 文件句柄尚未拥有读写权限。                                                                                                                                                             |
 | `READ_FAILED`                    | 读取输入失败。                                                                                                                                                                         |
 | `WRITE_FAILED`                   | 打开、写入或关闭输出失败。                                                                                                                                                             |
-| `OUTPUT_TOO_LARGE`               | 输出长度不是非负安全整数，WAV 超过 4294967295 字节，或解析出的缩略图某一边超过 4096 像素或面积超过 16000000 像素。                                                                     |
+| `OUTPUT_TOO_LARGE`               | 输出长度不是非负安全整数，WAV 超过 4294967295 字节，解析出的缩略图某一边超过 4096 像素或面积超过 16000000 像素，或波形 min 与 max 数组将超过 64 MiB。                                                                     |
 | `PROCESSING_FAILED`              | 操作失败且没有更具体的码，包括图像编码器没有返回字节。                                                                                                                                 |
 | `ABORTED`                        | `AbortSignal` 在提交前触发。                                                                                                                                                           |
 

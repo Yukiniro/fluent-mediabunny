@@ -12,7 +12,7 @@
 - 单张提取必填 `time`。批量提取选择 `times`，或同时提供 `start`、`end`、`count`。
 - 时间为有限非负秒数，`-0` 归一化为 0。时间列表包含 1–1000 个非递减值；重复值保留各自位置，不自动排序或去重。
 - 区间在微秒取整前后均满足 `end > start`，count 为 1–1000 的整数。第 i 个请求为 `start + i * (end - start) / count`，包含 start、不含 end；count 为 1 时取 start。end 必填，不自动扫描时长。
-- 时间原点为 `max(0, input.getFirstTimestamp())`，由所有输入轨道共享。查找使用呈现时间戳，适用于 VFR 和 B 帧。
+- 时间原点为 `max(0, input.getFirstTimestamp())`，由所有输入轨道共享。波形数据使用同一原点。查找使用呈现时间戳，适用于 VFR 和 B 帧。
 - 查找和覆盖判断按 `Math.round(seconds * 1_000_000)` 转为微秒。请求加原点、帧起点、时长和结束时间均在安全整数范围内；帧时长取整后为正。
 - 帧仅覆盖 `[帧起点, 帧起点 + 时长)`。间隙及视频覆盖范围之外返回 `null`，不钳制请求或延长帧。相同帧起点沿用上游查找结果。
 - 结果保留请求秒数和源样本的时间戳、时长。`actualTime = sourceTimestamp - timeOriginSeconds`；覆盖零点的帧可以有负 actualTime。
@@ -64,3 +64,5 @@ JPEG 将透明内容和 contain 留白合成到黑底；PNG 保留可用的解�
 | `ABORTED`                    | 完成前观察到取消                               |
 
 没有帧覆盖请求时间时返回空图片，不作为错误。
+
+相关契约：[媒体转换](conversion.zh-CN.md)、[波形](waveforms.zh-CN.md)。

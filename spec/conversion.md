@@ -12,8 +12,14 @@ Processing uses public Mediabunny APIs. Applications manage Workers and codec in
 - Supported input containers are MP4/M4A/MOV, WebM/MKV, MP3, WAV, Ogg, FLAC, and ADTS. Codec availability depends on the runtime.
 - URL objects are snapshotted as strings. Finite static URL resources are read using anonymous CORS GET without retries; range support is optional. Callers keep source bytes and remote content stable until completion; media bytes are neither copied nor modified.
 - Options are plain objects; unknown keys fail. `signal`, when supplied, is an AbortSignal.
-- `probe(source, options?)` returns source container, duration, audio/video tracks, projected metadata, and omitted fields. Track IDs are source IDs, not indices. Unknown values are not represented as zero; inapplicable track fields may be absent.
-- Probe defaults to `duration: "metadata"`; `"scan"` explicitly scans duration. Unknown duration is `null`, with `durationOrigin: "unknown"`. Probe reports source facts, not codec availability, and disposes its input before settling.
+- `probe(source, options?)` returns the source container, top-level duration, selected audio and video tracks, projected metadata, and omitted fields. Track IDs are source IDs, not indices. Unknown values stay `null`. They are not stored as zero and they are not filled with an estimate.
+- Probe defaults to every audio track and every video track. `video` and `audio` use the same selection as conversion: `all`, `primary`, a nonempty unique list of source IDs, or `false`. Selection changes `tracks` only. The container, top-level duration, and file metadata keep their meaning. An empty selection returns `tracks: []` and does not throw `NO_TRACKS`. A missing or duplicate ID is `INVALID_OPTIONS`.
+- Each selected track reports `startSeconds`, `endSeconds`, `elapsedSeconds`, `default`, `averageBitrate`, and `peakBitrate`. Start is the first packet timestamp, or `null` when the track has no packet. End is the track's metadata or scanned end timestamp. Elapsed is `endSeconds - startSeconds` when both are known, otherwise `null`. Top-level duration keeps the metadata or scan behavior below.
+- Video tracks also report coded size, display size, rotation `0 | 90 | 180 | 270`, and `frameRate`. Audio tracks also report sample rate, channel count, `language`, and `name`. `language` is `null` when the container omits it or stores ISO 639-2 `und`.
+- `frameRate` defaults to `{ hertz: null, origin: "unknown" }`. `frameRate: "estimate"` reads at most the first 256 packets and, when at least two distinct timestamps span a positive interval, returns `{ hertz, origin: "estimated" }`. Otherwise the result stays unknown. The estimate is not proof of a constant frame rate, and 256 packets is not a byte or time budget. A Mediabunny timebase substitute is not reported as a frame rate.
+- Average bitrate and peak bitrate are metadata values. A missing value stays `null`.
+- Probe defaults to `duration: "metadata"`. `"scan"` scans the top-level duration and each selected track's end. Unknown top-level duration is `null`, with `durationOrigin: "unknown"`. Probe reports source facts, not codec availability, and disposes its input before settling.
+- Probe facts stay on `ProbeTrack`. They are not copied into conversion `TrackInfo` or conversion reports.
 
 ## Configuration
 
@@ -116,4 +122,4 @@ Cancellation is cooperative with no fixed latency. Input disposal and owned clea
 | `READ_FAILED`, `WRITE_FAILED`, `OUTPUT_TOO_LARGE`          | Read, write/close, or logical size failure                               |
 | `PROCESSING_FAILED`, `ABORTED`                             | Execution failure or accepted cancellation                               |
 
-Related contracts: [thumbnails](thumbnails.md), [embedded pictures](embedded-picture.md).
+Related contracts: [thumbnails](thumbnails.md), [waveforms](waveforms.md), [embedded pictures](embedded-picture.md).
