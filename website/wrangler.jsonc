@@ -2,6 +2,7 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "fluentbunny-docs",
   "compatibility_date": "2026-10-22",
+  "previews": {},
   "assets": {
     "directory": "./doc_build",
     "html_handling": "auto-trailing-slash",
