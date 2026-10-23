@@ -23,6 +23,10 @@ test("browser probe, decoded peaks, and one PNG stay on the public contract", as
     const estimatedVideo = estimated.tracks.find((track) => track.type === "video");
     const offsetVideo = offset.tracks.find((track) => track.type === "video");
     const data = await window.mediaAPI.getWaveformData(await load("audio.wav"));
+    const aac = await window.mediaAPI.getWaveformData(await load("av.mp4"), {
+      track: 2,
+      end: 0.08,
+    });
     const before = data.max[0]![0];
     const image = await window.mediaAPI.renderWaveform(data, {
       width: 320,
@@ -65,6 +69,9 @@ test("browser probe, decoded peaks, and one PNG stay on the public contract", as
       height: image.height,
       covered: image.endSeconds - image.startSeconds,
       opaque,
+      aacBuckets: aac.min[0]!.length,
+      aacChannels: aac.channels,
+      aacRate: aac.sampleRate,
     };
   });
 
@@ -97,4 +104,7 @@ test("browser probe, decoded peaks, and one PNG stay on the public contract", as
   expect(result.height).toBe(80);
   expect(result.covered).toBeCloseTo(2, 5);
   expect(result.opaque).toBeGreaterThan(0);
+  expect(result.aacBuckets).toBe(4);
+  expect(result.aacChannels).toBe(1);
+  expect(result.aacRate).toBe(44100);
 });

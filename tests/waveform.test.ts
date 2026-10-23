@@ -278,6 +278,17 @@ test("refuses an envelope above 64 MiB before decoding", async () => {
   expect(fake.sinks).toBe(0);
 });
 
+test("refuses a grown envelope above 64 MiB when end is omitted", async () => {
+  fake.samples = [tone(9, [column(0.2, 1)])];
+  await expect(getWaveformData(source, { pointsPerSecond: 1_000_000 })).rejects.toMatchObject({
+    code: "OUTPUT_TOO_LARGE",
+  });
+  expect(fake.scanned).toBe(false);
+  expect(fake.sinks).toBe(1);
+  expect(fake.live).toBe(0);
+  expect(fake.disposed).toBe(1);
+});
+
 test("empty, undecodable, and missing tracks fail clearly", async () => {
   fake.packet = false;
   await expect(getWaveformData(source)).rejects.toMatchObject({ code: "NO_TRACKS" });

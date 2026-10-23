@@ -126,17 +126,16 @@ export async function selectTracks(
     invalid("Selected track ID does not exist for its media type.");
   return matching.filter((track) => selection.includes(track.id));
 }
+const frameRateSamplePackets = 256;
 async function packetRate(track: InputVideoTrack, scope: Scope): Promise<ProbeFrameRate> {
   const sink = new EncodedPacketSink(track);
   const stamps: number[] = [];
-  // 256 packets is the sample target. It is not a byte or time budget.
   for await (const packet of sink.packets(undefined, undefined, { metadataOnly: true })) {
     scope.check();
     stamps.push(packet.timestamp);
-    if (stamps.length >= 256) break;
+    if (stamps.length >= frameRateSamplePackets) break;
   }
   const hertz = frameRateFromTimestamps(stamps);
-  // Mediabunny substitutes its timebase when fewer than two timestamps exist. That number is not a frame rate.
   return hertz === null ? { hertz: null, origin: "unknown" } : { hertz, origin: "estimated" };
 }
 async function probeTrack(
