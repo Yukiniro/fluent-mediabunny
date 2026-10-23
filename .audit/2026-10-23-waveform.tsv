@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-10-23T09:40:39Z	start	started the handoff implementation in this run	the operator asked to analyze the confirmed plan and implement it	branch cursor/mediabunny-probe-waveform-6b98	open
+2026-10-23T09:43:16Z	upgrade	pinned Mediabunny to 1.62.1 and left historical validation notes on 1.61.6	the session locked this release, and old reports were not rerun on it	pnpm test 60 passed, pnpm check pass	tests green
+2026-10-23T09:43:16Z	frame	skipped a second design bakeoff and implemented the confirmed handoff	the behavior was already settled, so another prototype would reopen a closed decision	user handoff 2026-10-23	open
+2026-10-23T09:43:16Z	frame	kept probe facts off conversion track reports	source bitrate and frame rate must not become conversion settings	TrackInfo stays the conversion shape	open
+2026-10-23T09:45:33Z	probe	added track selection, timing, bitrate, and explicit frame-rate estimate	new probe facts stay off conversion track reports, and unknown bitrate stays null	tests/probe.test.ts, pnpm test 69 passed	tests green

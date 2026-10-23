@@ -43,7 +43,13 @@ export type RunOptions = {
   signal?: AbortSignal;
   onProgress?: (event: ProgressEvent) => void;
 };
-export type ProbeOptions = { signal?: AbortSignal; duration?: "metadata" | "scan" };
+export type ProbeOptions = {
+  signal?: AbortSignal;
+  duration?: "metadata" | "scan";
+  video?: TrackSelection;
+  audio?: TrackSelection;
+  frameRate?: "estimate";
+};
 export type Warning = { code: string; message: string; fields?: readonly string[] };
 export type TrackInfo = {
   id: number;
@@ -54,6 +60,36 @@ export type TrackInfo = {
   sampleRate?: number;
   channels?: number;
 };
+export type ProbeFrameRate =
+  | { hertz: number; origin: "estimated" }
+  | { hertz: null; origin: "unknown" };
+export type ProbeTiming = {
+  startSeconds: number | null;
+  endSeconds: number | null;
+  elapsedSeconds: number | null;
+  default: boolean;
+  averageBitrate: number | null;
+  peakBitrate: number | null;
+};
+export type ProbeVideoTrack = TrackInfo &
+  ProbeTiming & {
+    type: "video";
+    width: number;
+    height: number;
+    codedWidth: number;
+    codedHeight: number;
+    rotation: 0 | 90 | 180 | 270;
+    frameRate: ProbeFrameRate;
+  };
+export type ProbeAudioTrack = TrackInfo &
+  ProbeTiming & {
+    type: "audio";
+    sampleRate: number;
+    channels: number;
+    language: string | null;
+    name: string | null;
+  };
+export type ProbeTrack = ProbeVideoTrack | ProbeAudioTrack;
 export type ResolvedTrack = TrackInfo & {
   codec: string;
   quality?: Quality;
@@ -94,7 +130,7 @@ export type ProbeResult = {
   container: string;
   durationSeconds: number | null;
   durationOrigin: "metadata" | "scanned" | "unknown";
-  tracks: TrackInfo[];
+  tracks: ProbeTrack[];
   metadata: MetadataValues;
   omittedSourceFields: string[];
 };

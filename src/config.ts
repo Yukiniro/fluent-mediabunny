@@ -1,5 +1,12 @@
 import { MediaError, invalid } from "./errors.ts";
-import type { AudioOptions, Config, Format, MediaInput, VideoOptions } from "./types.ts";
+import type {
+  AudioOptions,
+  Config,
+  Format,
+  MediaInput,
+  TrackSelection,
+  VideoOptions,
+} from "./types.ts";
 
 export function object(value: unknown, keys: readonly string[]): Record<string, unknown> {
   if (
@@ -28,6 +35,16 @@ export function number(
     (zero ? value < 0 : value <= 0)
   )
     invalid(`Invalid ${name}.`);
+}
+export function trackSelection(value: unknown): TrackSelection {
+  if (Array.isArray(value)) {
+    if (!value.length || new Set(value).size !== value.length)
+      invalid("Track IDs must be nonempty and unique.");
+    for (const id of value) number(id, "track ID", { integer: true, zero: true });
+    return [...value];
+  }
+  oneOf(value, ["all", "primary", false] as const, "track selection");
+  return value;
 }
 export function normalizeSource(source: MediaInput): Exclude<MediaInput, URL> {
   if (source instanceof URL) source = source.href;
