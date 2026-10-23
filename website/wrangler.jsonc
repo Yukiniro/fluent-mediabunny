@@ -2,6 +2,13 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "fluentbunny-docs",
   "compatibility_date": "2026-10-22",
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true,
+    },
+  },
   "previews": {},
   "assets": {
     "directory": "./doc_build",
