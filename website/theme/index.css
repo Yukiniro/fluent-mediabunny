@@ -65,6 +65,10 @@ html.rp-dark {
   --shiki-token-punctuation: #c7b8c2;
 }
 
+body {
+  min-width: 0;
+}
+
 html .rp-doc-layout__sidebar {
   background: var(--rp-c-bg-soft);
 }
@@ -189,8 +193,41 @@ html .rp-prev-next-page__item {
   line-height: 1.2;
 }
 
+.home-brand {
+  margin: 0 0 8px;
+  color: #f65586;
+  font-size: clamp(40px, 4.4vw, 60px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
 .home-title-accent {
-  color: var(--rp-c-link);
+  color: inherit;
+}
+
+.home-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 1;
+  justify-self: center;
+}
+
+.home-art::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f6558659 0%, #f6558620 45%, transparent 72%);
+  content: "";
+}
+
+.home-art img {
+  position: relative;
+  width: 88%;
+  height: auto;
 }
 
 html[lang="en"] .site-home h1 {
@@ -226,14 +263,23 @@ html[lang="en"] .site-home h1 {
 
 .site-home .home-primary {
   padding: 10px 18px;
-  border-radius: 4px;
+  border-radius: 999px;
   background: var(--rp-c-brand-dark);
   color: #ffffff;
   transition: background-color 150ms;
 }
 
+.home-actions .home-text-link {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--rp-c-bg-soft);
+  color: var(--rp-c-text-1);
+}
+
 .home-demo {
+  max-width: 880px;
   min-width: 0;
+  margin: 0 auto 64px;
   overflow: hidden;
   border: 1px solid var(--rp-c-divider-light);
   border-radius: 8px;
@@ -370,6 +416,10 @@ html[lang="en"] .site-home h1 {
   .home-hero {
     padding: 48px 0;
   }
+
+  .home-art {
+    max-width: 300px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -410,6 +460,10 @@ html[lang="en"] .site-home h1 {
 
   .home-lead {
     font-size: 16px;
+  }
+
+  .home-actions {
+    gap: 12px;
   }
 
   .home-capabilities,

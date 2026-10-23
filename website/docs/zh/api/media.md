@@ -10,7 +10,7 @@ description: 通过不可变构建器配置媒体转换的格式、编码、轨�
 ## 示例
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const base = media(file).format("mp4");
 const preview = base.resize({ width: 1280 });

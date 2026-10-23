@@ -1,10 +1,10 @@
-# fluent-mediabunny verification map
+# fluentbunny verification map
 
 This directory is the maintained source for verifying browser-facing library behavior. Read this index before driving the harness, then use the matching feature file as the recipe.
 
 ## Baseline preconditions
 
-- Launch with `node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs launch` so the Vite validation page serves `window.mediaAPI`.
+- Launch with `node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs launch` so the Vite validation page serves `window.mediaAPI`.
 - Set a unique `FMB_VERIFY_RUN_ID` (and a free `FMB_VERIFY_PORT` if 4173 is taken).
 - Require `doctor` JSON `ok: true` before any drive.
 - Fixtures under `public/fixtures/` must include at least `av.mp4`, `audio.wav`, and `markers.mp4`.
@@ -22,7 +22,7 @@ This directory is the maintained source for verifying browser-facing library beh
 ## Proof and skip reporting
 
 - Capture the API call result and a second observer (`probe`, `ffprobe`, or file-handle event order).
-- Browser proof includes `proof.json` under `artifacts/verify-fluent-mediabunny/<run>/<feature>/`.
+- Browser proof includes `proof.json` under `artifacts/verify-fluentbunny/<run>/<feature>/`.
 - Mutation/side-effect proof for file targets includes open/write/abort/close event lists.
 - Record the feature ID and entry point in every `proof.json`.
 - Report an unreachable path with the unmet precondition; do not claim a different entry point verified it.

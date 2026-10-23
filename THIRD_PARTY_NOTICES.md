@@ -1,6 +1,6 @@
 # Third-party notices
 
-The MIT license in this repository applies to fluent-mediabunny's original source, documentation, and synthetic fixtures. It does not replace third-party licenses.
+The MIT license in this repository applies to fluentbunny's original source, documentation, and synthetic fixtures. It does not replace third-party licenses.
 
 ## Mediabunny 1.61.6
 

@@ -66,7 +66,7 @@ function commitAll(repo: Repo, message: string) {
 }
 
 function createRepo(): Repo {
-  const base = mkdtempSync(join(tmpdir(), "fluent-mediabunny-release-test-"));
+  const base = mkdtempSync(join(tmpdir(), "fluentbunny-release-test-"));
   scratch.push(base);
   const repo = {
     dir: join(base, "repo"),
@@ -79,7 +79,7 @@ function createRepo(): Repo {
   mkdirSync(repo.bin);
   writeStub(repo, "pnpm");
   const pkg = {
-    name: "fluent-mediabunny",
+    name: "fluentbunny",
     version: "0.2.0",
     repository: { type: "git", url: "git+https://github.com/Yukiniro/fluent-mediabunny.git" },
   };
@@ -98,7 +98,7 @@ function createRepo(): Repo {
 function addChangeset(repo: Repo, type: "patch" | "major") {
   writeFileSync(
     join(repo.dir, ".changeset", `${type}-change.md`),
-    `---\n"fluent-mediabunny": ${type}\n---\n\nFix a ${type} thing.\n`,
+    `---\n"fluentbunny": ${type}\n---\n\nFix a ${type} thing.\n`,
   );
   commitAll(repo, `fix: add a ${type} changeset`);
 }

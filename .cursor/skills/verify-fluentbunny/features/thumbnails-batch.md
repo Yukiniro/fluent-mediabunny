@@ -20,7 +20,7 @@ Preconditions:
 - Doctor `ok: true`.
 - `/fixtures/markers.mp4` available (color-marked synthetic video).
 
-- **Run batch.** `node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs drive thumbnails-batch`.
+- **Run batch.** `node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs drive thumbnails-batch`.
 - **Observe frames.** `proof.json` lists three frames with `width: 80`, non-zero `byteLength`, and JPEG mime.
 - **Proof.** JPEG files `frame-0.jpg` … written beside `proof.json`; `proof.ok === true`.
 

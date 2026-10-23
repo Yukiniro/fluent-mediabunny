@@ -10,7 +10,7 @@ description: 执行媒体转换，选择 Blob 或文件目标，处理进度与�
 ## 示例
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const controller = new AbortController();
 const result = await media(file)

@@ -16,7 +16,7 @@ description: 正确处理帧时间、图片尺寸与资源清理，提取视频�
 `time` 是秒，可以为 0。`width` 或 `height` 是不超过 4096 的正整数。
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 if (poster) {
@@ -31,7 +31,7 @@ if (poster) {
 传入 `times`，或者传入 `start`、`end` 和 `count`。不要两种都传。每批 1 到 1000 个时间点。`times` 必须非递减。重复的时间各自保留位置。
 
 ```ts
-import { thumbnails } from "fluent-mediabunny";
+import { thumbnails } from "fluentbunny";
 
 const controller = new AbortController();
 for await (const item of thumbnails(file, {

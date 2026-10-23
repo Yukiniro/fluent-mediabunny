@@ -1,12 +1,14 @@
-# fluent-mediabunny
+# fluentbunny
+
+<img src="https://raw.githubusercontent.com/Yukiniro/fluent-mediabunny/main/website/docs/public/logo.png" alt="fluentbunny 标志" width="96" height="96" />
 
 [English](README.md) | 简体中文
 
 为 [Mediabunny](https://mediabunny.dev/) 提供更简单、易理解的 TypeScript 链式 API。
 
-受 fluent-ffmpeg 链式风格的启发，fluent-mediabunny 在 Mediabunny 之上提供便捷的上层 API，将配置与执行组织成可读的调用，减少表达媒体处理任务所需的准备代码。
+受 fluent-ffmpeg 链式风格的启发，fluentbunny 在 Mediabunny 之上提供便捷的上层 API，将配置与执行组织成可读的调用，减少表达媒体处理任务所需的准备代码。
 
-底层媒体处理能力由 Mediabunny 提供，fluent-mediabunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、有数量上限的批量视频图像提取，以及一次内嵌图片读取。
+底层媒体处理能力由 Mediabunny 提供，fluentbunny 专注于通过 API 设计，让这些公开能力更容易理解和使用。当前版本覆盖单输入、单输出的媒体转换、有数量上限的批量视频图像提取，以及一次内嵌图片读取。
 
 ## 为什么使用它
 
@@ -18,20 +20,20 @@
 
 ## 开始使用
 
-请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建。维护者发布之后，`pnpm add fluent-mediabunny` 会从 npm 安装这个包。
+请使用 Node 24（版本固定在 [.node-version](.node-version)）和 pnpm 12.14.0 从源码构建。维护者发布之后，`pnpm add fluentbunny` 会从 npm 安装这个包。
 
 ```sh
-git clone https://github.com/Yukiniro/fluent-mediabunny.git
-cd fluent-mediabunny
+git clone https://github.com/Yukiniro/fluent-mediabunny.git fluentbunny
+cd fluentbunny
 pnpm install --frozen-lockfile
 pnpm build
-pnpm pack --out fluent-mediabunny.tgz
+pnpm pack --out fluentbunny.tgz
 ```
 
 然后进入你的应用目录，安装生成的压缩包和固定版本的 Mediabunny 对等依赖：
 
 ```sh
-pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.61.6
 ```
 
 将压缩包路径替换为实际位置。应用需要使用浏览器打包工具。
@@ -39,7 +41,7 @@ pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
 ### 处理一段视频
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")
@@ -57,7 +59,7 @@ const previewUrl = URL.createObjectURL(result.blob);
 ### 生成视频预览图
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 if (poster) {
@@ -71,7 +73,7 @@ if (poster) {
 ### 读取内嵌图片
 
 ```ts
-import { getEmbeddedPicture } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluentbunny";
 
 const picture = await getEmbeddedPicture(file);
 if (picture) {
@@ -111,4 +113,4 @@ pnpm test:browser
 
 ## 许可证
 
-fluent-mediabunny 使用 [MIT 许可证](LICENSE)。Mediabunny 是独立的 MPL-2.0 依赖，详见[第三方声明](THIRD_PARTY_NOTICES.md)。
+fluentbunny 使用 [MIT 许可证](LICENSE)。Mediabunny 是独立的 MPL-2.0 依赖，详见[第三方声明](THIRD_PARTY_NOTICES.md)。

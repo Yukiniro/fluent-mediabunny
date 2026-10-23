@@ -1,12 +1,14 @@
-# fluent-mediabunny
+# fluentbunny
+
+<img src="https://raw.githubusercontent.com/Yukiniro/fluent-mediabunny/main/website/docs/public/logo.png" alt="fluentbunny logo" width="96" height="96" />
 
 English | [简体中文](README.zh-CN.md)
 
 A simpler, more approachable fluent TypeScript API for [Mediabunny](https://mediabunny.dev/).
 
-Inspired by the chainable style of fluent-ffmpeg, fluent-mediabunny provides a convenient higher-level API over Mediabunny. It organizes configuration and execution into readable calls, reducing the setup needed to express a media task.
+Inspired by the chainable style of fluent-ffmpeg, fluentbunny provides a convenient higher-level API over Mediabunny. It organizes configuration and execution into readable calls, reducing the setup needed to express a media task.
 
-Mediabunny provides the underlying media processing capabilities. fluent-mediabunny focuses on making those public capabilities easier to understand and use through API design. The current release covers media conversion with one input and one output, video image extraction with bounded batches, and one embedded-picture read.
+Mediabunny provides the underlying media processing capabilities. fluentbunny focuses on making those public capabilities easier to understand and use through API design. The current release covers media conversion with one input and one output, video image extraction with bounded batches, and one embedded-picture read.
 
 ## Why use it
 
@@ -18,20 +20,20 @@ Mediabunny provides the underlying media processing capabilities. fluent-mediabu
 
 ## Get started
 
-Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source. After a maintainer publishes, `pnpm add fluent-mediabunny` installs the package from npm.
+Use Node 24 (pinned in [.node-version](.node-version)) and pnpm 12.14.0 to build it from source. After a maintainer publishes, `pnpm add fluentbunny` installs the package from npm.
 
 ```sh
-git clone https://github.com/Yukiniro/fluent-mediabunny.git
-cd fluent-mediabunny
+git clone https://github.com/Yukiniro/fluent-mediabunny.git fluentbunny
+cd fluentbunny
 pnpm install --frozen-lockfile
 pnpm build
-pnpm pack --out fluent-mediabunny.tgz
+pnpm pack --out fluentbunny.tgz
 ```
 
 Then install the generated tarball and the exact Mediabunny peer dependency from your application's directory:
 
 ```sh
-pnpm add /path/to/fluent-mediabunny/fluent-mediabunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.61.6
 ```
 
 Replace the tarball path with its actual location. Your application needs a browser bundler.
@@ -39,7 +41,7 @@ Replace the tarball path with its actual location. Your application needs a brow
 ### Prepare a video
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")
@@ -57,7 +59,7 @@ Conversion outputs can be MP4, WebM, M4A, or WAV. All audio/video tracks are sel
 ### Create a video preview
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const poster = await thumbnail(file, { time: 2, width: 640 });
 if (poster) {
@@ -71,7 +73,7 @@ A request returns `null` when no frame covers that time. For a strip of previews
 ### Read an embedded picture
 
 ```ts
-import { getEmbeddedPicture } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluentbunny";
 
 const picture = await getEmbeddedPicture(file);
 if (picture) {
@@ -111,4 +113,4 @@ If your pull request changes `src/`, run `pnpm changeset` and commit the file it
 
 ## License
 
-fluent-mediabunny is [MIT licensed](LICENSE). Mediabunny is a separate MPL-2.0 dependency; see the [third-party notices](THIRD_PARTY_NOTICES.md).
+fluentbunny is [MIT licensed](LICENSE). Mediabunny is a separate MPL-2.0 dependency; see the [third-party notices](THIRD_PARTY_NOTICES.md).

@@ -10,7 +10,7 @@ Build a conversion from one input to one output. Configuration is synchronous; m
 ## Example
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const base = media(file).format("mp4");
 const preview = base.resize({ width: 1280 });

@@ -1,8 +1,4 @@
-import {
-  getEmbeddedPicture,
-  type EmbeddedPictureOptions,
-  type MediaInput,
-} from "../dist/index.mjs";
+import { getEmbeddedPicture, type EmbeddedPictureOptions, type MediaInput } from "fluentbunny";
 
 export async function consumer(source: MediaInput, signal: AbortSignal) {
   const options: EmbeddedPictureOptions = { signal };

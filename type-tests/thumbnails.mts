@@ -7,7 +7,7 @@ import {
   type ThumbnailOptions,
   type ThumbnailsOptions,
   type ThumbnailImageOptions,
-} from "../dist/index.mjs";
+} from "fluentbunny";
 
 export async function consumer(source: MediaInput) {
   const imageOptions: ThumbnailImageOptions = { width: 160, type: "image/png" };

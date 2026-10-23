@@ -11,7 +11,7 @@ Convert with copy mode lets an integrating app remux a local media Blob into a c
 
 ## How to get to it (user POV)
 
-- Call `media(blob).format("mp4").mode("copy").run()` from application code that imported `fluent-mediabunny` (here: `window.mediaAPI` on the validation page).
+- Call `media(blob).format("mp4").mode("copy").run()` from application code that imported `fluentbunny` (here: `window.mediaAPI` on the validation page).
 - There is no GUI button; the validation harness only exposes the API.
 
 ## Driving it with verify-fmb
@@ -22,10 +22,10 @@ Preconditions:
 - `/fixtures/av.mp4` returns 200.
 - `ffprobe` is on PATH.
 
-- **Run copy convert.** Execute `node .cursor/skills/verify-fluent-mediabunny/helpers/verify-fmb.mjs drive convert-copy`. The helper evaluates `media(av.mp4 blob).format("mp4").mode("copy").run()`.
+- **Run copy convert.** Execute `node .cursor/skills/verify-fluentbunny/helpers/verify-fmb.mjs drive convert-copy`. The helper evaluates `media(av.mp4 blob).format("mp4").mode("copy").run()`.
 - **Observe blob result.** `proof.json` shows `kind: "blob"`, `size > 0`, and at least one track codec.
 - **Independent check.** The same drive writes `output.mp4` and runs ffprobe; `proof.json.ffprobe.streams` is present.
-- **Proof.** Require `proof.ok === true` and retain `artifacts/verify-fluent-mediabunny/<run>/convert-copy/`.
+- **Proof.** Require `proof.ok === true` and retain `artifacts/verify-fluentbunny/<run>/convert-copy/`.
 
 ## Gotchas
 

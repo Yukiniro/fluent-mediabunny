@@ -1,6 +1,6 @@
 ---
 title: 使用指南
-description: 安装 fluent-mediabunny 并构建浏览器媒体工作流的任务指南。
+description: 安装 fluentbunny 并构建浏览器媒体工作流的任务指南。
 ---
 
 # 使用指南

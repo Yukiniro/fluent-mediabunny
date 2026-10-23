@@ -10,7 +10,7 @@ Read container information and metadata without converting or decoding media. Co
 ## Example
 
 ```ts
-import { probe } from "fluent-mediabunny";
+import { probe } from "fluentbunny";
 
 const info = await probe(file, { duration: "scan" });
 console.log(info.container, info.durationSeconds);

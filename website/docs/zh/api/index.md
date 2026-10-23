@@ -1,21 +1,14 @@
 ---
 title: API 参考
-description: fluent-mediabunny 导出的公开函数、转换构建器方法、结果类型与错误。
+description: fluentbunny 导出的公开函数、转换构建器方法、结果类型与错误。
 ---
 
 # API 参考
 
-从 `fluent-mediabunny` 导入公开函数与类型。每次操作读取一个来源，转换生成一个输出。
+从 `fluentbunny` 导入公开函数与类型。每次操作读取一个来源，转换生成一个输出。
 
 ```ts
-import {
-  media,
-  probe,
-  thumbnail,
-  thumbnails,
-  getEmbeddedPicture,
-  MediaError,
-} from "fluent-mediabunny";
+import { media, probe, thumbnail, thumbnails, getEmbeddedPicture, MediaError } from "fluentbunny";
 ```
 
 ## 媒体转换

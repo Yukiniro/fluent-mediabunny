@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Verification scaffolding for fluent-mediabunny.
+ * Verification scaffolding for fluentbunny.
  * Manages an isolated Vite harness + Playwright drive of window.mediaAPI.
  * Usage: node helpers/verify-fmb.mjs <launch|doctor|drive|cleanup> [feature-id]
  */
@@ -29,7 +29,7 @@ const STATE_DIR = process.env.FMB_VERIFY_STATE_DIR || `/tmp/fmb-verify-${RUN_ID}
 const STATE_FILE = join(STATE_DIR, "state.json");
 const PORT = Number(process.env.FMB_VERIFY_PORT || 4173);
 const EVIDENCE_ROOT =
-  process.env.FMB_VERIFY_EVIDENCE || resolve(REPO, "artifacts/verify-fluent-mediabunny");
+  process.env.FMB_VERIFY_EVIDENCE || resolve(REPO, "artifacts/verify-fluentbunny");
 
 function loadState() {
   if (!existsSync(STATE_FILE)) return null;
@@ -199,7 +199,7 @@ async function cmdDoctor() {
       }
       const title = await page.title();
       report.pageTitle = title;
-      if (!title.includes("fluent-mediabunny")) {
+      if (!title.includes("fluentbunny")) {
         report.ok = false;
         report.problems.push(`Unexpected title: ${title}`);
       }

@@ -1,6 +1,6 @@
 ---
 name: verify-commit-barrier
-description: Formally checks the fluent-mediabunny file-target cancel-vs-commit barrier (Scope + OutputSink). Use when changing src/scope.ts or src/target.ts lifecycle, cancellation, or file close/abort ordering — or when a change might close a writable after abort.
+description: Formally checks the fluentbunny file-target cancel-vs-commit barrier (Scope + OutputSink). Use when changing src/scope.ts or src/target.ts lifecycle, cancellation, or file close/abort ordering — or when a change might close a writable after abort.
 ---
 
 # Verify commit barrier

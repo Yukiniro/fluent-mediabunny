@@ -10,7 +10,7 @@ description: 按确定的优先级读取一张内嵌原图，返回独立字节�
 ## 示例 {#example}
 
 ```ts
-import { getEmbeddedPicture } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluentbunny";
 
 const picture = await getEmbeddedPicture(file);
 if (picture) {

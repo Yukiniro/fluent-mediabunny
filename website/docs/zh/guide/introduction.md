@@ -1,16 +1,16 @@
 ---
 title: 简介
-description: 使用 fluent-mediabunny 在浏览器中转换媒体、提取视频帧和读取内嵌图片。
+description: 使用 fluentbunny 在浏览器中转换媒体、提取视频帧和读取内嵌图片。
 ---
 
-# fluent-mediabunny
+# fluentbunny
 
 在浏览器中转换媒体、提取视频帧和读取内嵌图片的 TypeScript 链式 API，底层由 [Mediabunny](https://mediabunny.dev/) 提供媒体处理能力。
 
 ## 从一个媒体任务开始
 
 ```ts title="转换视频"
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")

@@ -9,6 +9,7 @@ import { CodeBlock, Link } from "@rspress/core/theme";
 <main className="site-home">
   <section className="home-hero" aria-labelledby="home-title">
     <div className="home-intro">
+      <p className="home-brand">fluentbunny</p>
       <h1 id="home-title">Media tasks.<br /><span className="home-title-accent">Made readable.</span></h1>
       <p className="home-lead">An approachable fluent TypeScript API for Mediabunny.</p>
       <div className="home-actions">
@@ -16,13 +17,18 @@ import { CodeBlock, Link } from "@rspress/core/theme";
         <Link className="home-text-link" href="/api/"><span>Explore the API</span> <span aria-hidden="true">→</span></Link>
       </div>
     </div>
-    <div className="home-demo">
+    <div className="home-art">
+      <img src="/mascot.webp" alt="The fluentbunny rabbit waving, with a folded ear and a pink play symbol." width="768" height="768" fetchPriority="high" />
+    </div>
+  </section>
+
+  <section className="home-demo" aria-label="Conversion example">
       <div className="home-demo-header"><span>convert.ts</span></div>
       <div className="rp-doc">
       <CodeBlock lang="ts">
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")
@@ -37,7 +43,6 @@ const report = result.report;
       </CodeBlock>
       </div>
       <p className="home-demo-note">file is an application-supplied File covering seconds 2 to 12.</p>
-    </div>
 
   </section>
 

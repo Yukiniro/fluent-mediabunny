@@ -10,7 +10,7 @@ Decode video frames into JPEG or PNG images. Use `thumbnail` for one time and `t
 ## thumbnail
 
 ```ts
-import { thumbnail } from "fluent-mediabunny";
+import { thumbnail } from "fluentbunny";
 
 const image = await thumbnail(file, { time: 2, width: 640 });
 if (image) {
@@ -32,7 +32,7 @@ function thumbnail(source: MediaInput, options: ThumbnailOptions): Promise<Thumb
 ## thumbnails
 
 ```ts
-import { thumbnails } from "fluent-mediabunny";
+import { thumbnails } from "fluentbunny";
 
 for await (const item of thumbnails(file, {
   start: 2,

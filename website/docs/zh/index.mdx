@@ -9,6 +9,7 @@ import { CodeBlock, Link } from "@rspress/core/theme";
 <main className="site-home">
   <section className="home-hero" aria-labelledby="home-title">
     <div className="home-intro">
+      <p className="home-brand">fluentbunny</p>
       <h1 id="home-title">媒体处理，<br /><span className="home-title-accent">写得更直观。</span></h1>
       <p className="home-lead">为 Mediabunny 提供更易用的 TypeScript 链式 API。</p>
       <div className="home-actions">
@@ -16,13 +17,18 @@ import { CodeBlock, Link } from "@rspress/core/theme";
         <Link className="home-text-link" href="/zh/api/"><span>查阅 API</span> <span aria-hidden="true">→</span></Link>
       </div>
     </div>
-    <div className="home-demo">
+    <div className="home-art">
+      <img src="/mascot.webp" alt="fluentbunny 兔子正在挥手，折耳和粉色播放符号是它的标志。" width="768" height="768" fetchPriority="high" />
+    </div>
+  </section>
+
+  <section className="home-demo" aria-label="转换示例">
       <div className="home-demo-header"><span>convert.ts</span></div>
       <div className="rp-doc">
       <CodeBlock lang="ts">
 
 ```ts
-import { media } from "fluent-mediabunny";
+import { media } from "fluentbunny";
 
 const result = await media(file)
   .format("webm")
@@ -37,7 +43,6 @@ const report = result.report;
       </CodeBlock>
       </div>
       <p className="home-demo-note">file 是应用提供的 File，时长需覆盖第 2 到第 12 秒。</p>
-    </div>
 
   </section>
 

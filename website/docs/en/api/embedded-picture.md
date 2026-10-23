@@ -10,7 +10,7 @@ description: Read one original embedded picture as an owned byte copy, with dete
 ## Example
 
 ```ts
-import { getEmbeddedPicture } from "fluent-mediabunny";
+import { getEmbeddedPicture } from "fluentbunny";
 
 const picture = await getEmbeddedPicture(file);
 if (picture) {
