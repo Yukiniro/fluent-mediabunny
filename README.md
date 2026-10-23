@@ -90,6 +90,8 @@ Conversion returns an in-memory Blob result by default. Applications can instead
 
 ## Contributing
 
+Developer contracts: [conversion](spec/conversion.md), [thumbnails](spec/thumbnails.md), and [embedded pictures](spec/embedded-picture.md).
+
 Bug reports and focused improvements are welcome through [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) and pull requests. For browser-specific issues, include your browser, operating system, and a small reproducible example using shareable media.
 
 The project uses [Vite+](https://viteplus.dev/) for development, checks, tests, and packaging. Run `pnpm dev` to open the local validation harness, or use these commands to check a change:

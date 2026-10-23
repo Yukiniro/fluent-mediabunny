@@ -51,4 +51,4 @@ A batch reuses one input and decoding pipeline and encodes on demand. Each deliv
 
 `break` and `return()` clean up normally. Manual consumers must await `return()` when abandoning an iterator. Aborting while suspended after a yield starts cleanup immediately; the next `next()` rejects `ABORTED`, while explicit `return()` waits for cleanup. Calls on one iterator must be serial. In-flight browser encoding may need to finish before cancellation resolves; its late output is discarded. No image file writing, downloads, raw frames, spritesheets or public reader sessions are included.
 
-See the [formal specification](../spec/spec-design-v0-2.md) and [validation evidence](thumbnail-validation.md).
+See the [thumbnail contract](../spec/thumbnails.md) and [validation evidence](thumbnail-validation.md).
