@@ -10,3 +10,5 @@ coverage/
 !.env.example
 *.tgz
 artifacts/
+doc_build
+.wrangler
