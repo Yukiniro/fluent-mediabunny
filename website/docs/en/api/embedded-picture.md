@@ -27,13 +27,13 @@ The function reads pictures Mediabunny exposes as metadata images: ID3v2 APIC, M
 
 Eligibility uses the leading bytes. The declared MIME type, name, and description are ignored.
 
-| Leading bytes                            | Format |
-| ---------------------------------------- | ------ |
-| `FF D8 FF`                               | JPEG   |
-| `89 50 4E 47 0D 0A 1A 0A`                | PNG    |
-| `GIF87a` or `GIF89a`                     | GIF    |
-| `RIFF`, four size bytes, then `WEBPVP`  | WebP   |
-| `BM`                                     | BMP    |
+| Leading bytes                          | Format |
+| -------------------------------------- | ------ |
+| `FF D8 FF`                             | JPEG   |
+| `89 50 4E 47 0D 0A 1A 0A`              | PNG    |
+| `GIF87a` or `GIF89a`                   | GIF    |
+| `RIFF`, four size bytes, then `WEBPVP` | WebP   |
+| `BM`                                   | BMP    |
 
 SVG, an ID3 URL link (`-->`), an empty payload, a truncated JPEG, HEIC, TIFF, AVIF, and a WebP whose bytes do not continue with `VP` are ineligible. If every picture is ineligible, or there are no pictures, the result is `null`.
 
@@ -49,12 +49,12 @@ When the source exposes pictures, [probe](/api/probe) still lists `"images"` in 
 
 ## Errors
 
-| Condition                                                                                  | Outcome             |
-| ------------------------------------------------------------------------------------------ | ------------------- |
-| Options are not a plain object, an unknown key, or `signal` is not an `AbortSignal`       | `INVALID_OPTIONS`   |
-| Unsupported source or URL, or an unrecognized container                                    | `UNSUPPORTED_INPUT` |
-| Fetch, read, or tag parsing failed                                                         | `READ_FAILED`       |
-| Cancellation before resolution, including a signal that is already aborted                 | `ABORTED`           |
-| No eligible picture                                                                        | `null`              |
+| Condition                                                                           | Outcome             |
+| ----------------------------------------------------------------------------------- | ------------------- |
+| Options are not a plain object, an unknown key, or `signal` is not an `AbortSignal` | `INVALID_OPTIONS`   |
+| Unsupported source or URL, or an unrecognized container                             | `UNSUPPORTED_INPUT` |
+| Fetch, read, or tag parsing failed                                                  | `READ_FAILED`       |
+| Cancellation before resolution, including a signal that is already aborted          | `ABORTED`           |
+| No eligible picture                                                                 | `null`              |
 
 These errors use phase `"preparing"`. Empty input bytes follow the rules in [Choose inputs and outputs](/guide/inputs-and-outputs).
