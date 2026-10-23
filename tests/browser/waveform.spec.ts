@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { wav } from "../wav.ts";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -154,4 +155,38 @@ test("rendering keeps channel lanes, clips only pixels and retains peaks when do
     aggregated: [0, 255, 0, 255],
     raw: 2,
   });
+});
+
+test("96 kHz stereo PCM keeps each channel's extrema in every browser", async ({ page }) => {
+  const rate = 96_000;
+  const frames = rate / 10;
+  await page.route("**/fixtures/high-rate.wav", (route) =>
+    route.fulfill({
+      body: Buffer.from(
+        wav([Array<number>(frames).fill(0.5), Array<number>(frames).fill(-0.25)], rate),
+      ),
+      contentType: "audio/wav",
+    }),
+  );
+  const result = await page.evaluate(async () => {
+    const data = await window.mediaAPI.getWaveformData(
+      await (await fetch("/fixtures/high-rate.wav")).blob(),
+    );
+    const bounds = (channel: { min: Float32Array; max: Float32Array }) => [
+      Math.min(...channel.min),
+      Math.max(...channel.max),
+    ];
+    return {
+      end: data.end,
+      channels: data.channels.length,
+      length: data.channels[0]!.min.length,
+      left: bounds(data.channels[0]!),
+      right: bounds(data.channels[1]!),
+    };
+  });
+  expect(result.end).toBeCloseTo(0.1, 5);
+  expect(result.channels).toBe(2);
+  expect(result.length).toBe(5);
+  expect(result.left).toEqual([0.5, 0.5]);
+  expect(result.right).toEqual([-0.25, -0.25]);
 });

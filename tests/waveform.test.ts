@@ -1,3 +1,7 @@
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, expect, test, vi } from "vite-plus/test";
 import { AudioSample, AudioSampleSink, Input } from "mediabunny";
 import { getWaveformData } from "../src/index.ts";
@@ -157,6 +161,69 @@ test("cancellation awaits a pending decoder and closes its late sample before re
     code: "ABORTED",
   });
   expect(decoder).not.toHaveBeenCalled();
+});
+
+test("real high-rate stereo PCM keeps constants, mixed bins and sine peaks", async () => {
+  const rate = 96_000;
+  const frames = rate / 10;
+  const constant = await getWaveformData(
+    wav([Array<number>(frames).fill(0.5), Array<number>(frames).fill(-0.25)], rate),
+  );
+  expect(constant.end).toBeCloseTo(0.1, 6);
+  expect(constant.channels[0]!.min).toEqual(new Float32Array(5).fill(0.5));
+  expect(constant.channels[0]!.max).toEqual(new Float32Array(5).fill(0.5));
+  expect(constant.channels[1]!.min).toEqual(new Float32Array(5).fill(-0.25));
+  expect(constant.channels[1]!.max).toEqual(new Float32Array(5).fill(-0.25));
+  const cropped = await getWaveformData(
+    wav([Array<number>(frames).fill(0.5), Array<number>(frames).fill(-0.25)], rate),
+    { start: 0.025, end: 0.075 },
+  );
+  expect(cropped.channels[0]!.min).toEqual(new Float32Array(3).fill(0.5));
+  expect(cropped.channels[1]!.max).toEqual(new Float32Array(3).fill(-0.25));
+
+  const stepRate = 48_000;
+  const stepFrames = Math.round(stepRate * 0.04);
+  const step = Array.from({ length: stepFrames }, (_, i) => (i / stepRate < 0.01 ? 0.25 : 0.75));
+  const stepped = await getWaveformData(wav([step], stepRate));
+  expect(stepped.channels[0]!.min[0]).toBeCloseTo(0.25, 5);
+  expect(stepped.channels[0]!.max[0]).toBeCloseTo(0.75, 5);
+  expect(stepped.channels[0]!.min[1]).toBeCloseTo(0.75, 5);
+  expect(stepped.channels[0]!.max[1]).toBeCloseTo(0.75, 5);
+
+  const sineFrames = stepRate / 10;
+  const sine = Array.from({ length: sineFrames }, (_, i) =>
+    Math.sin((2 * Math.PI * 440 * i) / stepRate),
+  );
+  const tone = await getWaveformData(wav([sine], stepRate));
+  for (const value of tone.channels[0]!.min) expect(value).toBeLessThan(-0.99);
+  for (const value of tone.channels[0]!.max) expect(value).toBeGreaterThan(0.99);
+});
+
+test("ten seconds of real 96 kHz stereo PCM keeps constant extrema", async () => {
+  const file = join(tmpdir(), "fmb-wave-10s.wav");
+  execFileSync("ffmpeg", [
+    "-y",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-f",
+    "lavfi",
+    "-i",
+    "aevalsrc=0.5\\|-0.25:s=96000:d=10",
+    "-c:a",
+    "pcm_f32le",
+    file,
+  ]);
+  const started = performance.now();
+  const result = await getWaveformData(new Uint8Array(readFileSync(file)));
+  const elapsed = performance.now() - started;
+  expect(result.end).toBeCloseTo(10, 4);
+  expect(result.channels).toHaveLength(2);
+  expect(result.channels[0]!.min[100]).toBeCloseTo(0.5, 5);
+  expect(result.channels[1]!.max[100]).toBeCloseTo(-0.25, 5);
+  expect(result.channels[0]!.min.length).toBe(500);
+  // Catches a quadratic or full-PCM regression. The multi-hour budget is enforced in the browser.
+  expect(elapsed).toBeLessThan(1_000);
 });
 
 test("four hours of timestamped chunks produce bounded-size envelopes without retaining PCM", async () => {

@@ -260,6 +260,9 @@ export async function getWaveformData(
         }
     };
     const pcm = new Float32Array(4096);
+    const runBin = new Int32Array(pcm.length);
+    const runFrom = new Int32Array(pcm.length);
+    const runTo = new Int32Array(pcm.length);
     let lastYield = Date.now();
     scope.phase = "processing";
     samples = new AudioSampleSink(track).samples(
@@ -298,9 +301,41 @@ export async function getWaveformData(
         grow(bins);
         silence(coveredEnd, Math.round((timestamp - timeOriginSeconds) * 1_000_000) / 1_000_000);
         coveredEnd = Math.max(coveredEnd, sampleEnd);
+        // Group samples that share a bin. Assignment still uses microsecond rounding.
+        const relative = timestamp - timeOriginSeconds;
+        const frameBin = (frame: number) => {
+          const position = Math.round((relative + frame / sampleRate) * 1_000_000) / 1_000_000;
+          if (position < start || (requestedEnd !== undefined && position >= requestedEnd))
+            return -1;
+          const bin = Math.floor(
+            (Math.round((position - start) * 1_000_000) * pointsPerSecond) / 1_000_000,
+          );
+          return bin >= bins ? -1 : bin;
+        };
         for (let offset = 0; offset < numberOfFrames; offset += pcm.length) {
           scope.check();
           const count = Math.min(pcm.length, numberOfFrames - offset);
+          let runs = 0;
+          for (let local = 0; local < count;) {
+            const bin = frameBin(offset + local);
+            let next = local + 1;
+            if (bin < 0) while (next < count && frameBin(offset + next) < 0) next++;
+            else {
+              let lo = local;
+              let hi = count;
+              while (lo + 1 < hi) {
+                const mid = (lo + hi) >> 1;
+                if (frameBin(offset + mid) === bin) lo = mid;
+                else hi = mid;
+              }
+              next = lo + 1;
+            }
+            runBin[runs] = bin;
+            runFrom[runs] = local;
+            runTo[runs] = next;
+            runs++;
+            local = next;
+          }
           for (let c = 0; c < channelCount; c++) {
             sample.copyTo(pcm, {
               planeIndex: c,
@@ -308,24 +343,27 @@ export async function getWaveformData(
               frameOffset: offset,
               frameCount: count,
             });
-            for (let i = 0; i < count; i++) {
-              const value = pcm[i]!;
-              if (!Number.isFinite(value))
+            const channel = channels[c]!;
+            for (let r = 0; r < runs; r++) {
+              let min = Infinity;
+              let max = -Infinity;
+              for (let i = runFrom[r]!; i < runTo[r]!; i++) {
+                const value = pcm[i]!;
+                if (value < min) min = value;
+                if (value > max) max = value;
+                else if (!(value <= max))
+                  throw new MediaError("UNSUPPORTED_INPUT", "Non-finite audio sample.", {
+                    phase: "processing",
+                  });
+              }
+              if (!Number.isFinite(min) || !Number.isFinite(max))
                 throw new MediaError("UNSUPPORTED_INPUT", "Non-finite audio sample.", {
                   phase: "processing",
                 });
-              const position =
-                Math.round(
-                  (timestamp - timeOriginSeconds + (offset + i) / sampleRate) * 1_000_000,
-                ) / 1_000_000;
-              if (position < start || (requestedEnd !== undefined && position >= requestedEnd))
-                continue;
-              const bin = Math.floor(
-                (Math.round((position - start) * 1_000_000) * pointsPerSecond) / 1_000_000,
-              );
-              if (bin >= bins) continue;
-              channels[c]!.min[bin] = Math.min(channels[c]!.min[bin]!, value);
-              channels[c]!.max[bin] = Math.max(channels[c]!.max[bin]!, value);
+              const bin = runBin[r]!;
+              if (bin < 0) continue;
+              if (min < channel.min[bin]!) channel.min[bin] = min;
+              if (max > channel.max[bin]!) channel.max[bin] = max;
             }
           }
         }
