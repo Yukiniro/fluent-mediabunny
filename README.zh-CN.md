@@ -33,7 +33,7 @@ pnpm pack --out fluentbunny.tgz
 然后进入你的应用目录，安装生成的压缩包和固定版本的 Mediabunny 对等依赖：
 
 ```sh
-pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.62.1
 ```
 
 将压缩包路径替换为实际位置。应用需要使用浏览器打包工具。

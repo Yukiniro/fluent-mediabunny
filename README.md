@@ -33,7 +33,7 @@ pnpm pack --out fluentbunny.tgz
 Then install the generated tarball and the exact Mediabunny peer dependency from your application's directory:
 
 ```sh
-pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny/fluentbunny.tgz mediabunny@1.62.1
 ```
 
 Replace the tarball path with its actual location. Your application needs a browser bundler.

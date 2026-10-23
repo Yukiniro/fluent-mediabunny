@@ -12,7 +12,7 @@ description: 构建并安装 fluentbunny，在浏览器中完成视频转换与�
 | 要求       | 版本或能力                        |
 | ---------- | --------------------------------- |
 | 构建运行时 | Node 24.11.1、pnpm 12.14.0        |
-| 对等依赖   | 精确版本 `mediabunny@1.61.6`      |
+| 对等依赖   | 精确版本 `mediabunny@1.62.1`      |
 | 应用       | 浏览器打包工具、应用提供的 `File` |
 | 转码       | 浏览器支持所选编解码器            |
 
@@ -37,7 +37,7 @@ pnpm pack
 在应用目录安装该压缩包和对等依赖。
 
 ```sh
-pnpm add /path/to/fluentbunny-0.2.0.tgz mediabunny@1.61.6
+pnpm add /path/to/fluentbunny-0.2.0.tgz mediabunny@1.62.1
 ```
 
 把压缩包路径换成 `pnpm pack` 写出的文件。应用需要使用浏览器打包工具。
