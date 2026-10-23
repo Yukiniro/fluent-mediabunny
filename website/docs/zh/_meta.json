@@ -1,0 +1,13 @@
+[
+  "index",
+  {
+    "type": "dir",
+    "name": "guide",
+    "collapsible": false
+  },
+  {
+    "type": "dir",
+    "name": "api",
+    "collapsible": false
+  }
+]

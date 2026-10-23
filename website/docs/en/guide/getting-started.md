@@ -1,6 +1,22 @@
+---
+title: Get started
+description: Build and install fluent-mediabunny, then convert a video and extract images in a browser.
+---
+
 # Get started
 
-fluent-mediabunny is not on npm. Build it from source with Node 24 and pnpm 12.14.0, install the tarball with `mediabunny@1.61.6`, then run one conversion, one thumbnail, and one embedded-picture read.
+Install a local build, then run a conversion in your browser application. This guide uses the repository's source-build workflow.
+
+## Requirements
+
+| Requirement     | Version or capability                                   |
+| --------------- | ------------------------------------------------------- |
+| Build runtime   | Node 24.11.1 and pnpm 12.14.0                           |
+| Peer dependency | Exactly `mediabunny@1.61.6`                             |
+| Application     | A browser bundler and an application-supplied `File`    |
+| Transcoding     | Browser decoder/encoder support for the selected codecs |
+
+Codec support varies by browser, operating system, and device. A recognized container alone does not establish encoding support.
 
 ## Build from source
 

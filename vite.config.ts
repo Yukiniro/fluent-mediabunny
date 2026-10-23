@@ -24,6 +24,7 @@ export default defineConfig({
   },
   fmt: {
     // `changeset add --empty` writes front matter that Oxfmt rewrites.
-    ignorePatterns: [".changeset/*.md"],
+    // Preserve downloaded skills so their lock hashes stay valid.
+    ignorePatterns: [".changeset/*.md", ".agents/skills/**"],
   },
 });

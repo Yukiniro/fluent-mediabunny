@@ -1,0 +1,130 @@
+---
+pageType: custom
+title: 首页
+description: 使用可读的 TypeScript 链式 API，在浏览器中转换媒体、提取视频帧和读取封面。
+---
+
+import { CodeBlock, Link } from "@rspress/core/theme";
+
+<main className="site-home">
+  <section className="home-hero" aria-labelledby="home-title">
+    <div className="home-intro">
+      <h1 id="home-title">媒体处理，<br /><span className="home-title-accent">写得更直观。</span></h1>
+      <p className="home-lead">为 Mediabunny 提供更易用的 TypeScript 链式 API。</p>
+      <div className="home-actions">
+        <Link className="home-primary" href="/zh/guide/getting-started"><span>开始使用</span> <span aria-hidden="true">↗</span></Link>
+        <Link className="home-text-link" href="/zh/api/"><span>查阅 API</span> <span aria-hidden="true">→</span></Link>
+      </div>
+    </div>
+    <div className="home-demo">
+      <div className="home-demo-header"><span>convert.ts</span></div>
+      <div className="rp-doc">
+      <CodeBlock lang="ts">
+
+```ts
+import { media } from "fluent-mediabunny";
+
+const result = await media(file)
+  .format("webm")
+  .trim({ start: 2, end: 12 })
+  .resize({ width: 1280 })
+  .run();
+
+const video = result.blob;
+const report = result.report;
+```
+
+      </CodeBlock>
+      </div>
+      <p className="home-demo-note">file 是应用提供的 File，时长需覆盖第 2 到第 12 秒。</p>
+    </div>
+
+  </section>
+
+<section className="home-capabilities" aria-labelledby="home-capabilities-title">
+  <div className="home-section-intro">
+    <h2 id="home-capabilities-title">媒体任务</h2>
+  </div>
+  <div className="home-task-list">
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        01
+      </span>
+      <div>
+        <h3>转换与编辑</h3>
+        <p>转换格式、裁剪时间、调整画面或提取音频。</p>
+      </div>
+      <Link href="/zh/guide/convert">
+        <code>media()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        02
+      </span>
+      <div>
+        <h3>检查文件</h3>
+        <p>读取时长、轨道和元数据。</p>
+      </div>
+      <Link href="/zh/api/probe">
+        <code>probe()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        03
+      </span>
+      <div>
+        <h3>提取视频帧</h3>
+        <p>提取单张图片或批量生成预览。</p>
+      </div>
+      <Link href="/zh/guide/thumbnails">
+        <code>thumbnail()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        04
+      </span>
+      <div>
+        <h3>读取内嵌封面</h3>
+        <p>获取文件中内嵌的原始图片。</p>
+      </div>
+      <Link href="/zh/api/embedded-picture">
+        <code>getEmbeddedPicture()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+  </div>
+</section>
+
+<section className="home-principles" aria-labelledby="home-principles-title">
+  <div>
+    <h2 id="home-principles-title">清晰的 API 约定</h2>
+    <Link className="home-text-link" href="/zh/guide/introduction">
+      <span>了解工作方式</span> <span aria-hidden="true">→</span>
+    </Link>
+  </div>
+  <div className="home-principle-list">
+    <div>
+      <h3>配置可以复用</h3>
+      <p>每次配置返回新构建器，可复用同一输入创建多个输出。</p>
+    </div>
+    <div>
+      <h3>结果可以检查</h3>
+      <p>结果附带配置、轨道、元数据和警告报告。</p>
+    </div>
+    <div>
+      <h3>生命周期有边界</h3>
+      <p>支持取消，并在任务结束时清理资源。</p>
+    </div>
+  </div>
+</section>
+
+<footer className="home-footer">
+    <div><a href="https://mediabunny.dev/">Mediabunny</a><a href="https://github.com/Yukiniro/fluent-mediabunny">GitHub ↗</a><a href="https://github.com/Yukiniro/fluent-mediabunny/blob/main/LICENSE">MIT License</a></div>
+  </footer>
+</main>

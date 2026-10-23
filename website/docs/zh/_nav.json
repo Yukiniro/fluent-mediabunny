@@ -1,12 +1,17 @@
 [
   {
+    "text": "首页",
+    "link": "/",
+    "activeMatch": "^(/zh)?/$"
+  },
+  {
     "text": "指南",
-    "link": "/guide/getting-started",
+    "link": "/guide/",
     "activeMatch": "^(/zh)?/guide/"
   },
   {
-    "text": "API",
-    "link": "/api/media",
+    "text": "API 参考",
+    "link": "/api/",
     "activeMatch": "^(/zh)?/api/"
   }
 ]

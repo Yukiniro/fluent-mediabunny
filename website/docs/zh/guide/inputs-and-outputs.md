@@ -1,8 +1,13 @@
+---
+title: 选择输入与输出
+description: 选择媒体输入与输出目标，管理文件权限，并理解取消与提交状态。
+---
+
 # 选择输入与输出
 
 传入 `File` 或 `Blob`、`ArrayBuffer`、由 `ArrayBuffer` 支撑的 `Uint8Array`，或绝对的 HTTP 或 HTTPS URL。远程资源必须允许 CORS。请求不带凭据，也不重试。带用户名或密码的 URL 抛出 `UNSUPPORTED_INPUT`。空的 `ArrayBuffer` 抛出 `INVALID_OPTIONS`。空的 `Uint8Array` 抛出 `UNSUPPORTED_INPUT`。
 
-能识别容器不表示这个浏览器能解码或编码它。[probe](/api/probe) 在不转换的情况下读取容器、时长、音视频轨道和受支持的元数据。
+能识别容器不表示这个浏览器能解码或编码它。[probe](/zh/api/probe) 在不转换的情况下读取容器、时长、音视频轨道和受支持的元数据。
 
 ## 返回 blob
 
@@ -20,7 +25,7 @@ await media(file)
 
 `handle` 是文件的 `FileSystemFileHandle`，并且具备 `queryPermission`、`createWritable` 和 `isSameEntry`。`run` 之前就要授予读写权限。这个库不会打开文件选择器，也不会请求权限。没有授权时抛出 `PERMISSION_REQUIRED`。句柄做不到这些操作时抛出 `TARGET_UNSUPPORTED`。
 
-两个任务不能同时占有同一个文件。第二个抛出 `TARGET_BUSY`。可写流以 `keepExistingData: false` 创建，所以成功打开会替换文件内容。
+同一模块实例内，两个任务不能同时占有同一个输出文件，第二个抛出 `TARGET_BUSY`。请选择与输入不同的输出文件。可写流以 `keepExistingData: false` 创建，成功关闭后替换文件内容；仅打开流不代表提交成功。
 
 ## 取消并读取进度
 

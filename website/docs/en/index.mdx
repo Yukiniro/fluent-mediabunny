@@ -1,0 +1,130 @@
+---
+pageType: custom
+title: Home
+description: Convert browser media, extract video frames, and read cover images with a readable fluent TypeScript API.
+---
+
+import { CodeBlock, Link } from "@rspress/core/theme";
+
+<main className="site-home">
+  <section className="home-hero" aria-labelledby="home-title">
+    <div className="home-intro">
+      <h1 id="home-title">Media tasks.<br /><span className="home-title-accent">Made readable.</span></h1>
+      <p className="home-lead">An approachable fluent TypeScript API for Mediabunny.</p>
+      <div className="home-actions">
+        <Link className="home-primary" href="/guide/getting-started"><span>Get started</span> <span aria-hidden="true">↗</span></Link>
+        <Link className="home-text-link" href="/api/"><span>Explore the API</span> <span aria-hidden="true">→</span></Link>
+      </div>
+    </div>
+    <div className="home-demo">
+      <div className="home-demo-header"><span>convert.ts</span></div>
+      <div className="rp-doc">
+      <CodeBlock lang="ts">
+
+```ts
+import { media } from "fluent-mediabunny";
+
+const result = await media(file)
+  .format("webm")
+  .trim({ start: 2, end: 12 })
+  .resize({ width: 1280 })
+  .run();
+
+const video = result.blob;
+const report = result.report;
+```
+
+      </CodeBlock>
+      </div>
+      <p className="home-demo-note">file is an application-supplied File covering seconds 2 to 12.</p>
+    </div>
+
+  </section>
+
+<section className="home-capabilities" aria-labelledby="home-capabilities-title">
+  <div className="home-section-intro">
+    <h2 id="home-capabilities-title">Media tasks</h2>
+  </div>
+  <div className="home-task-list">
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        01
+      </span>
+      <div>
+        <h3>Convert and edit</h3>
+        <p>Convert formats, trim, resize, or extract audio.</p>
+      </div>
+      <Link href="/guide/convert">
+        <code>media()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        02
+      </span>
+      <div>
+        <h3>Inspect a file</h3>
+        <p>Read duration, tracks, and metadata.</p>
+      </div>
+      <Link href="/api/probe">
+        <code>probe()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        03
+      </span>
+      <div>
+        <h3>Extract video frames</h3>
+        <p>Extract one image or generate a batch of previews.</p>
+      </div>
+      <Link href="/guide/thumbnails">
+        <code>thumbnail()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+    <div className="home-task">
+      <span className="home-task-number" aria-hidden="true">
+        04
+      </span>
+      <div>
+        <h3>Read cover art</h3>
+        <p>Read an original image embedded in the file.</p>
+      </div>
+      <Link href="/api/embedded-picture">
+        <code>getEmbeddedPicture()</code>
+        <span aria-hidden="true">↗</span>
+      </Link>
+    </div>
+  </div>
+</section>
+
+<section className="home-principles" aria-labelledby="home-principles-title">
+  <div>
+    <h2 id="home-principles-title">Clear API contracts</h2>
+    <Link className="home-text-link" href="/guide/introduction">
+      <span>See how it works</span> <span aria-hidden="true">→</span>
+    </Link>
+  </div>
+  <div className="home-principle-list">
+    <div>
+      <h3>Reusable configuration</h3>
+      <p>Each configuration returns a new builder. Reuse one input for different outputs.</p>
+    </div>
+    <div>
+      <h3>Inspectable results</h3>
+      <p>Results include configuration, tracks, metadata, and warnings.</p>
+    </div>
+    <div>
+      <h3>Bounded lifecycles</h3>
+      <p>Cancel operations and let each task clean up its resources.</p>
+    </div>
+  </div>
+</section>
+
+<footer className="home-footer">
+    <div><a href="https://mediabunny.dev/">Mediabunny</a><a href="https://github.com/Yukiniro/fluent-mediabunny">GitHub ↗</a><a href="https://github.com/Yukiniro/fluent-mediabunny/blob/main/LICENSE">MIT License</a></div>
+  </footer>
+</main>

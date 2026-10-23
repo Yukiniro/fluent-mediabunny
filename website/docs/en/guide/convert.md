@@ -1,3 +1,8 @@
+---
+title: Convert a file
+description: Convert media with format selection, copy or transcode modes, trimming, geometry, tracks, and metadata.
+---
+
 # Convert a file
 
 `media(source)` returns a `MediaBuilder`. Each method returns a new builder and leaves the one you called unchanged. Call `format` before `run`. The default mode is `"auto"`, and both video and audio default to every track.
@@ -20,7 +25,7 @@ MP4 encodes `avc` and `aac`. WebM encodes `vp9` or `vp8`, and `opus`. M4A encode
 media(file).format("mp4").mode("copy");
 ```
 
-`"auto"` copies a track when the source codec can be copied into the format, and transcodes it otherwise. `"transcode"` decodes and encodes every selected track. `"copy"` copies every selected track and rejects `trim`, `resize`, `crop`, `rotate`, and video or audio options.
+`"auto"` resolves the explicit or format-default codec, then copies compatible tracks when the processing settings allow it and transcodes the rest. `"transcode"` decodes and encodes every selected track. `"copy"` copies every selected track and rejects `trim`, `resize`, `crop`, nonzero `rotate`, and nonempty video or audio options. `rotate(0)` is allowed.
 
 Copy can keep `avc` and `hevc` in MP4, `aac` in MP4 or M4A, `vp8`, `vp9`, and `av1` in WebM, `opus` and `vorbis` in WebM, and `pcm-s16`, `pcm-s24`, and `pcm-f32` in WAV. Anything else in copy mode throws `COPY_NOT_POSSIBLE`.
 
@@ -38,7 +43,7 @@ Both values are added to the earliest selected-track origin, `max(0, min(first t
 
 ## Resize the picture
 
-`width` and `height` are positive even integers. Pass at least one. `fit` is `"contain"`, `"cover"`, or `"fill"`, and it is valid only when both dimensions are set. One dimension keeps the aspect ratio and rounds the other dimension up to an even number.
+`width` and `height` are positive even integers. Pass at least one. `fit` is `"contain"`, `"cover"`, or `"fill"`, and it is required when both dimensions are set and forbidden otherwise. One dimension keeps the aspect ratio and rounds the other dimension up to an even number.
 
 ```ts
 media(file).format("mp4").resize({ width: 1280 });

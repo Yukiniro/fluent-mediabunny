@@ -1,9 +1,38 @@
+---
+title: 错误
+description: 处理 MediaError 错误码、执行阶段、文件目标状态、诊断信息与非致命转换警告。
+---
+
 # 错误
 
 `MediaError` 是转换、探测、缩略图提取和 `getEmbeddedPicture` 抛出的错误类。它继承 `Error`。`name` 是 `"MediaError"`。
 
+## 处理错误
+
+```ts
+import { media, MediaError } from "fluent-mediabunny";
+
+try {
+  const result = await media(file).format("webm").run();
+  console.log(result.report.warnings);
+} catch (error) {
+  if (!(error instanceof MediaError)) throw error;
+  if (error.code === "ABORTED") return;
+  console.error(error.code, error.phase, error.message);
+}
+```
+
+这段代码位于应用函数中，输入为名叫 `file` 的 `File`。构建器配置也要放入 `try`，因为参数错误会同步抛出。异步操作通过 Promise 拒绝，批次请求校验则可能在迭代前抛出。
+
+## MediaError
+
 ```ts
 class MediaError extends Error {
+  constructor(
+    code: ErrorCode,
+    message: string,
+    options?: { phase?: Phase; details?: Record<string, unknown>; cause?: unknown },
+  );
   readonly code: ErrorCode;
   readonly phase: Phase;
   readonly details: Readonly<Record<string, unknown>>;
@@ -55,3 +84,13 @@ type Warning = { code: string; message: string; fields?: readonly string[] };
 ```
 
 `run` 目前会赋 `METADATA_OMITTED`、`NON_AV_CONTENT_NOT_PRESERVED`、`FILENAME_EXTENSION_MISMATCH`、`CALLBACK_FAILED` 和 `CLEANUP_FAILED`。这些字符串不是 `ErrorCode` 的成员。观察者抛错或返回 Promise 时，`onProgress` 被停用，并加上 `CALLBACK_FAILED`。成功输出之后的清理失败加上 `CLEANUP_FAILED`。错误之后的清理失败改为追加到 `diagnostics`。
+
+| 警告码                         | 含义                                   |
+| ------------------------------ | -------------------------------------- |
+| `METADATA_OMITTED`             | 不支持或无效的源标签未被保留。         |
+| `NON_AV_CONTENT_NOT_PRESERVED` | 省略了音视频轨道之外的源内容。         |
+| `FILENAME_EXTENSION_MISMATCH`  | 输出文件的实际名称与所选格式不匹配。   |
+| `CALLBACK_FAILED`              | 进度观察者抛错或返回 Promise，已停用。 |
+| `CLEANUP_FAILED`               | 输出成功，但后续清理失败。             |
+
+使用 `code` 判断分支，保留 `diagnostics` 供调试。对外显示或发送原始 cause 与诊断前应进行脱敏。文件失败时 `targetState: "unknown"` 既不能证明字节已经提交，也不能证明已经回滚。

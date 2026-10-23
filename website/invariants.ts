@@ -20,7 +20,7 @@ export function metaDrift(english: unknown, chinese: unknown, path: string): str
 }
 
 export function navFieldMatches(english: string, chinese: string): boolean {
-  return chinese === english || chinese === `/zh${english}`;
+  return chinese === english;
 }
 
 export function navDrift(english: unknown, chinese: unknown, path: string): string[] {
