@@ -31,14 +31,14 @@ import {
 
 ## 检查与提取
 
-| 函数                                           | 返回类型                                   | 用途                               |
-| ---------------------------------------------- | ------------------------------------------ | ---------------------------------- |
-| [probe](/zh/api/probe)                         | `Promise<ProbeResult>`                     | 容器、时长、所选轨道、时间与文本元数据 |
-| [getWaveformData](/zh/api/waveforms#getwaveformdata) | `Promise<WaveformData>`              | 一条音轨的各声道 min 与 max 数组       |
-| [renderWaveform](/zh/api/waveforms#renderwaveform) | `Promise<WaveformImage>`               | 由波形数据绘制的一张 PNG               |
-| [thumbnail](/zh/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`          | 一帧解码后的视频图片                   |
-| [thumbnails](/zh/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`            | 每个请求时间对应一项，包含缺帧位置 |
-| [getEmbeddedPicture](/zh/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>` | 一张内嵌原图，返回独立字节副本     |
+| 函数                                                 | 返回类型                                   | 用途                                   |
+| ---------------------------------------------------- | ------------------------------------------ | -------------------------------------- |
+| [probe](/zh/api/probe)                               | `Promise<ProbeResult>`                     | 容器、时长、所选轨道、时间与文本元数据 |
+| [getWaveformData](/zh/api/waveforms#getwaveformdata) | `Promise<WaveformData>`                    | 一条音轨的各声道 min 与 max 数组       |
+| [renderWaveform](/zh/api/waveforms#renderwaveform)   | `Promise<WaveformImage>`                   | 由波形数据绘制的一张 PNG               |
+| [thumbnail](/zh/api/thumbnails#thumbnail)            | `Promise<ThumbnailImage \| null>`          | 一帧解码后的视频图片                   |
+| [thumbnails](/zh/api/thumbnails#thumbnails)          | `AsyncGenerator<ThumbnailItem>`            | 每个请求时间对应一项，包含缺帧位置     |
+| [getEmbeddedPicture](/zh/api/embedded-picture)       | `Promise<Uint8Array<ArrayBuffer> \| null>` | 一张内嵌原图，返回独立字节副本         |
 
 ## 共用约定
 

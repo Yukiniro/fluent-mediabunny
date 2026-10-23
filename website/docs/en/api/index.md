@@ -31,14 +31,14 @@ Builder configuration is synchronous and immutable. `run()` returns a promise. I
 
 ## Inspection and extraction
 
-| Function                                    | Return type                                | Purpose                                                    |
-| ------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------- |
-| [probe](/api/probe)                         | `Promise<ProbeResult>`                     | Container, duration, selected tracks, timing, and text metadata |
-| [getWaveformData](/api/waveforms#getwaveformdata) | `Promise<WaveformData>`              | One audio track as per-channel min and max arrays          |
-| [renderWaveform](/api/waveforms#renderwaveform) | `Promise<WaveformImage>`               | One PNG drawn from waveform data                           |
-| [thumbnail](/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`          | One decoded video frame                                    |
-| [thumbnails](/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`            | One item per requested time, including missing frames      |
-| [getEmbeddedPicture](/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>` | One original embedded image, copied into owned bytes       |
+| Function                                          | Return type                                | Purpose                                                         |
+| ------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------- |
+| [probe](/api/probe)                               | `Promise<ProbeResult>`                     | Container, duration, selected tracks, timing, and text metadata |
+| [getWaveformData](/api/waveforms#getwaveformdata) | `Promise<WaveformData>`                    | One audio track as per-channel min and max arrays               |
+| [renderWaveform](/api/waveforms#renderwaveform)   | `Promise<WaveformImage>`                   | One PNG drawn from waveform data                                |
+| [thumbnail](/api/thumbnails#thumbnail)            | `Promise<ThumbnailImage \| null>`          | One decoded video frame                                         |
+| [thumbnails](/api/thumbnails#thumbnails)          | `AsyncGenerator<ThumbnailItem>`            | One item per requested time, including missing frames           |
+| [getEmbeddedPicture](/api/embedded-picture)       | `Promise<Uint8Array<ArrayBuffer> \| null>` | One original embedded image, copied into owned bytes            |
 
 ## Shared contracts
 

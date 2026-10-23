@@ -34,14 +34,14 @@
 
 错误使用 `MediaError`，阶段为 `preparing` 或 `processing`，没有文件目标状态。
 
-| 错误码                       | 含义                                                                 |
-| ---------------------------- | -------------------------------------------------------------------- |
-| `INVALID_OPTIONS`            | 选项、颜色、尺寸、区间或数据无效，或 ID 不是音轨                    |
-| `NO_TRACKS`                  | 没有主音轨，或所选音轨没有包                                         |
-| `CODEC_UNAVAILABLE`          | 所选音轨不能解码                                                     |
-| `UNSUPPORTED_INPUT`          | 来源不支持、缺少采样布局、采样时间无效，或读取中声道数变化           |
-| `OUTPUT_TOO_LARGE`           | min 与 max 数组将超过 64 MiB                                         |
-| `IMAGE_ENCODING_UNAVAILABLE` | 缺少 Canvas 2D 或 PNG 编码，或 MIME 被替换                           |
-| `READ_FAILED`                | 素材读取失败                                                         |
-| `PROCESSING_FAILED`          | 图片编码为空或清理失败                                               |
-| `ABORTED`                    | 完成前观察到取消                                                     |
+| 错误码                       | 含义                                                       |
+| ---------------------------- | ---------------------------------------------------------- |
+| `INVALID_OPTIONS`            | 选项、颜色、尺寸、区间或数据无效，或 ID 不是音轨           |
+| `NO_TRACKS`                  | 没有主音轨，或所选音轨没有包                               |
+| `CODEC_UNAVAILABLE`          | 所选音轨不能解码                                           |
+| `UNSUPPORTED_INPUT`          | 来源不支持、缺少采样布局、采样时间无效，或读取中声道数变化 |
+| `OUTPUT_TOO_LARGE`           | min 与 max 数组将超过 64 MiB                               |
+| `IMAGE_ENCODING_UNAVAILABLE` | 缺少 Canvas 2D 或 PNG 编码，或 MIME 被替换                 |
+| `READ_FAILED`                | 素材读取失败                                               |
+| `PROCESSING_FAILED`          | 图片编码为空或清理失败                                     |
+| `ABORTED`                    | 完成前观察到取消                                           |

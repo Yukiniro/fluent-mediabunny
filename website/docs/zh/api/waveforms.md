@@ -26,22 +26,22 @@ const image = await renderWaveform(data, { width: 800, height: 160 });
 function getWaveformData(source: MediaInput, options?: WaveformOptions): Promise<WaveformData>;
 ```
 
-| 参数      | 类型                                    | 说明                               |
-| --------- | --------------------------------------- | ---------------------------------- |
-| `source`  | [MediaInput](/zh/api/probe#mediainput)  | 原始媒体。转换配置不适用。         |
-| `options` | `WaveformOptions`                       | 轨道、桶密度、半开区间和取消信号。 |
+| 参数      | 类型                                   | 说明                               |
+| --------- | -------------------------------------- | ---------------------------------- |
+| `source`  | [MediaInput](/zh/api/probe#mediainput) | 原始媒体。转换配置不适用。         |
+| `options` | `WaveformOptions`                      | 轨道、桶密度、半开区间和取消信号。 |
 
 **返回：** 一个 `WaveformData` 对象。失败和取消都会拒绝，不返回部分对象。
 
 ## WaveformOptions
 
-| 字段              | 类型                  | 默认值   | 说明                                                             |
-| ----------------- | --------------------- | -------- | ---------------------------------------------------------------- |
-| `track`           | `"primary" \| number` | `"primary"` | 主音轨，或非负安全整数音轨 ID。                               |
-| `pointsPerSecond` | `number`              | `50`     | 正的有限桶密度。默认每个桶 20 ms。                               |
-| `start`           | `number`              | `0`      | 包含的起点，单位为秒，位于共用时间原点上。                       |
-| `end`             | `number`              | 音轨结束 | 不包含的终点。省略时解码到样本结束，不预先扫描时长。             |
-| `signal`          | `AbortSignal`         | 未设置   | 取消解码。                                                       |
+| 字段              | 类型                  | 默认值      | 说明                                                 |
+| ----------------- | --------------------- | ----------- | ---------------------------------------------------- |
+| `track`           | `"primary" \| number` | `"primary"` | 主音轨，或非负安全整数音轨 ID。                      |
+| `pointsPerSecond` | `number`              | `50`        | 正的有限桶密度。默认每个桶 20 ms。                   |
+| `start`           | `number`              | `0`         | 包含的起点，单位为秒，位于共用时间原点上。           |
+| `end`             | `number`              | 音轨结束    | 不包含的终点。省略时解码到样本结束，不预先扫描时长。 |
+| `signal`          | `AbortSignal`         | 未设置      | 取消解码。                                           |
 
 时间使用 `max(0, input.getFirstTimestamp())`，与[缩略图](/zh/api/thumbnails)相同。区间是半开的。起步较晚、空洞，以及请求范围内没有样本的部分，min 和 max 都保持 0。
 
@@ -72,24 +72,24 @@ function getWaveformData(source: MediaInput, options?: WaveformOptions): Promise
 function renderWaveform(data: WaveformData, options: WaveformRenderOptions): Promise<WaveformImage>;
 ```
 
-| 参数      | 类型                    | 说明                                   |
-| --------- | ----------------------- | -------------------------------------- |
+| 参数      | 类型                    | 说明                                       |
+| --------- | ----------------------- | ------------------------------------------ |
 | `data`    | `WaveformData`          | `getWaveformData` 的峰值数组，或同形数据。 |
-| `options` | `WaveformRenderOptions` | 必填像素尺寸、可选区间、颜色和取消信号。 |
+| `options` | `WaveformRenderOptions` | 必填像素尺寸、可选区间、颜色和取消信号。   |
 
 **返回：** 一个 `WaveformImage`。输入数组不会被修改。
 
 ## WaveformRenderOptions
 
-| 字段         | 类型          | 默认值 | 说明                                                          |
-| ------------ | ------------- | ------ | ------------------------------------------------------------- |
-| `width`      | `number`      | 必填   | 正整数像素，最多 4096。                                       |
-| `height`     | `number`      | 必填   | 正整数像素，最多 4096，且至少每个声道 1 像素。                |
-| `start`      | `number`      | 数据起点 | 数据时间基准上的包含起点。                                  |
-| `end`        | `number`      | 数据终点 | 数据时间基准上的不包含终点。                                |
+| 字段         | 类型          | 默认值   | 说明                                                                 |
+| ------------ | ------------- | -------- | -------------------------------------------------------------------- |
+| `width`      | `number`      | 必填     | 正整数像素，最多 4096。                                              |
+| `height`     | `number`      | 必填     | 正整数像素，最多 4096，且至少每个声道 1 像素。                       |
+| `start`      | `number`      | 数据起点 | 数据时间基准上的包含起点。                                           |
+| `end`        | `number`      | 数据终点 | 数据时间基准上的不包含终点。                                         |
 | `color`      | `string`      | `"#000"` | 十六进制 RGB 或 RGBA。接受 `#RGB`、`#RGBA`、`#RRGGBB`、`#RRGGBBAA`。 |
-| `background` | `string`      | 透明   | 铺满图片的十六进制颜色。省略时不绘制背景。                    |
-| `signal`     | `AbortSignal` | 未设置 | 在编码完成前取消。                                            |
+| `background` | `string`      | 透明     | 铺满图片的十六进制颜色。省略时不绘制背景。                           |
+| `signal`     | `AbortSignal` | 未设置   | 在编码完成前取消。                                                   |
 
 面积上限是 16,000,000 像素。尺寸超出限制时以 `INVALID_OPTIONS` 拒绝。
 
@@ -101,12 +101,12 @@ function renderWaveform(data: WaveformData, options: WaveformRenderOptions): Pro
 
 ## WaveformImage
 
-| 字段                     | 类型          | 说明                          |
-| ------------------------ | ------------- | ----------------------------- |
-| `blob`                   | `Blob`        | 非空 `image/png` 字节。       |
-| `mimeType`               | `"image/png"` | 始终是 PNG。MIME 被替换是错误。 |
-| `width`、`height`        | `number`      | 请求的像素尺寸。              |
-| `startSeconds`、`endSeconds` | `number`  | 图片覆盖的完整桶。            |
+| 字段                         | 类型          | 说明                            |
+| ---------------------------- | ------------- | ------------------------------- |
+| `blob`                       | `Blob`        | 非空 `image/png` 字节。         |
+| `mimeType`                   | `"image/png"` | 始终是 PNG。MIME 被替换是错误。 |
+| `width`、`height`            | `number`      | 请求的像素尺寸。                |
+| `startSeconds`、`endSeconds` | `number`      | 图片覆盖的完整桶。              |
 
 编码之后画布重置为 1×1。编码失败或调用方取消时同样重置。
 
@@ -114,14 +114,14 @@ function renderWaveform(data: WaveformData, options: WaveformRenderOptions): Pro
 
 错误使用 [MediaError](/zh/api/errors)，阶段为 `preparing` 或 `processing`，没有文件目标状态。
 
-| 错误码                       | 原因                                                       |
-| ---------------------------- | ---------------------------------------------------------- |
-| `INVALID_OPTIONS`            | 选项、颜色、尺寸、区间或数据无效，或 ID 不是音轨。         |
-| `NO_TRACKS`                  | 没有主音轨，或所选音轨没有包。                             |
-| `CODEC_UNAVAILABLE`          | 所选音频解码器不可用。                                     |
-| `UNSUPPORTED_INPUT`          | 来源不支持、缺少布局、采样时间无效，或声道数变化。         |
-| `OUTPUT_TOO_LARGE`           | min 与 max 数组将超过 64 MiB。                             |
-| `IMAGE_ENCODING_UNAVAILABLE` | 缺少 Canvas 2D 或 PNG 编码，或 MIME 被替换。               |
-| `READ_FAILED`                | 读取来源失败。                                             |
-| `PROCESSING_FAILED`          | 编码器没有返回字节，或清理失败。                           |
-| `ABORTED`                    | 完成前取消。                                               |
+| 错误码                       | 原因                                               |
+| ---------------------------- | -------------------------------------------------- |
+| `INVALID_OPTIONS`            | 选项、颜色、尺寸、区间或数据无效，或 ID 不是音轨。 |
+| `NO_TRACKS`                  | 没有主音轨，或所选音轨没有包。                     |
+| `CODEC_UNAVAILABLE`          | 所选音频解码器不可用。                             |
+| `UNSUPPORTED_INPUT`          | 来源不支持、缺少布局、采样时间无效，或声道数变化。 |
+| `OUTPUT_TOO_LARGE`           | min 与 max 数组将超过 64 MiB。                     |
+| `IMAGE_ENCODING_UNAVAILABLE` | 缺少 Canvas 2D 或 PNG 编码，或 MIME 被替换。       |
+| `READ_FAILED`                | 读取来源失败。                                     |
+| `PROCESSING_FAILED`          | 编码器没有返回字节，或清理失败。                   |
+| `ABORTED`                    | 完成前取消。                                       |

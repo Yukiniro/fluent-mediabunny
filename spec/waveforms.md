@@ -34,14 +34,14 @@ English | [简体中文](waveforms.zh-CN.md)
 
 Errors use `MediaError` with phase `preparing` or `processing`, without a file target state.
 
-| Code                         | Meaning                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------ |
-| `INVALID_OPTIONS`            | Invalid options, colors, size, range, empty data, or an ID that is not an audio track |
-| `NO_TRACKS`                  | No primary audio track, or the selected audio track has no packets                  |
-| `CODEC_UNAVAILABLE`          | The selected audio track cannot be decoded                                          |
+| Code                         | Meaning                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `INVALID_OPTIONS`            | Invalid options, colors, size, range, empty data, or an ID that is not an audio track       |
+| `NO_TRACKS`                  | No primary audio track, or the selected audio track has no packets                          |
+| `CODEC_UNAVAILABLE`          | The selected audio track cannot be decoded                                                  |
 | `UNSUPPORTED_INPUT`          | Unsupported source, missing sample layout, invalid sample timing, or a channel-count change |
-| `OUTPUT_TOO_LARGE`           | The min and max arrays would exceed 64 MiB                                          |
-| `IMAGE_ENCODING_UNAVAILABLE` | Missing Canvas 2D or PNG encoding, or a substituted MIME type                       |
-| `READ_FAILED`                | Source read failure                                                                  |
-| `PROCESSING_FAILED`          | Empty image encoding or cleanup failure                                              |
-| `ABORTED`                    | Cancellation observed before completion                                              |
+| `OUTPUT_TOO_LARGE`           | The min and max arrays would exceed 64 MiB                                                  |
+| `IMAGE_ENCODING_UNAVAILABLE` | Missing Canvas 2D or PNG encoding, or a substituted MIME type                               |
+| `READ_FAILED`                | Source read failure                                                                         |
+| `PROCESSING_FAILED`          | Empty image encoding or cleanup failure                                                     |
+| `ABORTED`                    | Cancellation observed before completion                                                     |

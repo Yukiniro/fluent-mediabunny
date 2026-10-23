@@ -28,9 +28,9 @@ for (const track of info.tracks) {
 function probe(source: MediaInput, options?: ProbeOptions): Promise<ProbeResult>;
 ```
 
-| Parameter | Type           | Required | Description                                          |
-| --------- | -------------- | -------- | ---------------------------------------------------- |
-| `source`  | `MediaInput`   | Yes      | Source media, using the shared input contract below. |
+| Parameter | Type           | Required | Description                                                       |
+| --------- | -------------- | -------- | ----------------------------------------------------------------- |
+| `source`  | `MediaInput`   | Yes      | Source media, using the shared input contract below.              |
 | `options` | `ProbeOptions` | No       | Duration, track selection, frame-rate estimate, and cancellation. |
 
 ## MediaInput
@@ -52,26 +52,26 @@ Accepted containers are MP4, QTFF, WebM, Matroska, MP3, WAVE, OGG, FLAC, and ADT
 
 ## ProbeOptions
 
-| Field       | Type                                         | Default      | Description                                                                                                                    |
-| ----------- | ------------------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `duration`  | `"metadata" \| "scan"`                           | `"metadata"` | Read stored duration with `getDurationFromMetadata`, or scan with `computeDuration`. `"scan"` also scans each selected track end. |
-| `video`     | [TrackSelection](/api/media#tracks)              | `"all"`      | Which video tracks appear in `tracks`.                                                                                         |
-| `audio`     | [TrackSelection](/api/media#tracks)              | `"all"`      | Which audio tracks appear in `tracks`.                                                                                         |
-| `frameRate` | `"estimate"`                                     | Unset        | Estimate video frame rate from the first 256 packets. Omit it to leave the rate unknown.                                      |
-| `signal`    | `AbortSignal`                                    | Unset        | Cancel the read with `ABORTED`.                                                                                                |
+| Field       | Type                                | Default      | Description                                                                                                                       |
+| ----------- | ----------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `duration`  | `"metadata" \| "scan"`              | `"metadata"` | Read stored duration with `getDurationFromMetadata`, or scan with `computeDuration`. `"scan"` also scans each selected track end. |
+| `video`     | [TrackSelection](/api/media#tracks) | `"all"`      | Which video tracks appear in `tracks`.                                                                                            |
+| `audio`     | [TrackSelection](/api/media#tracks) | `"all"`      | Which audio tracks appear in `tracks`.                                                                                            |
+| `frameRate` | `"estimate"`                        | Unset        | Estimate video frame rate from the first 256 packets. Omit it to leave the rate unknown.                                          |
+| `signal`    | `AbortSignal`                       | Unset        | Cancel the read with `ABORTED`.                                                                                                   |
 
 Unknown option keys reject with `INVALID_OPTIONS`. Each invocation disposes its input before settling.
 
 ## ProbeResult
 
-| Field                 | Type                                   | Description                                                       |
-| --------------------- | -------------------------------------- | ----------------------------------------------------------------- |
-| `container`           | `string`                               | Recognized format name.                                           |
-| `durationSeconds`     | `number \| null`                       | Duration in seconds; `null` means unknown, not zero.              |
-| `durationOrigin`      | `"metadata" \| "scanned" \| "unknown"` | How duration was obtained; `"unknown"` when duration is `null`.   |
+| Field                 | Type                                   | Description                                                                |
+| --------------------- | -------------------------------------- | -------------------------------------------------------------------------- |
+| `container`           | `string`                               | Recognized format name.                                                    |
+| `durationSeconds`     | `number \| null`                       | Duration in seconds; `null` means unknown, not zero.                       |
+| `durationOrigin`      | `"metadata" \| "scanned" \| "unknown"` | How duration was obtained; `"unknown"` when duration is `null`.            |
 | `tracks`              | `ProbeTrack[]`                         | Selected audio and video tracks, in source order. Other types are omitted. |
-| `metadata`            | `MetadataValues`                       | Valid supported text fields. See [metadata](/api/media#metadata). |
-| `omittedSourceFields` | `string[]`                             | Names of unsupported or invalid source metadata fields.           |
+| `metadata`            | `MetadataValues`                       | Valid supported text fields. See [metadata](/api/media#metadata).          |
+| `omittedSourceFields` | `string[]`                             | Names of unsupported or invalid source metadata fields.                    |
 
 Source `Date` values use their UTC `YYYY-MM-DD` date. When metadata exposes pictures, `omittedSourceFields` includes `"images"`; read a picture separately with [getEmbeddedPicture](/api/embedded-picture).
 
@@ -94,30 +94,30 @@ Track selection does not change `container`, `durationSeconds`, `durationOrigin`
 
 `ProbeTrack` is `ProbeVideoTrack` or `ProbeAudioTrack`. Both include this timing.
 
-| Field                            | Type             | Description                                                                                          |
-| -------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------- |
-| `startSeconds`                   | `number \| null` | First packet timestamp. `null` when the track has no packet. A missing packet is not reported as 0. |
-| `endSeconds`                     | `number \| null` | Track end timestamp from metadata, or from a scan when `duration` is `"scan"`.                       |
-| `elapsedSeconds`                 | `number \| null` | `endSeconds - startSeconds` when both are known. Otherwise `null`.                                   |
-| `default`                        | `boolean`        | Whether the container marks the track as default.                                                    |
-| `averageBitrate`, `peakBitrate`  | `number \| null` | Metadata bitrates in bits per second. `null` means unknown.                                          |
+| Field                           | Type             | Description                                                                                         |
+| ------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| `startSeconds`                  | `number \| null` | First packet timestamp. `null` when the track has no packet. A missing packet is not reported as 0. |
+| `endSeconds`                    | `number \| null` | Track end timestamp from metadata, or from a scan when `duration` is `"scan"`.                      |
+| `elapsedSeconds`                | `number \| null` | `endSeconds - startSeconds` when both are known. Otherwise `null`.                                  |
+| `default`                       | `boolean`        | Whether the container marks the track as default.                                                   |
+| `averageBitrate`, `peakBitrate` | `number \| null` | Metadata bitrates in bits per second. `null` means unknown.                                         |
 
 ### ProbeVideoTrack
 
-| Field                    | Type                         | Description                                                                                          |
-| ------------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `codedWidth`, `codedHeight` | `number`                  | Coded sample size in pixels.                                                                         |
-| `rotation`               | `0 \| 90 \| 180 \| 270`      | Source rotation in degrees.                                                                          |
-| `frameRate`              | `ProbeFrameRate`             | `{ hertz: null, origin: "unknown" }` unless `frameRate: "estimate"` finds two distinct timestamps.   |
+| Field                       | Type                    | Description                                                                                        |
+| --------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `codedWidth`, `codedHeight` | `number`                | Coded sample size in pixels.                                                                       |
+| `rotation`                  | `0 \| 90 \| 180 \| 270` | Source rotation in degrees.                                                                        |
+| `frameRate`                 | `ProbeFrameRate`        | `{ hertz: null, origin: "unknown" }` unless `frameRate: "estimate"` finds two distinct timestamps. |
 
 `ProbeFrameRate` is `{ hertz: number; origin: "estimated" }` or `{ hertz: null; origin: "unknown" }`. The estimate uses at most the first 256 packets. It is not proof that the whole file has a constant frame rate. Insufficient timestamps stay unknown.
 
 ### ProbeAudioTrack
 
-| Field              | Type             | Description                                                     |
-| ------------------ | ---------------- | --------------------------------------------------------------- |
-| `language`         | `string \| null` | Container language code. `null` when omitted or stored as `und`. |
-| `name`             | `string \| null` | Container track name. `null` when the container has no name.    |
+| Field      | Type             | Description                                                      |
+| ---------- | ---------------- | ---------------------------------------------------------------- |
+| `language` | `string \| null` | Container language code. `null` when omitted or stored as `und`. |
+| `name`     | `string \| null` | Container track name. `null` when the container has no name.     |
 
 ## Errors
 
