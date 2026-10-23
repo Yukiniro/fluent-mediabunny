@@ -34,7 +34,7 @@ function probe(source: MediaInput, options?: ProbeOptions): Promise<ProbeResult>
 
 `tracks` 只含音频和视频轨道。其他轨道被略去。
 
-`metadata` 保留通过校验的受支持字段。源里的 `Date` 形式的 `date` 记为 `YYYY-MM-DD`。其他源字段，以及校验失败的受支持字段，名字出现在 `omittedSourceFields`。
+`metadata` 保留通过校验的受支持字段。源里的 `Date` 形式的 `date` 记为 `YYYY-MM-DD`。其他源字段，以及校验失败的受支持字段，名字出现在 `omittedSourceFields`。源里有图片时，这份名单包含 `"images"`。用 [getEmbeddedPicture](/api/embedded-picture) 读取其中一张。
 
 ## TrackInfo
 

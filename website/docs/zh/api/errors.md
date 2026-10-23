@@ -1,6 +1,6 @@
 # 错误
 
-`MediaError` 是转换、探测和缩略图提取抛出的错误类。它继承 `Error`。`name` 是 `"MediaError"`。
+`MediaError` 是转换、探测、缩略图提取和 `getEmbeddedPicture` 抛出的错误类。它继承 `Error`。`name` 是 `"MediaError"`。
 
 ```ts
 class MediaError extends Error {

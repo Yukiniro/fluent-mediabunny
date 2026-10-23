@@ -34,7 +34,7 @@ Accepted containers are MP4, QTFF, WebM, Matroska, MP3, WAVE, OGG, FLAC, and ADT
 
 `tracks` contains audio and video tracks only. Other tracks are omitted.
 
-`metadata` keeps supported fields that pass validation. `date` from a source `Date` is `YYYY-MM-DD`. Other source fields, and supported fields that fail validation, are names in `omittedSourceFields`.
+`metadata` keeps supported fields that pass validation. `date` from a source `Date` is `YYYY-MM-DD`. Other source fields, and supported fields that fail validation, are names in `omittedSourceFields`. When the source exposes pictures, that list includes `"images"`. Read one picture with [getEmbeddedPicture](/api/embedded-picture).
 
 ## TrackInfo
 

@@ -1,6 +1,6 @@
 # Get started
 
-fluent-mediabunny is not on npm. Build it from source with Node 24 and pnpm 12.14.0, install the tarball with `mediabunny@1.61.6`, then run one conversion and one thumbnail.
+fluent-mediabunny is not on npm. Build it from source with Node 24 and pnpm 12.14.0, install the tarball with `mediabunny@1.61.6`, then run one conversion, one thumbnail, and one embedded-picture read.
 
 ## Build from source
 
@@ -56,3 +56,16 @@ if (poster) {
 ```
 
 `thumbnail` returns `null` when no frame covers that time. Revoke `imageUrl` when the image is gone. [Extract thumbnails](/guide/thumbnails) covers batches.
+
+## Read an embedded picture
+
+```ts
+import { getEmbeddedPicture } from "fluent-mediabunny";
+
+const picture = await getEmbeddedPicture(file);
+if (picture) {
+  const imageUrl = URL.createObjectURL(new Blob([picture]));
+}
+```
+
+`null` means none of the embedded pictures is a JPEG, PNG, GIF, WebP, or BMP. Revoke `imageUrl` when the image is gone. [getEmbeddedPicture](/api/embedded-picture) covers selection and errors.

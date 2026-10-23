@@ -98,6 +98,6 @@ run(options: RunOptions): Promise<MediaResult>;
 
 `ResolvedTrack` is `TrackInfo` plus a string `codec`, and optional `quality`, `bitrate`, and `frameRate`. Resized video also reports `width` and `height`. Audio reports `sampleRate` and `channels`.
 
-`MetadataReport` is `{ values: MetadataValues; removedByUser: MetadataField[]; omittedSourceFields: string[]; replacedSourceMetadata: boolean }`.
+`MetadataReport` is `{ values: MetadataValues; removedByUser: MetadataField[]; omittedSourceFields: string[]; replacedSourceMetadata: boolean }`. Conversion does not write embedded pictures into the output. Read one from the source with [getEmbeddedPicture](/api/embedded-picture).
 
 `Warning` is documented on [Errors](/api/errors). Its `code` is a string. Codes `run` assigns today are `METADATA_OMITTED`, `NON_AV_CONTENT_NOT_PRESERVED`, `FILENAME_EXTENSION_MISMATCH`, `CALLBACK_FAILED`, and `CLEANUP_FAILED`.

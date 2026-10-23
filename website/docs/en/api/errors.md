@@ -1,6 +1,6 @@
 # Errors
 
-`MediaError` is the error class thrown by conversion, probe, and thumbnail extraction. It extends `Error`. `name` is `"MediaError"`.
+`MediaError` is the error class thrown by conversion, probe, thumbnail extraction, and `getEmbeddedPicture`. It extends `Error`. `name` is `"MediaError"`.
 
 ```ts
 class MediaError extends Error {

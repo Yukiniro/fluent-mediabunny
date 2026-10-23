@@ -4,6 +4,8 @@
 
 选项字段在 [thumbnail](/api/thumbnails)。没有帧时结果是 `null`。非法选项、缺少解码器、不支持的输入、读取失败、图像过大和编码失败都会拒绝，不会变成 `null`。
 
+内嵌封面是另一条读取。[getEmbeddedPicture](/api/embedded-picture) 返回文件自带的 JPEG、PNG、GIF、WebP 或 BMP 字节。
+
 ## 请求一个时间点
 
 `time` 是秒，可以为 0。`width` 或 `height` 是不超过 4096 的正整数。

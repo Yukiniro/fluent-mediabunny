@@ -1,6 +1,6 @@
 # 开始使用
 
-fluent-mediabunny 目前尚未在 npm 上提供安装包。请使用 Node 24 和 pnpm 12.14.0 从源码构建，连同 `mediabunny@1.61.6` 安装压缩包，然后各跑一次转换和缩略图。
+fluent-mediabunny 目前尚未在 npm 上提供安装包。请使用 Node 24 和 pnpm 12.14.0 从源码构建，连同 `mediabunny@1.61.6` 安装压缩包，然后各跑一次转换、缩略图和内嵌图片读取。
 
 ## 从源码构建
 
@@ -56,3 +56,16 @@ if (poster) {
 ```
 
 请求时间没有帧覆盖时，`thumbnail` 返回 `null`。图像不再使用时释放 `imageUrl`。[提取缩略图](/guide/thumbnails) 说明批量提取。
+
+## 读取内嵌图片
+
+```ts
+import { getEmbeddedPicture } from "fluent-mediabunny";
+
+const picture = await getEmbeddedPicture(file);
+if (picture) {
+  const imageUrl = URL.createObjectURL(new Blob([picture]));
+}
+```
+
+内嵌图片都不是 JPEG、PNG、GIF、WebP 或 BMP 时，结果是 `null`。图像不再使用时释放 `imageUrl`。[getEmbeddedPicture](/api/embedded-picture) 说明选择规则和错误。

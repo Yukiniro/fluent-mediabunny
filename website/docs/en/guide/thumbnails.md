@@ -4,6 +4,8 @@
 
 Option fields are on [thumbnail](/api/thumbnails). A missing frame is `null`. Invalid options, a missing decoder, an unsupported input, a read failure, an oversized image, and an encoder failure reject. They do not come back as `null`.
 
+An embedded cover is a different read. [getEmbeddedPicture](/api/embedded-picture) returns the file's own JPEG, PNG, GIF, WebP, or BMP bytes.
+
 ## Request one time
 
 `time` is seconds and may be zero. `width` or `height` is a positive integer up to 4096.

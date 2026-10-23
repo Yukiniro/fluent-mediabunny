@@ -98,6 +98,6 @@ WAV 的 `mimeType` 是 `audio/wav`。M4A 是 `audio/mp4`。MP4 是 `video/mp4` �
 
 `ResolvedTrack` 是 `TrackInfo` 加上字符串 `codec`，以及可选的 `quality`、`bitrate` 和 `frameRate`。缩放后的视频还报告 `width` 和 `height`。音频报告 `sampleRate` 和 `channels`。
 
-`MetadataReport` 是 `{ values: MetadataValues; removedByUser: MetadataField[]; omittedSourceFields: string[]; replacedSourceMetadata: boolean }`。
+`MetadataReport` 是 `{ values: MetadataValues; removedByUser: MetadataField[]; omittedSourceFields: string[]; replacedSourceMetadata: boolean }`。转换不会把内嵌图片写入输出。用 [getEmbeddedPicture](/api/embedded-picture) 从源里读取一张。
 
 `Warning` 写在 [错误](/api/errors)。它的 `code` 是字符串。`run` 目前赋的码有 `METADATA_OMITTED`、`NON_AV_CONTENT_NOT_PRESERVED`、`FILENAME_EXTENSION_MISMATCH`、`CALLBACK_FAILED` 和 `CLEANUP_FAILED`。
