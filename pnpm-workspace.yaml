@@ -1,4 +1,6 @@
 packages:
+  # Changesets only versions workspace packages. The library lives at the root.
+  - "."
   - website
 allowBuilds:
   esbuild: true
