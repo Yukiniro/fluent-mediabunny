@@ -1,10 +1,10 @@
 import { Conversion, Output } from "mediabunny";
 import type { Input } from "mediabunny";
-import { object, validateConfig } from "./config.ts";
+import { formats, object, validateConfig } from "./config.ts";
 import { invalid, MediaError } from "./errors.ts";
 import { openInput, readable, signalOption } from "./input.ts";
 import { resolveMetadata } from "./metadata.ts";
-import { outputFormat, prepare } from "./plan.ts";
+import { prepare } from "./plan.ts";
 import { Scope } from "./scope.ts";
 import { OutputSink } from "./target.ts";
 import type {
@@ -72,7 +72,7 @@ export async function run(
         code: "NON_AV_CONTENT_NOT_PRESERVED",
         message: "Non audio/video tracks were omitted.",
       });
-    output = new Output({ format: outputFormat(config.format), target: sink.target });
+    output = new Output({ format: formats[config.format].writer(), target: sink.target });
     scope.onStop(async () => {
       await cancel(conversion ?? output);
     });
@@ -123,18 +123,8 @@ export async function run(
         scope.progress(Number.isFinite(ratio) ? Math.max(0, Math.min(1, ratio)) : null);
     await scope.wait(conversion.execute());
     scope.check();
-    const mimeType =
-      config.format === "wav"
-        ? "audio/wav"
-        : config.format === "m4a"
-          ? "audio/mp4"
-          : config.format === "mp4"
-            ? plan.selectedInfo.some((t) => t.type === "video")
-              ? "video/mp4"
-              : "audio/mp4"
-            : plan.selectedInfo.some((t) => t.type === "video")
-              ? "video/webm"
-              : "audio/webm";
+    const hasVideo = plan.selectedInfo.some((t) => t.type === "video");
+    const mimeType = `${hasVideo ? "video" : "audio"}/${formats[config.format].mimeSubtype}`;
     if (file && !file.handle.name.toLowerCase().endsWith(`.${config.format}`))
       scope.warnings.push({
         code: "FILENAME_EXTENSION_MISMATCH",

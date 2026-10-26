@@ -88,7 +88,7 @@ pnpm test:browser
 
 ## CI portability follow-up
 
-Linux Chrome does not provide the same AAC encoding support as macOS Chrome. The encoder matrix requires successful WebM and WAV conversions on every tested browser, checks exact output audio parameters, and records unavailable MP4/M4A encoding as `CODEC_UNAVAILABLE`. macOS Chrome retains its all-format success assertion.
+Linux Chrome does not provide the same AAC encoding support as macOS Chrome. The encoder matrix requires successful WebM, WAV, and Ogg conversions on every tested browser, checks exact output audio parameters, and records unavailable MP4/M4A encoding as `CODEC_UNAVAILABLE`. macOS Chrome retains its all-format success assertion.
 
 The Linux WebKit decoder did not expose the dynamic AVC fixture's size change through decoded sample dimensions. Transcoding now also checks AVC sequence parameter sets before opening a file output. This conservatively rejects any differing SPS throughout the source track, including non-geometric changes or changes outside a trim range. Copy mode is unaffected. A separate decoded-frame guard checks coded, visible, and display dimensions.
 

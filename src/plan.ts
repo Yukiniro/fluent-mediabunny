@@ -2,9 +2,6 @@ import {
   Conversion,
   Output,
   NullTarget,
-  Mp4OutputFormat,
-  WebMOutputFormat,
-  WavOutputFormat,
   Quality,
   canEncodeVideo,
   canEncodeAudio,
@@ -36,14 +33,8 @@ function additionalTransform(
   const turned = (((rotate ?? 0) + (vertical ? 180 : 0)) % 360) as 0 | 90 | 180 | 270;
   return { rotate: turned, flip: horizontal !== vertical };
 }
-export function outputFormat(format: Format) {
-  return format === "webm"
-    ? new WebMOutputFormat({ appendOnly: false })
-    : format === "wav"
-      ? new WavOutputFormat({ metadataFormat: "id3", large: false })
-      : new Mp4OutputFormat({ fastStart: false, metadataFormat: "mdir" });
-}
 export async function prepare(input: Input, config: Config & { format: Format }, scope: Scope) {
+  const profile = formats[config.format];
   const all = await scope.wait(input.getTracks(), "READ_FAILED");
   const selected = [
     ...(await selectTracks(input, all, "video", config.tracks.video)),
@@ -52,9 +43,9 @@ export async function prepare(input: Input, config: Config & { format: Format },
   if (!selected.length) throw new MediaError("NO_TRACKS", "No tracks selected.");
   const videos = selected.filter((t) => t.isVideoTrack()).length,
     audios = selected.length - videos;
-  const limits = outputFormat(config.format).getSupportedTrackCounts();
+  const limits = profile.writer().getSupportedTrackCounts();
   if (
-    (["m4a", "wav"].includes(config.format) && (videos !== 0 || audios !== 1)) ||
+    (profile.trackPolicy === "one-audio" && (videos !== 0 || audios !== 1)) ||
     videos > limits.video.max ||
     audios > limits.audio.max ||
     selected.length > limits.total.max
@@ -97,10 +88,9 @@ export async function prepare(input: Input, config: Config & { format: Format },
     const t = selected[i]!,
       info = selectedInfo[i]!,
       kind = info.type,
-      opts = config[kind],
-      matrix = formats[config.format];
-    const codec = config.mode === "copy" ? info.codec : (opts.codec ?? matrix[kind][0]);
-    const copyCodecs: readonly string[] = kind === "video" ? matrix.copyVideo : matrix.copyAudio;
+      opts = config[kind];
+    const codec = config.mode === "copy" ? info.codec : (opts.codec ?? profile[kind][0]);
+    const copyCodecs: readonly string[] = kind === "video" ? profile.copyVideo : profile.copyAudio;
     if (!codec || (config.mode === "copy" && !copyCodecs.includes(codec)))
       throw new MediaError("COPY_NOT_POSSIBLE", "Source codec cannot be copied to this format.");
     const r: ResolvedTrack = { ...info, codec, ...(opts.bitrate ? { bitrate: opts.bitrate } : {}) };
@@ -149,6 +139,9 @@ export async function prepare(input: Input, config: Config & { format: Format },
           : undefined,
         ...(config.resize ? { width: w, height: h, fit: config.resize.fit ?? "fill" } : {}),
         frameRate: config.video.frameRate,
+        ...(config.video.keyFrameInterval !== undefined
+          ? { keyFrameInterval: config.video.keyFrameInterval }
+          : {}),
       });
     } else {
       r.sampleRate = config.audio.sampleRate ?? info.sampleRate;
@@ -168,7 +161,7 @@ export async function prepare(input: Input, config: Config & { format: Format },
   };
   let copyable = new Set<number>();
   if (config.mode !== "transcode" && !trim) {
-    const output = new Output({ format: outputFormat(config.format), target: new NullTarget() });
+    const output = new Output({ format: profile.writer(), target: new NullTarget() });
     let trial: Conversion | undefined;
     const off = scope.onStop(() => output.cancel());
     try {

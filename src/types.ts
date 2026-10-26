@@ -1,5 +1,5 @@
 export type MediaInput = Blob | ArrayBuffer | Uint8Array<ArrayBuffer> | URL | string;
-export type Format = "mp4" | "webm" | "m4a" | "wav";
+export type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 export type Mode = "auto" | "copy" | "transcode";
 export type Quality = "low" | "medium" | "high";
 export type TrackSelection = "all" | "primary" | readonly number[] | false;
@@ -8,6 +8,7 @@ export type VideoOptions = {
   bitrate?: number;
   quality?: Quality;
   frameRate?: number;
+  keyFrameInterval?: number;
 };
 export type AudioOptions = {
   codec?: "aac" | "opus" | "pcm-s16" | "pcm-s24" | "pcm-f32";
