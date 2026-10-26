@@ -42,7 +42,7 @@ Every configuration method returns a **new** `MediaBuilder`. Methods validate ar
 | Methods                                              | Repeated calls                                                               |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `format`, `mode`, `trim`, `resize`, `crop`, `rotate` | Replace the previous setting                                                 |
-| `video`, `audio`, `tracks`                           | Merge supplied fields; empty objects and `undefined` fields do not overwrite |
+| `video`, `audio`, `tracks`, `flip`                   | Merge supplied fields; empty objects and `undefined` fields do not overwrite |
 | `metadata`                                           | Replace the entire metadata instruction, including its mode                  |
 
 ### format
@@ -77,7 +77,7 @@ type Mode = "auto" | "copy" | "transcode";
 | `"copy"`           | Preserve every selected track's codec. Reject if any selected track cannot be copied.                          |
 | `"transcode"`      | Decode and encode every selected track.                                                                        |
 
-Copy mode rejects trim, resize, crop, nonzero rotation, and nonempty video/audio options. `rotate(0)` is allowed. Every explicit trim forces transcoding, including in auto mode. Unavailable decoding or exact encoding configurations fail with `CODEC_UNAVAILABLE`; they are not substituted.
+Copy mode rejects trim, resize, crop, nonzero rotation, a flip axis set to `true`, and nonempty video/audio options. `rotate(0)` and a flip with both axes `false` are allowed. Every explicit trim forces transcoding, including in auto mode. Unavailable decoding or exact encoding configurations fail with `CODEC_UNAVAILABLE`; they are not substituted.
 
 ### trim
 
@@ -109,7 +109,7 @@ type ResizeOptions = {
 | `width`, `height` | Positive even integers in pixels. Supply at least one. Upscaling is allowed.                                                                 |
 | `fit`             | Required when both dimensions are supplied; forbidden when only one is supplied. `contain` letterboxes, `cover` crops, and `fill` stretches. |
 
-A single dimension preserves aspect ratio and infers the other with `2 * ceil(round(size) / 2)`. Geometry applies in this order, regardless of call order: source orientation and flip, additional rotation, crop, then resize.
+A single dimension preserves aspect ratio and infers the other with `2 * ceil(round(size) / 2)`. Geometry applies in this order, regardless of call order: source orientation and flip, additional rotation, additional flip, crop, then resize.
 
 ### crop
 
@@ -126,7 +126,16 @@ type CropOptions = { x: number; y: number; width: number; height: number };
 rotate(degrees: 0 | 90 | 180 | 270): MediaBuilder;
 ```
 
-Apply an additional rotation before crop and resize. Omit it, or pass `0`, to leave the source orientation unchanged.
+Apply an additional rotation before flip, crop, and resize. Omit it, or pass `0`, to leave the source orientation unchanged.
+
+### flip
+
+```ts
+flip(options: FlipOptions): MediaBuilder;
+type FlipOptions = { horizontal?: boolean; vertical?: boolean };
+```
+
+Mirror the picture after rotation and before crop. Each call merges the axes you pass. An omitted axis keeps its previous value. `false` clears that axis. Flip does not change the frame size. A vertical flip is a horizontal flip plus 180 degrees. Copy mode rejects an axis set to `true`. Both axes `false` are allowed, as with `rotate(0)`.
 
 ### video
 

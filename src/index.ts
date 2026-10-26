@@ -19,6 +19,7 @@ import type {
   TrimOptions,
   ResizeOptions,
   CropOptions,
+  FlipOptions,
   VideoOptions,
   AudioOptions,
   TracksOptions,
@@ -43,6 +44,7 @@ export type {
   ResizeOptions,
   TrimOptions,
   CropOptions,
+  FlipOptions,
   TracksOptions,
   MetadataField,
   MetadataPatch,
@@ -120,6 +122,19 @@ export class MediaBuilder {
   rotate(value: 0 | 90 | 180 | 270) {
     oneOf(value, [0, 90, 180, 270], "rotation");
     return this.with({ rotate: value });
+  }
+  flip(value: FlipOptions) {
+    const patch = object(value, ["horizontal", "vertical"]);
+    for (const key of ["horizontal", "vertical"] as const)
+      if (patch[key] !== undefined && typeof patch[key] !== "boolean") invalid(`Invalid ${key}.`);
+    const previous = this.#config.flip ?? { horizontal: false, vertical: false };
+    return this.with({
+      flip: {
+        horizontal:
+          patch.horizontal === undefined ? previous.horizontal : (patch.horizontal as boolean),
+        vertical: patch.vertical === undefined ? previous.vertical : (patch.vertical as boolean),
+      },
+    });
   }
   video(value: VideoOptions) {
     return this.with({ video: mergeEncoding(this.#config.video, encoding(value, "video")) });

@@ -28,7 +28,7 @@ Builder methods perform no media I/O and return a new builder with copied option
 | Calls                                                | Repeated-call behavior                                                              |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `format`, `mode`, `trim`, `resize`, `crop`, `rotate` | Replace the previous value                                                          |
-| `video`, `audio`, `tracks`                           | Merge supplied fields; `undefined` and empty objects do not overwrite               |
+| `video`, `audio`, `tracks`, `flip`                   | Merge supplied fields; `undefined` and empty objects do not overwrite               |
 | `metadata`                                           | Replace the entire instruction and mode; default `merge` applies to source metadata |
 
 `bitrate` and `quality` are mutually exclusive: supplying both fails, and setting one later removes the other. Invalid method arguments throw `MediaError` synchronously; final-configuration and source-dependent errors reject `run()` during preparation.
@@ -53,12 +53,12 @@ Builder methods perform no media I/O and return a new builder with copied option
 ## Encoding and geometry
 
 - `auto` is the default: resolve the explicit or format-default codec, then copy compatible tracks when processing settings allow it. `transcode` re-encodes every selected track.
-- `copy` preserves source codecs within the copy allowlist and requires no decoder or encoder. It rejects trim, resize, crop, nonzero rotation, and nonempty audio/video settings. Failure to copy any selected track fails the run.
+- `copy` preserves source codecs within the copy allowlist and requires no decoder or encoder. It rejects trim, resize, crop, nonzero rotation, a flip axis set to `true`, and nonempty audio/video settings. `flip` with both axes `false` is allowed. Failure to copy any selected track fails the run.
 - Encoding defaults to `quality: "high"`; explicit quality or bitrate forces transcoding. Bitrate is a positive finite integer in bits/s. PCM rejects quality and bitrate options.
 - Frame rate is positive finite frames/s; sample rate and channel count are positive integers. Omitted values preserve source behavior. Unavailable requested configurations fail without codec, rate, or channel substitution.
 - `keyFrameInterval` is finite seconds `>= 0` between video key frames; `0` makes every frame a key frame. Setting it, including `0`, forces video transcoding and leaves audio copy decisions unchanged. Omitted, the property is not passed to Mediabunny, whose 1.62.1 encoder falls back to 2 seconds. The value is a request to the encoder, not a guarantee of exact key-frame timestamps. It is not reported in `ResolvedTrack`.
 - Trim uses finite `start >= 0` and optional `end > start`, relative to `max(0, min(selected firstTimestamp))`. Omitted end uses the selected tracks' end. Start at/after that end or an end beyond it fails. Every explicit trim transcodes all selected tracks, normalizes output time, and preserves inter-track offsets within frame/sample precision.
-- Geometry order is source orientation/flip → additional rotation → crop → resize, regardless of call order. Rotation is 0, 90, 180, or 270 degrees. Crop uses nonnegative integer x/y and positive integer dimensions within the rotated frame.
+- Geometry order is source orientation/flip → additional rotation → additional flip → crop → resize, regardless of call order. Rotation is 0, 90, 180, or 270 degrees. `flip` sets `horizontal` and `vertical` independently. An omitted axis keeps its previous value, and `false` clears that axis. Flip does not change frame size. A vertical flip is a horizontal flip plus 180 degrees, because Mediabunny stores one horizontal flip after rotation. Crop uses nonnegative integer x/y and positive integer dimensions within the rotated frame.
 - Resize requires at least one positive even dimension. Both dimensions require `fit: "contain" | "cover" | "fill"`; a single dimension prohibits fit and infers the other as `2 * ceil(round(aspect-preserving dimension) / 2)`. Upscaling is allowed.
 - Transcoding rejects changing frame dimensions. AVC transcoding requires an avcC description and unchanged sequence parameter sets throughout the source, including outside a trim. Copy is unaffected.
 

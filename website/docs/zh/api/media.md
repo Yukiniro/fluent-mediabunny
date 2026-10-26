@@ -42,7 +42,7 @@ class MediaBuilder {
 | 方法                                                 | 重复调用                                            |
 | ---------------------------------------------------- | --------------------------------------------------- |
 | `format`、`mode`、`trim`、`resize`、`crop`、`rotate` | 替换之前的设置                                      |
-| `video`、`audio`、`tracks`                           | 合并提供的字段；空对象和 `undefined` 字段不覆盖旧值 |
+| `video`、`audio`、`tracks`、`flip`                   | 合并提供的字段；空对象和 `undefined` 字段不覆盖旧值 |
 | `metadata`                                           | 替换整条元数据指令及其模式                          |
 
 ### format
@@ -77,7 +77,7 @@ type Mode = "auto" | "copy" | "transcode";
 | `"copy"`         | 保留所有选中轨道的源编解码器；任何选中轨道无法复制时失败。     |
 | `"transcode"`    | 解码并重新编码所有选中轨道。                                   |
 
-复制模式拒绝时间裁剪、缩放、画面裁剪、非零旋转和非空音视频选项，允许 `rotate(0)`。任何显式时间裁剪都会强制转码，包括自动模式。无法满足精确编解码配置时，报 `CODEC_UNAVAILABLE`，不会替换为其他配置。
+复制模式拒绝时间裁剪、缩放、画面裁剪、非零旋转、任一轴为 `true` 的翻转，以及非空音视频选项。允许 `rotate(0)`，也允许两个轴都为 `false` 的 `flip`。任何显式时间裁剪都会强制转码，包括自动模式。无法满足精确编解码配置时，报 `CODEC_UNAVAILABLE`，不会替换为其他配置。
 
 ### trim
 
@@ -109,7 +109,7 @@ type ResizeOptions = {
 | `width`、`height` | 像素单位的正偶数，至少提供一个，允许放大。                                            |
 | `fit`             | 同时指定宽高时必填，只指定一个尺寸时禁止。`contain` 留边，`cover` 裁剪，`fill` 拉伸。 |
 
-单尺寸保持宽高比，另一边按 `2 * ceil(round(size) / 2)` 推导。无论方法调用顺序如何，画面处理顺序始终是：源方向与翻转、额外旋转、裁剪、缩放。
+单尺寸保持宽高比，另一边按 `2 * ceil(round(size) / 2)` 推导。无论方法调用顺序如何，画面处理顺序始终是：源方向与翻转、额外旋转、额外翻转、裁剪、缩放。
 
 ### crop
 
@@ -126,7 +126,16 @@ type CropOptions = { x: number; y: number; width: number; height: number };
 rotate(degrees: 0 | 90 | 180 | 270): MediaBuilder;
 ```
 
-在裁剪和缩放前应用额外旋转。省略或传入 `0` 时保留源方向。
+在翻转、裁剪和缩放前应用额外旋转。省略或传入 `0` 时保留源方向。
+
+### flip
+
+```ts
+flip(options: FlipOptions): MediaBuilder;
+type FlipOptions = { horizontal?: boolean; vertical?: boolean };
+```
+
+在旋转之后、裁剪之前镜像画面。每次调用只合并传入的轴。省略的轴保留前值。`false` 清除该轴。翻转不改变画面尺寸。垂直翻转是水平翻转再加 180 度。复制模式拒绝任一轴为 `true`。两个轴都为 `false` 时允许，与 `rotate(0)` 相同。
 
 ### video
 

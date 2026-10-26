@@ -208,6 +208,8 @@ export function validateConfig(config: Config): asserts config is Config & { for
       config.resize ||
       config.crop ||
       config.rotate ||
+      config.flip?.horizontal ||
+      config.flip?.vertical ||
       Object.keys(config.video).length ||
       Object.keys(config.audio).length)
   )

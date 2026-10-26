@@ -20,6 +20,7 @@ export type AudioOptions = {
 export type ResizeOptions = { width?: number; height?: number; fit?: "contain" | "cover" | "fill" };
 export type TrimOptions = { start: number; end?: number };
 export type CropOptions = { x: number; y: number; width: number; height: number };
+export type FlipOptions = { horizontal?: boolean; vertical?: boolean };
 export type TracksOptions = { video?: TrackSelection; audio?: TrackSelection };
 export const metadataFields = [
   "title",
@@ -163,6 +164,7 @@ export type Config = {
   resize?: ResizeOptions;
   crop?: CropOptions;
   rotate?: 0 | 90 | 180 | 270;
+  flip?: { horizontal: boolean; vertical: boolean };
   video: VideoOptions;
   audio: AudioOptions;
   tracks: TracksOptions;
