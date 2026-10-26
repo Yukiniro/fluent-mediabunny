@@ -25,7 +25,7 @@ MP4 encodes `avc` and `aac`. WebM encodes `vp9` or `vp8`, and `opus`. M4A encode
 media(file).format("mp4").mode("copy");
 ```
 
-`"auto"` resolves the explicit or format-default codec, then copies compatible tracks when the processing settings allow it and transcodes the rest. `"transcode"` decodes and encodes every selected track. `"copy"` copies every selected track and rejects `trim`, `resize`, `crop`, nonzero `rotate`, and nonempty video or audio options. `rotate(0)` is allowed.
+`"auto"` resolves the explicit or format-default codec, then copies compatible tracks when the processing settings allow it and transcodes the rest. `"transcode"` decodes and encodes every selected track. `"copy"` copies every selected track and rejects `trim`, `resize`, `crop`, nonzero `rotate`, a `flip` axis set to `true`, and nonempty video or audio options. `rotate(0)` and `flip` with both axes `false` are allowed.
 
 Copy can keep `avc` and `hevc` in MP4, `aac` in MP4 or M4A, `vp8`, `vp9`, and `av1` in WebM, `opus` and `vorbis` in WebM, and `pcm-s16`, `pcm-s24`, and `pcm-f32` in WAV. Anything else in copy mode throws `COPY_NOT_POSSIBLE`.
 
@@ -64,6 +64,14 @@ Pass `0`, `90`, `180`, or `270`. Rotation is applied before crop and resize.
 
 ```ts
 media(file).format("mp4").rotate(90);
+```
+
+## Flip the picture
+
+Pass `horizontal`, `vertical`, or both. A later call changes only the axes you set. The flip runs after rotation and before crop. A vertical flip is a horizontal flip plus 180 degrees.
+
+```ts
+media(file).format("mp4").flip({ horizontal: true }).flip({ vertical: true });
 ```
 
 ## Set the video encoding

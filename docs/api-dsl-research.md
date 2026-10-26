@@ -32,7 +32,7 @@ The local builder follows that model: [`MediaBuilder.with`](../src/index.ts) cre
 
 Sharp permits one resize per pipeline, with previous resize calls ignored. Its rotation documentation says rotation/extraction order can change the result, while auto-orientation and flip have their own ordering rules. This demonstrates why a familiar chain syntax does not establish a universal execution model. [Sharp resize](https://sharp.pixelplumbing.com/api-resize/), [Sharp operations](https://sharp.pixelplumbing.com/api-operation/).
 
-Here, geometry has a fixed order: source orientation/flip, additional rotation, crop, then resize, regardless of call order. Keep that explicit [contract](../spec/conversion.md#encoding-and-geometry). Do not imitate Sharp's operation order merely because both interfaces are fluent. A useful review example is whether `crop(...).rotate(...)` and `rotate(...).crop(...)` intentionally resolve to the same configuration.
+Here, geometry has a fixed order: source orientation/flip, additional rotation, additional flip, crop, then resize, regardless of call order. Keep that explicit [contract](../spec/conversion.md#encoding-and-geometry). Do not imitate Sharp's operation order merely because both interfaces are fluent. A useful review example is whether `crop(...).rotate(...)` and `rotate(...).crop(...)` intentionally resolve to the same configuration.
 
 ### 4. Keep construction and execution separate without exporting every internal stage
 

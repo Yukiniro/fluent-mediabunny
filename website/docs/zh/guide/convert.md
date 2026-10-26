@@ -25,7 +25,7 @@ MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A �
 media(file).format("mp4").mode("copy");
 ```
 
-`"auto"` 先解析显式或格式默认编解码器，再在处理配置允许时复制兼容轨道，其余轨道转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、非零 `rotate` 以及非空视频或音频选项。允许 `rotate(0)`。
+`"auto"` 先解析显式或格式默认编解码器，再在处理配置允许时复制兼容轨道，其余轨道转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、非零 `rotate`、任一轴为 `true` 的 `flip`，以及非空视频或音频选项。允许 `rotate(0)`，也允许两个轴都为 `false` 的 `flip`。
 
 复制可以在 MP4 中保留 `avc` 和 `hevc`，在 MP4 或 M4A 中保留 `aac`，在 WebM 中保留 `vp8`、`vp9` 和 `av1`，在 WebM 中保留 `opus` 和 `vorbis`，在 WAV 中保留 `pcm-s16`、`pcm-s24` 和 `pcm-f32`。复制模式遇到其余编解码器时抛出 `COPY_NOT_POSSIBLE`。
 
@@ -64,6 +64,14 @@ media(file).format("mp4").crop({ x: 0, y: 0, width: 640, height: 360 });
 
 ```ts
 media(file).format("mp4").rotate(90);
+```
+
+## 翻转画面
+
+传入 `horizontal`、`vertical` 或两者。后一次调用只改你传入的轴。翻转在旋转之后、裁剪之前进行。垂直翻转是水平翻转再加 180 度。
+
+```ts
+media(file).format("mp4").flip({ horizontal: true }).flip({ vertical: true });
 ```
 
 ## 设置视频编码

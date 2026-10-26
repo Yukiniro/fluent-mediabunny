@@ -25,6 +25,17 @@ import { selectTracks, trackInfo } from "./input.ts";
 import { checkSize } from "./target.ts";
 import { Scope } from "./scope.ts";
 import type { Config, Format, ResolvedTrack } from "./types.ts";
+function additionalTransform(
+  rotate: 0 | 90 | 180 | 270 | undefined,
+  flip: { horizontal: boolean; vertical: boolean } | undefined,
+) {
+  const horizontal = !!flip?.horizontal;
+  const vertical = !!flip?.vertical;
+  if (!horizontal && !vertical) return { rotate, flip: false };
+  // Mediabunny stores one horizontal flip after rotation. Vertical flip is that flip plus 180 degrees.
+  const turned = (((rotate ?? 0) + (vertical ? 180 : 0)) % 360) as 0 | 90 | 180 | 270;
+  return { rotate: turned, flip: horizontal !== vertical };
+}
 export function outputFormat(format: Format) {
   return format === "webm"
     ? new WebMOutputFormat({ appendOnly: false })
@@ -51,7 +62,12 @@ export async function prepare(input: Input, config: Config & { format: Format },
     throw new MediaError("TRACK_LOSS", "Output format cannot hold every selected track.");
   if (
     !videos &&
-    (Object.keys(config.video).length || config.crop || config.resize || config.rotate)
+    (Object.keys(config.video).length ||
+      config.crop ||
+      config.resize ||
+      config.rotate ||
+      config.flip?.horizontal ||
+      config.flip?.vertical)
   )
     invalid("No video track to process.");
   if (!audios && Object.keys(config.audio).length) invalid("No audio track to process.");
@@ -116,11 +132,13 @@ export async function prepare(input: Input, config: Config & { format: Format },
       r.width = w;
       r.height = h;
       r.frameRate = config.video.frameRate;
+      const turned = additionalTransform(config.rotate, config.flip);
       video.set(t.id, {
         codec: codec as VideoCodec,
         quality,
         forceTranscode,
-        rotate: config.rotate,
+        rotate: turned.rotate,
+        ...(turned.flip ? { flip: true } : {}),
         crop: config.crop
           ? {
               left: config.crop.x,
