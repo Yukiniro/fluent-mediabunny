@@ -4,7 +4,7 @@
 
 `thumbnail(source, options)` 返回 `Promise<ThumbnailImage | null>`。`thumbnails(source, options)` 返回 `AsyncGenerator<ThumbnailItem>`，每个请求对应一个条目，索引从 0 开始。公开类型见 [types.ts](../src/types.ts)。
 
-两者按共享的[输入契约](conversion.zh-CN.md#输入与探测)读取原始素材，不继承转换 builder 的设置。
+两者按共享的[输入契约](conversion.zh-CN.md#输入与探测)读取原始素材，不继承转换 builder 的设置。编码关键帧见单独的[关键帧契约](keyframes.zh-CN.md)。
 
 ## 请求与时间
 

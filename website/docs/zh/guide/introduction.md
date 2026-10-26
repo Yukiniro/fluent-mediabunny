@@ -35,6 +35,9 @@ const previewUrl = URL.createObjectURL(result.blob);
 | 把该波形画成一张 PNG       | [renderWaveform()](/zh/api/waveforms)            | `Promise<WaveformImage>`                   |
 | 解码一帧视频               | [thumbnail()](/zh/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`          |
 | 生成视频预览序列           | [thumbnails()](/zh/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`            |
+| 解码最近的编码关键帧       | [getClosestKeyFrameImage()](/zh/api/keyframes)   | `Promise<KeyFrameImage \| null>`           |
+| 列出时间范围内的编码关键帧 | [getKeyFrameImages()](/zh/api/keyframes)         | `AsyncGenerator<KeyFrameImage>`            |
+| 统计编码关键帧数量         | [getKeyFrameCount()](/zh/api/keyframes)          | `Promise<number>`                          |
 | 读取文件内嵌的封面图片     | [getEmbeddedPicture()](/zh/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>` |
 
 ## API 的工作方式

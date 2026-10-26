@@ -4,7 +4,7 @@ English | [简体中文](thumbnails.zh-CN.md)
 
 `thumbnail(source, options)` returns `Promise<ThumbnailImage | null>`. `thumbnails(source, options)` returns an `AsyncGenerator<ThumbnailItem>` with one entry per request and a zero-based index. Public types are in [types.ts](../src/types.ts).
 
-Both read the original source using the shared [input contract](conversion.md#input-and-probe). Conversion-builder settings do not apply.
+Both read the original source using the shared [input contract](conversion.md#input-and-probe). Conversion-builder settings do not apply. Encoded keyframes are a separate contract in [keyframes](keyframes.md).
 
 ## Requests and timing
 

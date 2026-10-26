@@ -5,7 +5,7 @@ description: Decode one video frame or lazily generate a bounded batch of JPEG o
 
 # thumbnail / thumbnails
 
-Decode video frames into JPEG or PNG images. Use `thumbnail` for one time and `thumbnails` for a batch. To read original cover art instead, use [getEmbeddedPicture](/api/embedded-picture).
+Decode video frames into JPEG or PNG images. Use `thumbnail` for one time and `thumbnails` for a batch. To read original cover art instead, use [getEmbeddedPicture](/api/embedded-picture). For encoded keyframes, use [getClosestKeyFrameImage](/api/keyframes).
 
 ## thumbnail
 

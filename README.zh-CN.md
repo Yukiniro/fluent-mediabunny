@@ -70,6 +70,8 @@ if (poster) {
 
 请求时间没有帧覆盖时，结果为 `null`。需要一组预览图时，`thumbnails()` 会按需生成图像，并保留每个请求的位置，包括没有帧的位置。每批支持 1–1000 个请求，输出 JPEG 或 PNG；图像每边最多 4096 像素，总面积不超过 16,000,000 像素。
 
+`thumbnail()` 返回覆盖该时间的显示帧，这个帧可以是 B 帧。`getClosestKeyFrameImage()`、`getKeyFrameImages()` 和 `getKeyFrameCount()` 读取的是编码关键帧。契约见 [关键帧](spec/keyframes.zh-CN.md)。
+
 ### 读取内嵌图片
 
 ```ts
@@ -106,7 +108,7 @@ const imageUrl = URL.createObjectURL(image.blob);
 
 ## 参与贡献
 
-开发契约：[媒体转换](spec/conversion.zh-CN.md)、[波形](spec/waveforms.zh-CN.md)、[缩略图](spec/thumbnails.zh-CN.md)、[内嵌图片](spec/embedded-picture.zh-CN.md)。
+开发契约：[媒体转换](spec/conversion.zh-CN.md)、[波形](spec/waveforms.zh-CN.md)、[缩略图](spec/thumbnails.zh-CN.md)、[关键帧](spec/keyframes.zh-CN.md)、[内嵌图片](spec/embedded-picture.zh-CN.md)。
 
 欢迎通过 [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) 或 Pull Request 提交问题和范围明确的改进。反馈浏览器相关问题时，请附上浏览器、操作系统，以及使用可分享媒体的最小复现示例。
 

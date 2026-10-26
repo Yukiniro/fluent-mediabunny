@@ -1,9 +1,12 @@
 import { EncodedPacketSink, VideoSampleSink } from "mediabunny";
 import type { Input, VideoSample } from "mediabunny";
-import { normalizeSource, number, object, oneOf } from "./config.ts";
+import { normalizeSource, number } from "./config.ts";
 import { invalid, MediaError } from "./errors.ts";
-import { createCanvas, encodeCanvas } from "./image.ts";
-import { openInput, readable, signalOption } from "./input.ts";
+import type { Raster } from "./image.ts";
+import { readImageRequest } from "./image-options.ts";
+import { openInput, readable } from "./input.ts";
+import { micros } from "./media-time.ts";
+import { paintFrame } from "./paint-frame.ts";
 import { Scope } from "./scope.ts";
 import type {
   MediaInput,
@@ -14,13 +17,6 @@ import type {
   ThumbnailsOptions,
 } from "./types.ts";
 
-const imageKeys = ["track", "width", "height", "fit", "type", "quality", "signal"];
-function micros(value: number, phase: "preparing" | "processing" = "preparing"): number {
-  const result = Math.round(value * 1_000_000);
-  if (!Number.isSafeInteger(result))
-    throw new MediaError("UNSUPPORTED_INPUT", "Unsafe media timestamp.", { phase });
-  return result;
-}
 function time(value: unknown): number {
   number(value, "time", { zero: true });
   if (!Number.isSafeInteger(Math.round(value * 1_000_000)))
@@ -28,35 +24,7 @@ function time(value: unknown): number {
   return value === 0 ? 0 : value;
 }
 function options(value: unknown, single: boolean) {
-  const opts = object(value, [
-    ...imageKeys,
-    ...(single ? ["time"] : ["times", "start", "end", "count"]),
-  ]);
-  signalOption(opts.signal);
-  if (opts.track !== undefined && opts.track !== "primary")
-    number(opts.track, "track ID", { integer: true, zero: true });
-  for (const key of ["width", "height"]) {
-    if (opts[key] !== undefined) {
-      number(opts[key], key, { integer: true });
-      if (opts[key] > 4096) invalid("Image dimensions must not exceed 4096.");
-    }
-  }
-  if ((opts.width !== undefined && opts.height !== undefined) !== (opts.fit !== undefined))
-    invalid("fit requires both dimensions and vice versa.");
-  if (opts.fit !== undefined) oneOf(opts.fit, ["contain", "cover", "fill"], "fit");
-  if (
-    typeof opts.width === "number" &&
-    typeof opts.height === "number" &&
-    opts.width * opts.height > 16_000_000
-  )
-    invalid("Image area exceeds 16000000 pixels.");
-  const type = opts.type === undefined ? "image/jpeg" : opts.type;
-  oneOf(type, ["image/jpeg", "image/png"] as const, "image type");
-  if (opts.quality !== undefined) {
-    number(opts.quality, "quality", { zero: true });
-    if (opts.quality > 1 || type === "image/png")
-      invalid("quality is a JPEG-only value in [0, 1].");
-  }
+  const opts = readImageRequest(value, single ? ["time"] : ["times", "start", "end", "count"]);
   let times: number[];
   if (single) times = [time(opts.time)];
   else if (opts.times !== undefined) {
@@ -76,7 +44,7 @@ function options(value: unknown, single: boolean) {
       time(start + (i * (end - start)) / (opts.count as number)),
     );
   }
-  return { ...opts, type, quality: opts.quality ?? 0.8, times } as ThumbnailImageOptions & {
+  return { ...opts, times } as ThumbnailImageOptions & {
     type: "image/jpeg" | "image/png";
     quality: number;
     times: number[];
@@ -92,7 +60,7 @@ function extract(
     let input: Input | undefined;
     let samples: AsyncGenerator<VideoSample | null, void, unknown> | undefined;
     let sample: VideoSample | null = null;
-    let surface: ReturnType<typeof createCanvas> | undefined;
+    const slot: { canvas?: Raster } = {};
     let working = true;
     let cleaning: Promise<void> | undefined;
     const closeSample = () => {
@@ -119,14 +87,14 @@ function extract(
         }
         sample = null;
         try {
-          if (surface) {
-            surface.width = 1;
-            surface.height = 1;
+          if (slot.canvas) {
+            slot.canvas.width = 1;
+            slot.canvas.height = 1;
           }
         } catch (e) {
           scope.fail(e);
         }
-        surface = undefined;
+        slot.canvas = undefined;
       }));
     scope.onStop(() => {
       if (!working) return cleanup();
@@ -178,93 +146,26 @@ function extract(
               phase: scope.phase,
             });
           if (start <= queries[index]! && queries[index]! < start + duration) {
-            // Some decoders omit container pixel aspect ratio from their VideoFrame metadata.
-            const aspect =
-              sample.pixelAspectRatio.num === sample.pixelAspectRatio.den &&
-              sample.codedWidth === codedWidth &&
-              sample.codedHeight === codedHeight
-                ? fallbackAspect
-                : 1;
-            const sw = sample.displayWidth * (sample.rotation % 180 === 0 ? aspect : 1),
-              sh = sample.displayHeight * (sample.rotation % 180 === 0 ? 1 : aspect);
-            if (!Number.isFinite(sw) || !Number.isFinite(sh) || sw <= 0 || sh <= 0)
-              throw new MediaError("UNSUPPORTED_INPUT", "Invalid frame geometry.", {
-                phase: scope.phase,
-              });
-            const width =
-              opts.width ??
-              Math.max(1, Math.round(opts.height === undefined ? sw : (opts.height * sw) / sh));
-            const height =
-              opts.height ??
-              Math.max(1, Math.round(opts.width === undefined ? sh : (opts.width * sh) / sw));
-            if (width > 4096 || height > 4096 || width * height > 16_000_000)
-              throw new MediaError("OUTPUT_TOO_LARGE", "Resolved image exceeds output limits.", {
-                phase: scope.phase,
-              });
-            surface ??= createCanvas(width, height);
-            surface.width = width;
-            surface.height = height;
-            const context = surface.getContext("2d") as
-              | CanvasRenderingContext2D
-              | OffscreenCanvasRenderingContext2D
-              | null;
-            if (!context)
-              throw new MediaError(
-                "IMAGE_ENCODING_UNAVAILABLE",
-                "Canvas 2D rendering is unavailable.",
-                { phase: scope.phase },
-              );
-            const scale =
-              opts.fit === "contain"
-                ? Math.min(width / sw, height / sh)
-                : Math.max(width / sw, height / sh);
-            const dw = !opts.fit || opts.fit === "fill" ? width : sw * scale;
-            const dh = !opts.fit || opts.fit === "fill" ? height : sh * scale;
-            sample.draw(context, (width - dw) / 2, (height - dh) / 2, dw, dh);
-            if (opts.type === "image/jpeg") {
-              if (sample.hasAlpha !== false) {
-                // CPU composition avoids accelerated VideoFrame alpha blending differences.
-                const pixels = context.getImageData(0, 0, width, height);
-                for (let i = 0; i < pixels.data.length; i += 4) {
-                  const alpha = pixels.data[i + 3]! / 255;
-                  for (let c = 0; c < 3; c++)
-                    pixels.data[i + c] = Math.round(pixels.data[i + c]! * alpha);
-                  pixels.data[i + 3] = 255;
-                }
-                context.putImageData(pixels, 0, 0);
-              } else {
-                context.globalCompositeOperation = "destination-over";
-                context.fillStyle = "black";
-                context.fillRect(0, 0, width, height);
-                context.globalCompositeOperation = "source-over";
-              }
-            }
-            const timing = {
-              sourceTimestamp: sample.timestamp,
-              durationSeconds: sample.duration,
-              actualTime: sample.timestamp - origin,
-            };
-            closeSample();
-            const blob = await scope.wait(encodeCanvas(surface, opts.type, opts.quality));
-            if (!blob || !blob.size)
-              throw new MediaError("PROCESSING_FAILED", "Image encoder returned no data.", {
-                phase: scope.phase,
-              });
-            if (blob.type !== opts.type)
-              throw new MediaError(
-                "IMAGE_ENCODING_UNAVAILABLE",
-                "Image encoder substituted the requested MIME type.",
-                { phase: scope.phase },
-              );
             image = {
-              blob,
-              mimeType: opts.type,
-              width,
-              height,
-              trackId: track.id,
+              ...(await paintFrame(
+                sample,
+                {
+                  width: opts.width,
+                  height: opts.height,
+                  fit: opts.fit,
+                  type: opts.type,
+                  quality: opts.quality,
+                  trackId: track.id,
+                  origin,
+                  codedWidth,
+                  codedHeight,
+                  fallbackAspect,
+                },
+                scope,
+                slot,
+                closeSample,
+              )),
               requestedTime,
-              timeOriginSeconds: origin,
-              ...timing,
             };
           }
           closeSample();
