@@ -1,3 +1,9 @@
+import { Mp4OutputFormat, OggOutputFormat, WavOutputFormat, WebMOutputFormat } from "mediabunny";
+import type {
+  AudioCodec as EngineAudioCodec,
+  OutputFormat,
+  VideoCodec as EngineVideoCodec,
+} from "mediabunny";
 import { MediaError, invalid } from "./errors.ts";
 import type {
   AudioOptions,
@@ -117,31 +123,79 @@ export function mergeEncoding<T extends VideoOptions | AudioOptions>(current: T,
   if (patch.quality !== undefined) delete result.bitrate;
   return result;
 }
-export const formats = {
-  mp4: { video: ["avc"], audio: ["aac"], copyVideo: ["avc", "hevc"], copyAudio: ["aac"] },
+type EncodeCodecs<C> = readonly [defaultCodec: C, ...alternatives: C[]];
+export type FormatProfile = {
+  readonly writer: () => OutputFormat;
+  /** Owned here, not read from writer().mimeType, so a Mediabunny upgrade cannot change the public MIME. */
+  readonly mimeSubtype: string;
+  readonly audio: EncodeCodecs<NonNullable<AudioOptions["codec"]>>;
+  readonly copyAudio: readonly EngineAudioCodec[];
+} & (
+  | {
+      readonly trackPolicy: "one-audio";
+      readonly video: readonly never[];
+      readonly copyVideo: readonly never[];
+    }
+  | {
+      readonly trackPolicy: "engine-limits";
+      readonly video: EncodeCodecs<NonNullable<VideoOptions["codec"]>>;
+      readonly copyVideo: readonly EngineVideoCodec[];
+    }
+);
+const mp4Writer = () => new Mp4OutputFormat({ fastStart: false, metadataFormat: "mdir" });
+export const formats: Readonly<Record<Format, FormatProfile>> = {
+  mp4: {
+    writer: mp4Writer,
+    mimeSubtype: "mp4",
+    trackPolicy: "engine-limits",
+    video: ["avc"],
+    audio: ["aac"],
+    copyVideo: ["avc", "hevc"],
+    copyAudio: ["aac"],
+  },
   webm: {
+    writer: () => new WebMOutputFormat({ appendOnly: false }),
+    mimeSubtype: "webm",
+    trackPolicy: "engine-limits",
     video: ["vp9", "vp8"],
     audio: ["opus"],
     copyVideo: ["vp8", "vp9", "av1"],
     copyAudio: ["opus", "vorbis"],
   },
-  m4a: { video: [], audio: ["aac"], copyVideo: [], copyAudio: ["aac"] },
+  m4a: {
+    writer: mp4Writer,
+    mimeSubtype: "mp4",
+    trackPolicy: "one-audio",
+    video: [],
+    audio: ["aac"],
+    copyVideo: [],
+    copyAudio: ["aac"],
+  },
   wav: {
+    writer: () => new WavOutputFormat({ metadataFormat: "id3", large: false }),
+    mimeSubtype: "wav",
+    trackPolicy: "one-audio",
     video: [],
     audio: ["pcm-s16", "pcm-s24", "pcm-f32"],
     copyVideo: [],
     copyAudio: ["pcm-s16", "pcm-s24", "pcm-f32"],
   },
-} satisfies Record<
-  Format,
-  { video: string[]; audio: string[]; copyVideo: string[]; copyAudio: string[] }
->;
+  ogg: {
+    writer: () => new OggOutputFormat(),
+    mimeSubtype: "ogg",
+    trackPolicy: "one-audio",
+    video: [],
+    audio: ["opus"],
+    copyVideo: [],
+    copyAudio: ["opus", "vorbis"],
+  },
+};
 export function validateConfig(config: Config): asserts config is Config & { format: Format } {
   if (!config.format) invalid("Output format is required.");
-  const matrix = formats[config.format];
   for (const kind of ["video", "audio"] as const) {
     const codec = config[kind].codec;
-    if (codec && !(matrix[kind] as string[]).includes(codec))
+    const allowed: readonly string[] = formats[config.format][kind];
+    if (codec && !allowed.includes(codec))
       throw new MediaError(
         "UNSUPPORTED_OUTPUT_COMBINATION",
         `${codec} is not enabled for ${config.format}.`,

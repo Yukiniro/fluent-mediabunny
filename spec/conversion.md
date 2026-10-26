@@ -43,9 +43,10 @@ Builder methods perform no media I/O and return a new builder with copied option
 | WebM   | vp9, vp8     | opus                      | vp8, vp9, av1 | opus, vorbis              |
 | M4A    | None         | aac                       | None          | aac                       |
 | WAV    | None         | pcm-s16, pcm-s24, pcm-f32 | None          | pcm-s16, pcm-s24, pcm-f32 |
+| Ogg    | None         | opus                      | None          | opus, vorbis              |
 
 - Default selection is all audio/video tracks. `primary` uses Mediabunny's primary track; `false` excludes a media type. ID lists are nonempty, unique nonnegative safe integers identifying tracks of that type.
-- M4A/WAV require exactly one audio track and no video. Callers exclude video explicitly. MP4/WebM retain selected tracks within backend limits; silent video is valid.
+- M4A/WAV/Ogg require exactly one audio track and no video, even though Mediabunny's Ogg writer accepts more audio tracks. Callers exclude video explicitly. MP4/WebM retain selected tracks within backend limits; silent video is valid.
 - No selected tracks yields `NO_TRACKS`; incompatible track counts or unexpected selected-track loss yields `TRACK_LOSS`.
 - Processing options for an absent or excluded media type fail. Source non-audio/video content is outside track preservation and may produce `NON_AV_CONTENT_NOT_PRESERVED`.
 
@@ -77,23 +78,23 @@ Text preserves whitespace and Unicode; NUL and unpaired surrogates fail. Dates a
 
 Raw tags, images, attachments, and unsupported fields are omitted, including when no metadata call is made. Default/merge reports omitted or invalid source fields with `METADATA_OMITTED`; explicit overrides take precedence. Replace reports `replacedSourceMetadata` without per-field omission warnings. Explicit deletions appear in `removedByUser` even if absent in the source.
 
-MP4/M4A use mdir tags, WebM uses SimpleTags, and WAV uses ID3v2.4. Removing descriptive tags leaves technical container metadata and media content intact.
+MP4/M4A use mdir tags, WebM uses SimpleTags, WAV uses ID3v2.4, and Ogg uses Vorbis comments. Removing descriptive tags leaves technical container metadata and media content intact.
 
-| Field       | MP4/M4A | WebM         | WAV  |
-| ----------- | ------- | ------------ | ---- |
-| title       | ©nam    | TITLE        | TIT2 |
-| artist      | ©ART    | ARTIST       | TPE1 |
-| album       | ©alb    | ALBUM        | TALB |
-| albumArtist | aART    | ALBUM_ARTIST | TPE2 |
-| genre       | ©gen    | GENRE        | TCON |
-| comment     | ©cmt    | COMMENT      | COMM |
-| description | ©des    | DESCRIPTION  | TIT3 |
-| date        | ©day    | DATE         | TDRC |
+| Field       | MP4/M4A | WebM         | WAV  | Ogg         |
+| ----------- | ------- | ------------ | ---- | ----------- |
+| title       | ©nam    | TITLE        | TIT2 | TITLE       |
+| artist      | ©ART    | ARTIST       | TPE1 | ARTIST      |
+| album       | ©alb    | ALBUM        | TALB | ALBUM       |
+| albumArtist | aART    | ALBUM_ARTIST | TPE2 | ALBUMARTIST |
+| genre       | ©gen    | GENRE        | TCON | GENRE       |
+| comment     | ©cmt    | COMMENT      | COMM | COMMENT     |
+| description | ©des    | DESCRIPTION  | TIT3 | DESCRIPTION |
+| date        | ©day    | DATE         | TDRC | DATE        |
 
 ## Output and cancellation
 
 - The default target returns `BlobResult`; a file target returns `FileResult` only after successful close. Reports contain resolved settings, selected/excluded tracks, metadata changes, and warnings. Resolved settings do not describe measured per-frame execution or actual hardware use.
-- MIME is `video/mp4` or `video/webm` when video is present, otherwise `audio/mp4` or `audio/webm`; M4A uses `audio/mp4` and WAV uses `audio/wav`.
+- MIME is `video/mp4` or `video/webm` when video is present, otherwise `audio/mp4` or `audio/webm`; M4A uses `audio/mp4`, WAV uses `audio/wav`, and Ogg uses `audio/ogg`. MIME types carry no codecs parameter.
 - Blob filenames are `output.<format>`. File output keeps the actual name and warns `FILENAME_EXTENSION_MISMATCH` when needed. Size is final logical length. MP4/M4A disable fast start; WebM is not append-only; WAV stays within ordinary RIFF's `0xffffffff` byte limit without RF64 fallback. Estimated or actual overflow fails before an oversized write or commit.
 - File handles need granted read/write permission and `queryPermission`, `createWritable`, and `isSameEntry`. Applications choose a target distinct from the input; the library neither opens pickers nor requests permission, deletes picker-created files, or retries overwrites automatically.
 - Configuration, source, codec, track, and metadata preparation finishes before opening the real writable. Successful output replaces existing content, including old trailing bytes. Concurrent writes to the same file within one module instance fail with `TARGET_BUSY`.

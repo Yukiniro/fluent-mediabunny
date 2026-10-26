@@ -115,6 +115,7 @@ type ProgressEvent = { phase: Phase; ratio: number | null };
 | WebM | 选中视频时为 `video/webm`，否则为 `audio/webm` |
 | M4A  | `audio/mp4`                                    |
 | WAV  | `audio/wav`                                    |
+| Ogg  | `audio/ogg`                                    |
 
 输出长度必须为非负安全整数。WAV 的 RIFF 上限为 4,294,967,295 字节，不回退到 RF64。溢出时报 `OUTPUT_TOO_LARGE`。
 

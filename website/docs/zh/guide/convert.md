@@ -11,13 +11,13 @@ description: 配置格式、复制或转码、时间与画面裁剪、缩放、�
 
 ## 设置格式
 
-传入 `"mp4"`、`"webm"`、`"m4a"` 或 `"wav"`。
+传入 `"mp4"`、`"webm"`、`"m4a"`、`"wav"` 或 `"ogg"`。
 
 ```ts
 media(file).format("webm");
 ```
 
-MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A 编码 `aac`，不能有视频。WAV 编码 `pcm-s16`、`pcm-s24` 或 `pcm-f32`，不能有视频。不在上述集合里的编解码器会抛出 `UNSUPPORTED_OUTPUT_COMBINATION`。省略编解码器时，转码使用上述编解码器中的第一个。
+MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A 编码 `aac`，不能有视频。WAV 编码 `pcm-s16`、`pcm-s24` 或 `pcm-f32`，不能有视频。Ogg 编码 `opus`，不能有视频。不在上述集合里的编解码器会抛出 `UNSUPPORTED_OUTPUT_COMBINATION`。省略编解码器时，转码使用上述编解码器中的第一个。
 
 ## 设置模式
 
@@ -27,7 +27,7 @@ media(file).format("mp4").mode("copy");
 
 `"auto"` 先解析显式或格式默认编解码器，再在处理配置允许时复制兼容轨道，其余轨道转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、非零 `rotate` 以及非空视频或音频选项。允许 `rotate(0)`。
 
-复制可以在 MP4 中保留 `avc` 和 `hevc`，在 MP4 或 M4A 中保留 `aac`，在 WebM 中保留 `vp8`、`vp9` 和 `av1`，在 WebM 中保留 `opus` 和 `vorbis`，在 WAV 中保留 `pcm-s16`、`pcm-s24` 和 `pcm-f32`。复制模式遇到其余编解码器时抛出 `COPY_NOT_POSSIBLE`。
+复制可以在 MP4 中保留 `avc` 和 `hevc`，在 MP4 或 M4A 中保留 `aac`，在 WebM 中保留 `vp8`、`vp9` 和 `av1`，在 WebM 或 Ogg 中保留 `opus` 和 `vorbis`，在 WAV 中保留 `pcm-s16`、`pcm-s24` 和 `pcm-f32`。复制模式遇到其余编解码器时抛出 `COPY_NOT_POSSIBLE`。
 
 显式 `trim` 会使每条选中轨道转码，`"auto"` 也一样。
 
@@ -100,7 +100,7 @@ media(file)
   .tracks({ video: "primary", audio: [1] });
 ```
 
-M4A 和 WAV 需要恰好一条音轨，并且不能有视频。去掉视频并选一条音轨。
+M4A、WAV 和 Ogg 需要恰好一条音轨，并且不能有视频。去掉视频并选一条音轨。
 
 ```ts
 media(file).format("m4a").tracks({ video: false, audio: "primary" });

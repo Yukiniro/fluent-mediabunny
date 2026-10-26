@@ -49,7 +49,7 @@ class MediaBuilder {
 
 ```ts
 format(value: Format): MediaBuilder;
-type Format = "mp4" | "webm" | "m4a" | "wav";
+type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 ```
 
 必须在 `run()` 之前设置。每种格式列出的第一个编码器是默认值。复制模式可保留后两列中的源编解码器。
@@ -60,8 +60,9 @@ type Format = "mp4" | "webm" | "m4a" | "wav";
 | `webm` | `vp9`、`vp8` | `opus`                          | `vp8`、`vp9`、`av1` | `opus`、`vorbis`                |
 | `m4a`  | 无           | `aac`                           | 无                  | `aac`                           |
 | `wav`  | 无           | `pcm-s16`、`pcm-s24`、`pcm-f32` | 无                  | `pcm-s16`、`pcm-s24`、`pcm-f32` |
+| `ogg`  | 无           | `opus`                          | 无                  | `opus`、`vorbis`                |
 
-M4A 和 WAV 要求恰好一条音轨且没有视频，需显式设置 `tracks({ video: false, audio: "primary" })`。显式编解码器与格式不兼容时，`run()` 以 `UNSUPPORTED_OUTPUT_COMBINATION` 拒绝。
+M4A、WAV 和 Ogg 要求恰好一条音轨且没有视频，需显式设置 `tracks({ video: false, audio: "primary" })`。显式编解码器与格式不兼容时，`run()` 以 `UNSUPPORTED_OUTPUT_COMBINATION` 拒绝。
 
 ### mode
 

@@ -49,7 +49,7 @@ Every configuration method returns a **new** `MediaBuilder`. Methods validate ar
 
 ```ts
 format(value: Format): MediaBuilder;
-type Format = "mp4" | "webm" | "m4a" | "wav";
+type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 ```
 
 Required before `run()`. The first encode codec listed for each format is the default. Copy mode can preserve the additional source codecs in the last two columns.
@@ -60,8 +60,9 @@ Required before `run()`. The first encode codec listed for each format is the de
 | `webm` | `vp9`, `vp8` | `opus`                          | `vp8`, `vp9`, `av1` | `opus`, `vorbis`                |
 | `m4a`  | None         | `aac`                           | None                | `aac`                           |
 | `wav`  | None         | `pcm-s16`, `pcm-s24`, `pcm-f32` | None                | `pcm-s16`, `pcm-s24`, `pcm-f32` |
+| `ogg`  | None         | `opus`                          | None                | `opus`, `vorbis`                |
 
-M4A and WAV need exactly one audio track and no video. Exclude video explicitly with `tracks({ video: false, audio: "primary" })`. An incompatible explicit codec rejects `run()` with `UNSUPPORTED_OUTPUT_COMBINATION`.
+M4A, WAV, and Ogg need exactly one audio track and no video. Exclude video explicitly with `tracks({ video: false, audio: "primary" })`. An incompatible explicit codec rejects `run()` with `UNSUPPORTED_OUTPUT_COMBINATION`.
 
 ### mode
 

@@ -1,4 +1,5 @@
 import { expect, test } from "vite-plus/test";
+import { formats } from "../src/config.ts";
 import { media, MediaError } from "../src/index.ts";
 import { resolveMetadata, metadataPatch } from "../src/metadata.ts";
 import { Scope } from "../src/scope.ts";
@@ -126,6 +127,38 @@ test("keyFrameInterval 0 counts as a video option before any input read", async 
     webm.mode("copy").video({ keyFrameInterval: 2 }).video({ keyFrameInterval: undefined }).run(),
   ).rejects.toMatchObject({ code: "INVALID_OPTIONS" });
   await expect(webm.mode("copy").run()).rejects.not.toMatchObject({ code: "INVALID_OPTIONS" });
+});
+test("ogg is a format name and rejects codecs it cannot encode before opening a target", async () => {
+  expect(() => media(input).format("ogg")).not.toThrow();
+  for (const format of ["OGG", "toString"])
+    expect(() => media(input).format(format as never)).toThrowError(
+      expect.objectContaining({ code: "INVALID_OPTIONS" }),
+    );
+  const ogg = media(input).format("ogg");
+  for (const task of [ogg.audio({ codec: "aac" }), ogg.video({ codec: "vp9" })]) {
+    const events: string[] = [];
+    const target = { type: "file", handle: fakeHandle(events) } as const;
+    await expect(task.run({ target })).rejects.toMatchObject({
+      code: "UNSUPPORTED_OUTPUT_COMBINATION",
+      targetState: "untouched",
+    });
+    expect(events).toEqual([]);
+  }
+});
+test("every format row matches the Mediabunny writer it builds", () => {
+  for (const [format, profile] of Object.entries(formats)) {
+    const writer = profile.writer();
+    expect(writer.mimeType.split("/")[1], format).toBe(profile.mimeSubtype);
+    expect(writer.fileExtension, format).toBe(format === "m4a" ? ".mp4" : `.${format}`);
+    const supported: readonly string[] = writer.getSupportedCodecs();
+    for (const codec of [
+      ...profile.video,
+      ...profile.audio,
+      ...profile.copyVideo,
+      ...profile.copyAudio,
+    ])
+      expect(supported, `${format} ${codec}`).toContain(codec);
+  }
 });
 test("input scheme boundary and unknown options reject early", () => {
   expect(() => media("file:///private.mp4")).toThrowError(

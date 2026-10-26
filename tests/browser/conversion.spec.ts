@@ -591,20 +591,154 @@ test("keyFrameInterval requests key frames and leaves copyable audio as is", asy
     expect(audioFacts(path)).toEqual(source);
   }
 });
+test("ogg holds one Opus or Vorbis audio track with Vorbis comments", async ({
+  page,
+}, testInfo) => {
+  const tags = {
+    title: "\u6807\u9898🎬",
+    artist: "\u827a\u672f\u5bb6",
+    album: "\u4e13\u8f91",
+    albumArtist: "\u6f14\u594f\u8005",
+    genre: "\u6d4b\u8bd5",
+    comment: "\u6ce8\u91ca🙂",
+    description: "\u63cf\u8ff0",
+    date: "2024-02-29",
+  };
+  const results = await page.evaluate(async (tags) => {
+    const { media, probe } = window.mediaAPI;
+    const load = async (name: string) => (await fetch(`/fixtures/${name}`)).blob();
+    const attempt = async (name: string, task: API.MediaBuilder) => {
+      try {
+        const r = await task.run();
+        return {
+          name,
+          code: "ok",
+          mimeType: r.mimeType,
+          suggestedFilename: r.suggestedFilename,
+          info: await probe(r.blob),
+          bytes: Array.from(new Uint8Array(await r.blob.arrayBuffer())),
+        };
+      } catch (e) {
+        return { name, code: (e as API.MediaError).code };
+      }
+    };
+    const mp4 = await load("av.mp4");
+    return [
+      await attempt(
+        "transcode",
+        media(mp4).format("ogg").tracks({ video: false }).metadata(tags, { mode: "replace" }),
+      ),
+      await attempt(
+        "copy-opus",
+        media(await load("av.webm"))
+          .format("ogg")
+          .mode("copy")
+          .tracks({ video: false }),
+      ),
+      await attempt(
+        "copy-vorbis",
+        media(await load("vorbis.ogg"))
+          .format("ogg")
+          .mode("copy"),
+      ),
+      await attempt("selected-video", media(mp4).format("ogg")),
+    ];
+  }, tags);
+  await testInfo.attach("ogg", {
+    body: JSON.stringify(results.map((r) => ({ ...r, bytes: undefined }))),
+    contentType: "application/json",
+  });
+  const byName = Object.fromEntries(results.map((r) => [r.name, r]));
+  expect(byName["selected-video"]!.code).toBe("TRACK_LOSS");
+  const write = (name: string, bytes: number[]) => {
+    const path = testInfo.outputPath(`${name}.ogg`);
+    mkdirSync(testInfo.outputDir, { recursive: true });
+    writeFileSync(path, Buffer.from(bytes));
+    return path;
+  };
+  const ffprobe = (path: string) =>
+    JSON.parse(
+      execFileSync(
+        "ffprobe",
+        ["-v", "error", "-show_streams", "-show_format", "-of", "json", path],
+        {
+          encoding: "utf8",
+        },
+      ),
+    );
+  const audioPackets = (path: string) =>
+    execFileSync(
+      "ffmpeg",
+      ["-v", "error", "-i", path, "-map", "0:a", "-c", "copy", "-f", "framemd5", "-"],
+      { encoding: "utf8" },
+    )
+      .split("\n")
+      .filter((line) => line && !line.startsWith("#"))
+      .map((line) => line.split(",").map((field) => field.trim()))
+      .map(([, , pts, , size, hash]) => ({ pts: Number(pts), packet: `${size}:${hash}` }));
+
+  const transcode = byName.transcode!;
+  expect(transcode.code).toBe("ok");
+  expect(transcode.mimeType).toBe("audio/ogg");
+  expect(transcode.suggestedFilename).toBe("output.ogg");
+  expect(transcode.info!.tracks).toHaveLength(1);
+  expect(transcode.info!.tracks[0]!.codec).toBe("opus");
+  expect(transcode.info!.metadata).toEqual(tags);
+  const independent = ffprobe(write("transcode", transcode.bytes!));
+  expect(independent.format.format_name).toContain("ogg");
+  expect(independent.streams).toHaveLength(1);
+  expect(independent.streams[0].codec_name).toBe("opus");
+  // ffprobe puts Ogg comments on the stream and renames ALBUMARTIST and DESCRIPTION, so the Vorbis names are checked in the raw bytes.
+  expect(independent.streams[0].tags.TITLE).toBe(tags.title);
+  const raw = Buffer.from(transcode.bytes!);
+  for (const [key, value] of Object.entries({
+    TITLE: tags.title,
+    ARTIST: tags.artist,
+    ALBUM: tags.album,
+    ALBUMARTIST: tags.albumArtist,
+    GENRE: tags.genre,
+    COMMENT: tags.comment,
+    DESCRIPTION: tags.description,
+    DATE: tags.date,
+  }))
+    expect(raw.includes(Buffer.from(`${key}=${value}`)), key).toBe(true);
+
+  for (const [name, source, codec] of [
+    ["copy-opus", "av.webm", "opus"],
+    ["copy-vorbis", "vorbis.ogg", "vorbis"],
+  ] as const) {
+    const r = byName[name]!;
+    expect(r.code, name).toBe("ok");
+    expect(r.mimeType).toBe("audio/ogg");
+    expect(r.info!.tracks).toHaveLength(1);
+    expect(r.info!.tracks[0]!.codec).toBe(codec);
+    const path = write(name, r.bytes!);
+    expect(ffprobe(path).streams[0].codec_name).toBe(codec);
+    const copied = audioPackets(path).map((p) => p.packet);
+    // Copy starts at time zero, so the Vorbis priming packet before it is dropped.
+    const kept = audioPackets(`public/fixtures/${source}`).filter((p) => p.pts >= 0);
+    expect(copied.length).toBeGreaterThan(1);
+    expect(copied).toEqual(kept.map((p) => p.packet));
+  }
+});
 test("encoder matrix and explicit audio parameters use the requested configuration", async ({
   page,
 }, testInfo) => {
   const results = await page.evaluate(async () => {
     const { media, probe } = window.mediaAPI;
     const source = await (await fetch("/fixtures/av.mp4")).blob();
+    const audioOnly = { mp4: false, webm: false, m4a: true, wav: true, ogg: true } satisfies Record<
+      API.Format,
+      boolean
+    >;
     const results = [];
-    for (const format of ["mp4", "webm", "m4a", "wav"] as const) {
+    for (const [format, noVideo] of Object.entries(audioOnly) as [API.Format, boolean][]) {
       try {
         let task = media(source)
           .format(format)
           .mode("transcode")
           .audio({ sampleRate: 48000, channels: 2 });
-        if (format === "m4a" || format === "wav") task = task.tracks({ video: false });
+        if (noVideo) task = task.tracks({ video: false });
         if (format === "webm")
           task = task.video({ codec: "vp8", quality: "low" }).video({ bitrate: 300000 });
         const r = await task.run();
@@ -638,7 +772,7 @@ test("encoder matrix and explicit audio parameters use the requested configurati
     }
   }
   // AAC encoding is platform-dependent even with the same Chrome version.
-  for (const format of ["webm", "wav"]) {
+  for (const format of ["webm", "wav", "ogg"]) {
     expect(results.find((r) => r.format === format)?.code).toBe("ok");
   }
   if (testInfo.project.name === "chrome" && process.platform === "darwin")
