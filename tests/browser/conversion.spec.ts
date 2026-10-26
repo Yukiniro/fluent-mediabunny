@@ -511,6 +511,86 @@ test("explicit rotate crop resize and frame rate compose in order", async ({ pag
     expect(testInfo.project.name).not.toBe("chrome");
   }
 });
+test("keyFrameInterval requests key frames and leaves copyable audio as is", async ({
+  page,
+}, testInfo) => {
+  const results = await page.evaluate(async () => {
+    const { media } = window.mediaAPI;
+    const source = await (await fetch("/fixtures/av.webm")).blob();
+    const results = [];
+    for (const keyFrameInterval of [0, 0.5]) {
+      try {
+        const r = await media(source).format("webm").video({ keyFrameInterval }).run();
+        results.push({
+          keyFrameInterval,
+          code: "ok",
+          bytes: Array.from(new Uint8Array(await r.blob.arrayBuffer())),
+        });
+      } catch (e) {
+        results.push({ keyFrameInterval, code: (e as API.MediaError).code });
+      }
+    }
+    return results;
+  });
+  await testInfo.attach("key-frame-interval", {
+    body: JSON.stringify(results.map((r) => ({ ...r, bytes: undefined }))),
+    contentType: "application/json",
+  });
+  const ffprobe = (path: string, ...args: string[]) =>
+    JSON.parse(
+      execFileSync("ffprobe", ["-v", "error", ...args, "-of", "json", path], { encoding: "utf8" }),
+    );
+  const audioFacts = (path: string) => {
+    const [stream] = ffprobe(path, "-select_streams", "a", "-show_streams").streams;
+    const packets = execFileSync(
+      "ffmpeg",
+      [
+        "-v",
+        "error",
+        "-i",
+        path,
+        "-map",
+        "0:a",
+        "-c",
+        "copy",
+        "-f",
+        "streamhash",
+        "-hash",
+        "md5",
+        "-",
+      ],
+      { encoding: "utf8" },
+    );
+    return {
+      codec: stream.codec_name,
+      sampleRate: stream.sample_rate,
+      channels: stream.channels,
+      packets,
+    };
+  };
+  const source = audioFacts("public/fixtures/av.webm");
+  mkdirSync(testInfo.outputDir, { recursive: true });
+  for (const r of results) {
+    if (r.code !== "ok") {
+      expect(r.code).toBe("CODEC_UNAVAILABLE");
+      expect(testInfo.project.name).not.toBe("chrome");
+      continue;
+    }
+    const path = testInfo.outputPath(`key-frame-${r.keyFrameInterval}.webm`);
+    writeFileSync(path, Buffer.from(r.bytes!));
+    const keyFrames: number[] = ffprobe(
+      path,
+      "-select_streams",
+      "v",
+      "-show_entries",
+      "frame=key_frame",
+    ).frames.map((f: { key_frame: number }) => f.key_frame);
+    expect(keyFrames.length).toBeGreaterThan(1);
+    if (r.keyFrameInterval === 0) expect(keyFrames.every((k) => k === 1)).toBe(true);
+    else expect(keyFrames.filter((k) => k === 1).length).toBeGreaterThan(1);
+    expect(audioFacts(path)).toEqual(source);
+  }
+});
 test("encoder matrix and explicit audio parameters use the requested configuration", async ({
   page,
 }, testInfo) => {

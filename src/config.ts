@@ -73,13 +73,28 @@ export function normalizeSource(source: MediaInput): Exclude<MediaInput, URL> {
     "Expected File, Blob, ArrayBuffer, Uint8Array or HTTP(S) URL.",
   );
 }
+const videoOptionKeys = [
+  "codec",
+  "bitrate",
+  "quality",
+  "frameRate",
+  "keyFrameInterval",
+] as const satisfies readonly (keyof VideoOptions)[];
+const audioOptionKeys = [
+  "codec",
+  "bitrate",
+  "quality",
+  "sampleRate",
+  "channels",
+] as const satisfies readonly (keyof AudioOptions)[];
+type _AllVideoKeysListed =
+  Exclude<keyof VideoOptions, (typeof videoOptionKeys)[number]> extends never ? true : never;
+type _AllAudioKeysListed =
+  Exclude<keyof AudioOptions, (typeof audioOptionKeys)[number]> extends never ? true : never;
+void (true satisfies _AllVideoKeysListed);
+void (true satisfies _AllAudioKeysListed);
 export function encoding(value: unknown, kind: "video" | "audio"): VideoOptions & AudioOptions {
-  const opts = object(
-    value,
-    kind === "video"
-      ? ["codec", "bitrate", "quality", "frameRate"]
-      : ["codec", "bitrate", "quality", "sampleRate", "channels"],
-  );
+  const opts = object(value, kind === "video" ? videoOptionKeys : audioOptionKeys);
   if (opts.codec !== undefined)
     oneOf(
       opts.codec,
@@ -92,6 +107,8 @@ export function encoding(value: unknown, kind: "video" | "audio"): VideoOptions 
     invalid("bitrate and quality are mutually exclusive.");
   for (const key of ["frameRate", "sampleRate", "channels"])
     if (opts[key] !== undefined) number(opts[key], key, { integer: key !== "frameRate" });
+  if (opts.keyFrameInterval !== undefined)
+    number(opts.keyFrameInterval, "keyFrameInterval", { zero: true });
   return opts as VideoOptions & AudioOptions;
 }
 export function mergeEncoding<T extends VideoOptions | AudioOptions>(current: T, patch: T): T {

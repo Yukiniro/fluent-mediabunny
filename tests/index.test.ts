@@ -103,6 +103,30 @@ test("permission denied does not create a writable", async () => {
   expect(sink.targetState).toBe("untouched");
   await scope.finish();
 });
+test("video keyFrameInterval accepts zero and positive seconds and is video-only", () => {
+  for (const keyFrameInterval of [0, 0.5, 2])
+    expect(() => media(input).video({ keyFrameInterval })).not.toThrow();
+  for (const keyFrameInterval of [-1, NaN, Infinity, "2"])
+    expect(() => media(input).video({ keyFrameInterval } as never)).toThrowError(
+      expect.objectContaining({ code: "INVALID_OPTIONS" }),
+    );
+  expect(() => media(input).audio({ keyFrameInterval: 2 } as never)).toThrowError(
+    expect.objectContaining({ code: "INVALID_OPTIONS" }),
+  );
+});
+test("keyFrameInterval 0 counts as a video option before any input read", async () => {
+  const webm = media(input).format("webm");
+  await expect(webm.mode("copy").video({ keyFrameInterval: 0 }).run()).rejects.toMatchObject({
+    code: "INVALID_OPTIONS",
+  });
+  await expect(
+    webm.tracks({ video: false }).video({ keyFrameInterval: 0 }).run(),
+  ).rejects.toMatchObject({ code: "INVALID_OPTIONS" });
+  await expect(
+    webm.mode("copy").video({ keyFrameInterval: 2 }).video({ keyFrameInterval: undefined }).run(),
+  ).rejects.toMatchObject({ code: "INVALID_OPTIONS" });
+  await expect(webm.mode("copy").run()).rejects.not.toMatchObject({ code: "INVALID_OPTIONS" });
+});
 test("input scheme boundary and unknown options reject early", () => {
   expect(() => media("file:///private.mp4")).toThrowError(
     expect.objectContaining({ code: "UNSUPPORTED_INPUT" }),

@@ -131,6 +131,9 @@ export async function prepare(input: Input, config: Config & { format: Format },
           : undefined,
         ...(config.resize ? { width: w, height: h, fit: config.resize.fit ?? "fill" } : {}),
         frameRate: config.video.frameRate,
+        ...(config.video.keyFrameInterval !== undefined
+          ? { keyFrameInterval: config.video.keyFrameInterval }
+          : {}),
       });
     } else {
       r.sampleRate = config.audio.sampleRate ?? info.sampleRate;

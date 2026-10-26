@@ -76,6 +76,12 @@ media(file).format("mp4").video({ codec: "avc", quality: "high", frameRate: 30 }
 
 转码时既不设比特率也不设质量，解析出的质量是 `"high"`。
 
+`keyFrameInterval` 是关键帧之间的秒数。它是有限数，可以为 0。`0` 让每一帧都成为关键帧。设置它会重新编码视频，`"auto"` 模式也一样，音频仍会在可行时复制。省略时由编码器决定，Mediabunny 1.62.1 目前回退到 2 秒。这个值是对编码器的请求，本库不保证关键帧落在精确的时间戳上。
+
+```ts
+media(file).format("webm").video({ keyFrameInterval: 2 });
+```
+
 ## 设置音频编码
 
 `codec` 是 `"aac"`、`"opus"`、`"pcm-s16"`、`"pcm-s24"` 或 `"pcm-f32"`。`sampleRate` 和 `channels` 是正整数。比特率与质量的规则和视频相同。WAV 拒绝比特率和质量。多次调用会合并到已有的音频选项上。

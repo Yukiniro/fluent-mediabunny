@@ -76,6 +76,12 @@ media(file).format("mp4").video({ codec: "avc", quality: "high", frameRate: 30 }
 
 When a transcode sets neither bitrate nor quality, the resolved quality is `"high"`.
 
+`keyFrameInterval` is the number of seconds between key frames. It is a finite number and may be zero. `0` makes every frame a key frame. Setting it re-encodes the video, even in `"auto"` mode, and audio still copies when it can. Omit it to let the encoder choose. Mediabunny 1.62.1 currently falls back to 2 seconds. The value is a request to the encoder, so this library does not promise key frames at exact timestamps.
+
+```ts
+media(file).format("webm").video({ keyFrameInterval: 2 });
+```
+
 ## Set the audio encoding
 
 `codec` is `"aac"`, `"opus"`, `"pcm-s16"`, `"pcm-s24"`, or `"pcm-f32"`. `sampleRate` and `channels` are positive integers. The same bitrate and quality rules as video apply. WAV rejects bitrate and quality. Calls merge onto the previous audio options.

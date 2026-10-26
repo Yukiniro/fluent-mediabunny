@@ -8,6 +8,7 @@ export type VideoOptions = {
   bitrate?: number;
   quality?: Quality;
   frameRate?: number;
+  keyFrameInterval?: number;
 };
 export type AudioOptions = {
   codec?: "aac" | "opus" | "pcm-s16" | "pcm-s24" | "pcm-f32";
