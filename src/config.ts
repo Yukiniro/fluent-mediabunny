@@ -126,7 +126,6 @@ export function mergeEncoding<T extends VideoOptions | AudioOptions>(current: T,
 type EncodeCodecs<C> = readonly [defaultCodec: C, ...alternatives: C[]];
 export type FormatProfile = {
   readonly writer: () => OutputFormat;
-  /** Owned here, not read from writer().mimeType, so a Mediabunny upgrade cannot change the public MIME. */
   readonly mimeSubtype: string;
   readonly audio: EncodeCodecs<NonNullable<AudioOptions["codec"]>>;
   readonly copyAudio: readonly EngineAudioCodec[];
