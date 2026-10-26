@@ -54,7 +54,7 @@ const previewUrl = URL.createObjectURL(result.blob);
 
 Here, `file` is a browser `File` supplied by your application, long enough to contain the requested 2–12 second range. Revoke `previewUrl` with `URL.revokeObjectURL()` when the preview is no longer needed.
 
-Conversion outputs can be MP4, WebM, M4A, or WAV. All audio/video tracks are selected by default; audio-only M4A and WAV require explicitly selecting one audio track and excluding video. The default mode copies tracks when compatible with the resolved settings and transcodes when needed; an explicit trim transcodes every selected track.
+Conversion outputs can be MP4, WebM, M4A, WAV, or Ogg. All audio/video tracks are selected by default; audio-only M4A, WAV, and Ogg require explicitly selecting one audio track and excluding video. The default mode copies tracks when compatible with the resolved settings and transcodes when needed; an explicit trim transcodes every selected track.
 
 ### Create a video preview
 

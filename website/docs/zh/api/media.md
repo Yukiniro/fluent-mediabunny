@@ -42,14 +42,14 @@ class MediaBuilder {
 | 方法                                                 | 重复调用                                            |
 | ---------------------------------------------------- | --------------------------------------------------- |
 | `format`、`mode`、`trim`、`resize`、`crop`、`rotate` | 替换之前的设置                                      |
-| `video`、`audio`、`tracks`                           | 合并提供的字段；空对象和 `undefined` 字段不覆盖旧值 |
+| `video`、`audio`、`tracks`、`flip`                   | 合并提供的字段；空对象和 `undefined` 字段不覆盖旧值 |
 | `metadata`                                           | 替换整条元数据指令及其模式                          |
 
 ### format
 
 ```ts
 format(value: Format): MediaBuilder;
-type Format = "mp4" | "webm" | "m4a" | "wav";
+type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 ```
 
 必须在 `run()` 之前设置。每种格式列出的第一个编码器是默认值。复制模式可保留后两列中的源编解码器。
@@ -60,8 +60,9 @@ type Format = "mp4" | "webm" | "m4a" | "wav";
 | `webm` | `vp9`、`vp8` | `opus`                          | `vp8`、`vp9`、`av1` | `opus`、`vorbis`                |
 | `m4a`  | 无           | `aac`                           | 无                  | `aac`                           |
 | `wav`  | 无           | `pcm-s16`、`pcm-s24`、`pcm-f32` | 无                  | `pcm-s16`、`pcm-s24`、`pcm-f32` |
+| `ogg`  | 无           | `opus`                          | 无                  | `opus`、`vorbis`                |
 
-M4A 和 WAV 要求恰好一条音轨且没有视频，需显式设置 `tracks({ video: false, audio: "primary" })`。显式编解码器与格式不兼容时，`run()` 以 `UNSUPPORTED_OUTPUT_COMBINATION` 拒绝。
+M4A、WAV 和 Ogg 要求恰好一条音轨且没有视频，需显式设置 `tracks({ video: false, audio: "primary" })`。显式编解码器与格式不兼容时，`run()` 以 `UNSUPPORTED_OUTPUT_COMBINATION` 拒绝。
 
 ### mode
 
@@ -76,7 +77,7 @@ type Mode = "auto" | "copy" | "transcode";
 | `"copy"`         | 保留所有选中轨道的源编解码器；任何选中轨道无法复制时失败。     |
 | `"transcode"`    | 解码并重新编码所有选中轨道。                                   |
 
-复制模式拒绝时间裁剪、缩放、画面裁剪、非零旋转和非空音视频选项，允许 `rotate(0)`。任何显式时间裁剪都会强制转码，包括自动模式。无法满足精确编解码配置时，报 `CODEC_UNAVAILABLE`，不会替换为其他配置。
+复制模式拒绝时间裁剪、缩放、画面裁剪、非零旋转、任一轴为 `true` 的翻转，以及非空音视频选项。允许 `rotate(0)`，也允许两个轴都为 `false` 的 `flip`。任何显式时间裁剪都会强制转码，包括自动模式。无法满足精确编解码配置时，报 `CODEC_UNAVAILABLE`，不会替换为其他配置。
 
 ### trim
 
@@ -108,7 +109,7 @@ type ResizeOptions = {
 | `width`、`height` | 像素单位的正偶数，至少提供一个，允许放大。                                            |
 | `fit`             | 同时指定宽高时必填，只指定一个尺寸时禁止。`contain` 留边，`cover` 裁剪，`fill` 拉伸。 |
 
-单尺寸保持宽高比，另一边按 `2 * ceil(round(size) / 2)` 推导。无论方法调用顺序如何，画面处理顺序始终是：源方向与翻转、额外旋转、裁剪、缩放。
+单尺寸保持宽高比，另一边按 `2 * ceil(round(size) / 2)` 推导。无论方法调用顺序如何，画面处理顺序始终是：源方向与翻转、额外旋转、额外翻转、裁剪、缩放。
 
 ### crop
 
@@ -125,7 +126,16 @@ type CropOptions = { x: number; y: number; width: number; height: number };
 rotate(degrees: 0 | 90 | 180 | 270): MediaBuilder;
 ```
 
-在裁剪和缩放前应用额外旋转。省略或传入 `0` 时保留源方向。
+在翻转、裁剪和缩放前应用额外旋转。省略或传入 `0` 时保留源方向。
+
+### flip
+
+```ts
+flip(options: FlipOptions): MediaBuilder;
+type FlipOptions = { horizontal?: boolean; vertical?: boolean };
+```
+
+在旋转之后、裁剪之前镜像画面。每次调用只合并传入的轴。省略的轴保留前值。`false` 清除该轴。翻转不改变画面尺寸。垂直翻转是水平翻转再加 180 度。复制模式拒绝任一轴为 `true`。两个轴都为 `false` 时允许，与 `rotate(0)` 相同。
 
 ### video
 
@@ -136,18 +146,20 @@ type VideoOptions = {
   bitrate?: number;
   quality?: Quality;
   frameRate?: number;
+  keyFrameInterval?: number;
 };
 type Quality = "low" | "medium" | "high";
 ```
 
-| 字段        | 默认值                      | 说明                                          |
-| ----------- | --------------------------- | --------------------------------------------- |
-| `codec`     | 格式的首个视频编码器        | 必须与输出格式兼容。                          |
-| `bitrate`   | 未设置                      | 正安全整数，单位为 bit/s，与 `quality` 互斥。 |
-| `quality`   | 无比特率的转码使用 `"high"` | 质量预设；显式设置会强制转码。                |
-| `frameRate` | 源行为                      | 正的有限数，单位为帧/秒。                     |
+| 字段               | 默认值                      | 说明                                                     |
+| ------------------ | --------------------------- | -------------------------------------------------------- |
+| `codec`            | 格式的首个视频编码器        | 必须与输出格式兼容。                                     |
+| `bitrate`          | 未设置                      | 正安全整数，单位为 bit/s，与 `quality` 互斥。            |
+| `quality`          | 无比特率的转码使用 `"high"` | 质量预设；显式设置会强制转码。                           |
+| `frameRate`        | 源行为                      | 正的有限数，单位为帧/秒。                                |
+| `keyFrameInterval` | 编码器回退值                | 关键帧间隔秒数，有限且至少为 0。`0` 表示每帧都是关键帧。 |
 
-后续调用设置比特率时会移除之前的质量设置，反之亦然。视频选项要求存在选中视频轨道。视频转码拒绝帧尺寸变化；AVC 转码还要求整个源中的 avcC 配置稳定，包括裁剪范围之外。
+后续调用设置比特率时会移除之前的质量设置，反之亦然。设置 `keyFrameInterval`（包括 `0`）会强制视频转码；音轨仍在可行时复制。省略时由编码器决定，Mediabunny 1.62.1 目前回退到 2 秒。该间隔是对编码器的请求，不保证关键帧的精确时间戳。之后的 `video()` 调用只有传入新数值才会替换已保存的间隔；`undefined` 不会清除它。视频选项要求存在选中视频轨道。视频转码拒绝帧尺寸变化；AVC 转码还要求整个源中的 avcC 配置稳定，包括裁剪范围之外。
 
 ### audio
 

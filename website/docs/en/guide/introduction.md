@@ -52,6 +52,6 @@ New to the package? Follow [Get started](/guide/getting-started) to build and in
 
 Container support and codec support are separate. Recognizing an MP4 does not prove that a device can decode or encode its tracks. Transcoding uses the browser's media capabilities; there is no automatic server or WASM fallback.
 
-Conversion writes MP4, WebM, M4A, or WAV. Waveform images are PNG. Thumbnails use JPEG or PNG. Embedded pictures return the original image bytes without decoding.
+Conversion writes MP4, WebM, M4A, WAV, or Ogg. Waveform images are PNG. Thumbnails use JPEG or PNG. Embedded pictures return the original image bytes without decoding.
 
 Continue with the [task guides](/guide/) or browse the [API reference](/api/).

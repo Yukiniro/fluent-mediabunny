@@ -11,13 +11,13 @@ description: 配置格式、复制或转码、时间与画面裁剪、缩放、�
 
 ## 设置格式
 
-传入 `"mp4"`、`"webm"`、`"m4a"` 或 `"wav"`。
+传入 `"mp4"`、`"webm"`、`"m4a"`、`"wav"` 或 `"ogg"`。
 
 ```ts
 media(file).format("webm");
 ```
 
-MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A 编码 `aac`，不能有视频。WAV 编码 `pcm-s16`、`pcm-s24` 或 `pcm-f32`，不能有视频。不在上述集合里的编解码器会抛出 `UNSUPPORTED_OUTPUT_COMBINATION`。省略编解码器时，转码使用上述编解码器中的第一个。
+MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A 编码 `aac`，不能有视频。WAV 编码 `pcm-s16`、`pcm-s24` 或 `pcm-f32`，不能有视频。Ogg 编码 `opus`，不能有视频。不在上述集合里的编解码器会抛出 `UNSUPPORTED_OUTPUT_COMBINATION`。省略编解码器时，转码使用上述编解码器中的第一个。
 
 ## 设置模式
 
@@ -25,9 +25,9 @@ MP4 编码 `avc` 和 `aac`。WebM 编码 `vp9` 或 `vp8`，以及 `opus`。M4A �
 media(file).format("mp4").mode("copy");
 ```
 
-`"auto"` 先解析显式或格式默认编解码器，再在处理配置允许时复制兼容轨道，其余轨道转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、非零 `rotate` 以及非空视频或音频选项。允许 `rotate(0)`。
+`"auto"` 先解析显式或格式默认编解码器，再在处理配置允许时复制兼容轨道，其余轨道转码。`"transcode"` 对每条选中轨道解码再编码。`"copy"` 复制每条选中轨道，并拒绝 `trim`、`resize`、`crop`、非零 `rotate`、任一轴为 `true` 的 `flip`，以及非空视频或音频选项。允许 `rotate(0)`，也允许两个轴都为 `false` 的 `flip`。
 
-复制可以在 MP4 中保留 `avc` 和 `hevc`，在 MP4 或 M4A 中保留 `aac`，在 WebM 中保留 `vp8`、`vp9` 和 `av1`，在 WebM 中保留 `opus` 和 `vorbis`，在 WAV 中保留 `pcm-s16`、`pcm-s24` 和 `pcm-f32`。复制模式遇到其余编解码器时抛出 `COPY_NOT_POSSIBLE`。
+复制可以在 MP4 中保留 `avc` 和 `hevc`，在 MP4 或 M4A 中保留 `aac`，在 WebM 中保留 `vp8`、`vp9` 和 `av1`，在 WebM 或 Ogg 中保留 `opus` 和 `vorbis`，在 WAV 中保留 `pcm-s16`、`pcm-s24` 和 `pcm-f32`。复制模式遇到其余编解码器时抛出 `COPY_NOT_POSSIBLE`。
 
 显式 `trim` 会使每条选中轨道转码，`"auto"` 也一样。
 
@@ -66,6 +66,14 @@ media(file).format("mp4").crop({ x: 0, y: 0, width: 640, height: 360 });
 media(file).format("mp4").rotate(90);
 ```
 
+## 翻转画面
+
+传入 `horizontal`、`vertical` 或两者。后一次调用只改你传入的轴。翻转在旋转之后、裁剪之前进行。垂直翻转是水平翻转再加 180 度。
+
+```ts
+media(file).format("mp4").flip({ horizontal: true }).flip({ vertical: true });
+```
+
 ## 设置视频编码
 
 `codec` 是 `"avc"`、`"vp8"` 或 `"vp9"`。`bitrate` 是正整数。`quality` 是 `"low"`、`"medium"` 或 `"high"`。比特率与质量只能设一个。后一次 `video` 调用用质量替换先前的比特率，反过来也一样。`frameRate` 是正的有限数。多次调用会合并到已有的视频选项上。
@@ -75,6 +83,12 @@ media(file).format("mp4").video({ codec: "avc", quality: "high", frameRate: 30 }
 ```
 
 转码时既不设比特率也不设质量，解析出的质量是 `"high"`。
+
+`keyFrameInterval` 是关键帧之间的秒数。它是有限数，可以为 0。`0` 让每一帧都成为关键帧。设置它会重新编码视频，`"auto"` 模式也一样，音频仍会在可行时复制。省略时由编码器决定，Mediabunny 1.62.1 目前回退到 2 秒。这个值是对编码器的请求，本库不保证关键帧落在精确的时间戳上。
+
+```ts
+media(file).format("webm").video({ keyFrameInterval: 2 });
+```
 
 ## 设置音频编码
 
@@ -94,7 +108,7 @@ media(file)
   .tracks({ video: "primary", audio: [1] });
 ```
 
-M4A 和 WAV 需要恰好一条音轨，并且不能有视频。去掉视频并选一条音轨。
+M4A、WAV 和 Ogg 需要恰好一条音轨，并且不能有视频。去掉视频并选一条音轨。
 
 ```ts
 media(file).format("m4a").tracks({ video: false, audio: "primary" });

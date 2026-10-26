@@ -28,7 +28,7 @@ Builder methods perform no media I/O and return a new builder with copied option
 | Calls                                                | Repeated-call behavior                                                              |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `format`, `mode`, `trim`, `resize`, `crop`, `rotate` | Replace the previous value                                                          |
-| `video`, `audio`, `tracks`                           | Merge supplied fields; `undefined` and empty objects do not overwrite               |
+| `video`, `audio`, `tracks`, `flip`                   | Merge supplied fields; `undefined` and empty objects do not overwrite               |
 | `metadata`                                           | Replace the entire instruction and mode; default `merge` applies to source metadata |
 
 `bitrate` and `quality` are mutually exclusive: supplying both fails, and setting one later removes the other. Invalid method arguments throw `MediaError` synchronously; final-configuration and source-dependent errors reject `run()` during preparation.
@@ -43,20 +43,22 @@ Builder methods perform no media I/O and return a new builder with copied option
 | WebM   | vp9, vp8     | opus                      | vp8, vp9, av1 | opus, vorbis              |
 | M4A    | None         | aac                       | None          | aac                       |
 | WAV    | None         | pcm-s16, pcm-s24, pcm-f32 | None          | pcm-s16, pcm-s24, pcm-f32 |
+| Ogg    | None         | opus                      | None          | opus, vorbis              |
 
 - Default selection is all audio/video tracks. `primary` uses Mediabunny's primary track; `false` excludes a media type. ID lists are nonempty, unique nonnegative safe integers identifying tracks of that type.
-- M4A/WAV require exactly one audio track and no video. Callers exclude video explicitly. MP4/WebM retain selected tracks within backend limits; silent video is valid.
+- M4A/WAV/Ogg require exactly one audio track and no video, even though Mediabunny's Ogg writer accepts more audio tracks. Callers exclude video explicitly. MP4/WebM retain selected tracks within backend limits; silent video is valid.
 - No selected tracks yields `NO_TRACKS`; incompatible track counts or unexpected selected-track loss yields `TRACK_LOSS`.
 - Processing options for an absent or excluded media type fail. Source non-audio/video content is outside track preservation and may produce `NON_AV_CONTENT_NOT_PRESERVED`.
 
 ## Encoding and geometry
 
 - `auto` is the default: resolve the explicit or format-default codec, then copy compatible tracks when processing settings allow it. `transcode` re-encodes every selected track.
-- `copy` preserves source codecs within the copy allowlist and requires no decoder or encoder. It rejects trim, resize, crop, nonzero rotation, and nonempty audio/video settings. Failure to copy any selected track fails the run.
+- `copy` preserves source codecs within the copy allowlist and requires no decoder or encoder. It rejects trim, resize, crop, nonzero rotation, a flip axis set to `true`, and nonempty audio/video settings. `flip` with both axes `false` is allowed. Failure to copy any selected track fails the run.
 - Encoding defaults to `quality: "high"`; explicit quality or bitrate forces transcoding. Bitrate is a positive finite integer in bits/s. PCM rejects quality and bitrate options.
 - Frame rate is positive finite frames/s; sample rate and channel count are positive integers. Omitted values preserve source behavior. Unavailable requested configurations fail without codec, rate, or channel substitution.
+- `keyFrameInterval` is finite seconds `>= 0` between video key frames; `0` makes every frame a key frame. Setting it, including `0`, forces video transcoding and leaves audio copy decisions unchanged. Omitted, the property is not passed to Mediabunny, whose 1.62.1 encoder falls back to 2 seconds. The value is a request to the encoder, not a guarantee of exact key-frame timestamps. It is not reported in `ResolvedTrack`.
 - Trim uses finite `start >= 0` and optional `end > start`, relative to `max(0, min(selected firstTimestamp))`. Omitted end uses the selected tracks' end. Start at/after that end or an end beyond it fails. Every explicit trim transcodes all selected tracks, normalizes output time, and preserves inter-track offsets within frame/sample precision.
-- Geometry order is source orientation/flip → additional rotation → crop → resize, regardless of call order. Rotation is 0, 90, 180, or 270 degrees. Crop uses nonnegative integer x/y and positive integer dimensions within the rotated frame.
+- Geometry order is source orientation/flip → additional rotation → additional flip → crop → resize, regardless of call order. Rotation is 0, 90, 180, or 270 degrees. `flip` sets `horizontal` and `vertical` independently. An omitted axis keeps its previous value, and `false` clears that axis. Flip does not change frame size. A vertical flip is a horizontal flip plus 180 degrees, because Mediabunny stores one horizontal flip after rotation. Crop uses nonnegative integer x/y and positive integer dimensions within the rotated frame.
 - Resize requires at least one positive even dimension. Both dimensions require `fit: "contain" | "cover" | "fill"`; a single dimension prohibits fit and infers the other as `2 * ceil(round(aspect-preserving dimension) / 2)`. Upscaling is allowed.
 - Transcoding rejects changing frame dimensions. AVC transcoding requires an avcC description and unchanged sequence parameter sets throughout the source, including outside a trim. Copy is unaffected.
 
@@ -76,23 +78,23 @@ Text preserves whitespace and Unicode; NUL and unpaired surrogates fail. Dates a
 
 Raw tags, images, attachments, and unsupported fields are omitted, including when no metadata call is made. Default/merge reports omitted or invalid source fields with `METADATA_OMITTED`; explicit overrides take precedence. Replace reports `replacedSourceMetadata` without per-field omission warnings. Explicit deletions appear in `removedByUser` even if absent in the source.
 
-MP4/M4A use mdir tags, WebM uses SimpleTags, and WAV uses ID3v2.4. Removing descriptive tags leaves technical container metadata and media content intact.
+MP4/M4A use mdir tags, WebM uses SimpleTags, WAV uses ID3v2.4, and Ogg uses Vorbis comments. Removing descriptive tags leaves technical container metadata and media content intact.
 
-| Field       | MP4/M4A | WebM         | WAV  |
-| ----------- | ------- | ------------ | ---- |
-| title       | ©nam    | TITLE        | TIT2 |
-| artist      | ©ART    | ARTIST       | TPE1 |
-| album       | ©alb    | ALBUM        | TALB |
-| albumArtist | aART    | ALBUM_ARTIST | TPE2 |
-| genre       | ©gen    | GENRE        | TCON |
-| comment     | ©cmt    | COMMENT      | COMM |
-| description | ©des    | DESCRIPTION  | TIT3 |
-| date        | ©day    | DATE         | TDRC |
+| Field       | MP4/M4A | WebM         | WAV  | Ogg         |
+| ----------- | ------- | ------------ | ---- | ----------- |
+| title       | ©nam    | TITLE        | TIT2 | TITLE       |
+| artist      | ©ART    | ARTIST       | TPE1 | ARTIST      |
+| album       | ©alb    | ALBUM        | TALB | ALBUM       |
+| albumArtist | aART    | ALBUM_ARTIST | TPE2 | ALBUMARTIST |
+| genre       | ©gen    | GENRE        | TCON | GENRE       |
+| comment     | ©cmt    | COMMENT      | COMM | COMMENT     |
+| description | ©des    | DESCRIPTION  | TIT3 | DESCRIPTION |
+| date        | ©day    | DATE         | TDRC | DATE        |
 
 ## Output and cancellation
 
 - The default target returns `BlobResult`; a file target returns `FileResult` only after successful close. Reports contain resolved settings, selected/excluded tracks, metadata changes, and warnings. Resolved settings do not describe measured per-frame execution or actual hardware use.
-- MIME is `video/mp4` or `video/webm` when video is present, otherwise `audio/mp4` or `audio/webm`; M4A uses `audio/mp4` and WAV uses `audio/wav`.
+- MIME is `video/mp4` or `video/webm` when video is present, otherwise `audio/mp4` or `audio/webm`; M4A uses `audio/mp4`, WAV uses `audio/wav`, and Ogg uses `audio/ogg`. MIME types carry no codecs parameter.
 - Blob filenames are `output.<format>`. File output keeps the actual name and warns `FILENAME_EXTENSION_MISMATCH` when needed. Size is final logical length. MP4/M4A disable fast start; WebM is not append-only; WAV stays within ordinary RIFF's `0xffffffff` byte limit without RF64 fallback. Estimated or actual overflow fails before an oversized write or commit.
 - File handles need granted read/write permission and `queryPermission`, `createWritable`, and `isSameEntry`. Applications choose a target distinct from the input; the library neither opens pickers nor requests permission, deletes picker-created files, or retries overwrites automatically.
 - Configuration, source, codec, track, and metadata preparation finishes before opening the real writable. Successful output replaces existing content, including old trailing bytes. Concurrent writes to the same file within one module instance fail with `TARGET_BUSY`.

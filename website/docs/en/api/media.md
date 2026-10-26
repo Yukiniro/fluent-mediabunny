@@ -42,14 +42,14 @@ Every configuration method returns a **new** `MediaBuilder`. Methods validate ar
 | Methods                                              | Repeated calls                                                               |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `format`, `mode`, `trim`, `resize`, `crop`, `rotate` | Replace the previous setting                                                 |
-| `video`, `audio`, `tracks`                           | Merge supplied fields; empty objects and `undefined` fields do not overwrite |
+| `video`, `audio`, `tracks`, `flip`                   | Merge supplied fields; empty objects and `undefined` fields do not overwrite |
 | `metadata`                                           | Replace the entire metadata instruction, including its mode                  |
 
 ### format
 
 ```ts
 format(value: Format): MediaBuilder;
-type Format = "mp4" | "webm" | "m4a" | "wav";
+type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 ```
 
 Required before `run()`. The first encode codec listed for each format is the default. Copy mode can preserve the additional source codecs in the last two columns.
@@ -60,8 +60,9 @@ Required before `run()`. The first encode codec listed for each format is the de
 | `webm` | `vp9`, `vp8` | `opus`                          | `vp8`, `vp9`, `av1` | `opus`, `vorbis`                |
 | `m4a`  | None         | `aac`                           | None                | `aac`                           |
 | `wav`  | None         | `pcm-s16`, `pcm-s24`, `pcm-f32` | None                | `pcm-s16`, `pcm-s24`, `pcm-f32` |
+| `ogg`  | None         | `opus`                          | None                | `opus`, `vorbis`                |
 
-M4A and WAV need exactly one audio track and no video. Exclude video explicitly with `tracks({ video: false, audio: "primary" })`. An incompatible explicit codec rejects `run()` with `UNSUPPORTED_OUTPUT_COMBINATION`.
+M4A, WAV, and Ogg need exactly one audio track and no video. Exclude video explicitly with `tracks({ video: false, audio: "primary" })`. An incompatible explicit codec rejects `run()` with `UNSUPPORTED_OUTPUT_COMBINATION`.
 
 ### mode
 
@@ -76,7 +77,7 @@ type Mode = "auto" | "copy" | "transcode";
 | `"copy"`           | Preserve every selected track's codec. Reject if any selected track cannot be copied.                          |
 | `"transcode"`      | Decode and encode every selected track.                                                                        |
 
-Copy mode rejects trim, resize, crop, nonzero rotation, and nonempty video/audio options. `rotate(0)` is allowed. Every explicit trim forces transcoding, including in auto mode. Unavailable decoding or exact encoding configurations fail with `CODEC_UNAVAILABLE`; they are not substituted.
+Copy mode rejects trim, resize, crop, nonzero rotation, a flip axis set to `true`, and nonempty video/audio options. `rotate(0)` and a flip with both axes `false` are allowed. Every explicit trim forces transcoding, including in auto mode. Unavailable decoding or exact encoding configurations fail with `CODEC_UNAVAILABLE`; they are not substituted.
 
 ### trim
 
@@ -108,7 +109,7 @@ type ResizeOptions = {
 | `width`, `height` | Positive even integers in pixels. Supply at least one. Upscaling is allowed.                                                                 |
 | `fit`             | Required when both dimensions are supplied; forbidden when only one is supplied. `contain` letterboxes, `cover` crops, and `fill` stretches. |
 
-A single dimension preserves aspect ratio and infers the other with `2 * ceil(round(size) / 2)`. Geometry applies in this order, regardless of call order: source orientation and flip, additional rotation, crop, then resize.
+A single dimension preserves aspect ratio and infers the other with `2 * ceil(round(size) / 2)`. Geometry applies in this order, regardless of call order: source orientation and flip, additional rotation, additional flip, crop, then resize.
 
 ### crop
 
@@ -125,7 +126,16 @@ type CropOptions = { x: number; y: number; width: number; height: number };
 rotate(degrees: 0 | 90 | 180 | 270): MediaBuilder;
 ```
 
-Apply an additional rotation before crop and resize. Omit it, or pass `0`, to leave the source orientation unchanged.
+Apply an additional rotation before flip, crop, and resize. Omit it, or pass `0`, to leave the source orientation unchanged.
+
+### flip
+
+```ts
+flip(options: FlipOptions): MediaBuilder;
+type FlipOptions = { horizontal?: boolean; vertical?: boolean };
+```
+
+Mirror the picture after rotation and before crop. Each call merges the axes you pass. An omitted axis keeps its previous value. `false` clears that axis. Flip does not change the frame size. A vertical flip is a horizontal flip plus 180 degrees. Copy mode rejects an axis set to `true`. Both axes `false` are allowed, as with `rotate(0)`.
 
 ### video
 
@@ -136,18 +146,20 @@ type VideoOptions = {
   bitrate?: number;
   quality?: Quality;
   frameRate?: number;
+  keyFrameInterval?: number;
 };
 type Quality = "low" | "medium" | "high";
 ```
 
-| Field       | Default                                   | Description                                                                   |
-| ----------- | ----------------------------------------- | ----------------------------------------------------------------------------- |
-| `codec`     | First video codec for the format          | Must be compatible with the output format.                                    |
-| `bitrate`   | Unset                                     | Positive safe integer, in bits per second. Mutually exclusive with `quality`. |
-| `quality`   | `"high"` when transcoding without bitrate | A quality preset. An explicit preset forces transcoding.                      |
-| `frameRate` | Source behavior                           | Positive finite frames per second.                                            |
+| Field              | Default                                   | Description                                                                       |
+| ------------------ | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `codec`            | First video codec for the format          | Must be compatible with the output format.                                        |
+| `bitrate`          | Unset                                     | Positive safe integer, in bits per second. Mutually exclusive with `quality`.     |
+| `quality`          | `"high"` when transcoding without bitrate | A quality preset. An explicit preset forces transcoding.                          |
+| `frameRate`        | Source behavior                           | Positive finite frames per second.                                                |
+| `keyFrameInterval` | Encoder fallback                          | Finite seconds between key frames, at least 0. `0` makes every frame a key frame. |
 
-Setting bitrate in a later call removes a previous quality setting, and the reverse. Video options require a selected video track. Video transcoding rejects changing frame dimensions; AVC transcoding also requires a stable avcC configuration across the source, including outside a trim.
+Setting bitrate in a later call removes a previous quality setting, and the reverse. Setting `keyFrameInterval`, including `0`, forces video transcoding; audio tracks still copy when they can. When it is omitted, the encoder chooses; Mediabunny 1.62.1 currently falls back to 2 seconds. The interval is a request to the encoder, not a promise of exact key-frame timestamps. A later `video()` call keeps the stored interval unless it passes a new number; `undefined` does not clear it. Video options require a selected video track. Video transcoding rejects changing frame dimensions; AVC transcoding also requires a stable avcC configuration across the source, including outside a trim.
 
 ### audio
 

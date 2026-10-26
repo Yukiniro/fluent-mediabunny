@@ -28,7 +28,7 @@ Builder 方法不进行媒体 I/O，复制选项并返回新 builder。每次 `r
 | 调用                                                 | 重复调用行为                                    |
 | ---------------------------------------------------- | ----------------------------------------------- |
 | `format`、`mode`、`trim`、`resize`、`crop`、`rotate` | 替换前值                                        |
-| `video`、`audio`、`tracks`                           | 合并已提供字段；`undefined` 和空对象不覆盖原值  |
+| `video`、`audio`、`tracks`、`flip`                   | 合并已提供字段；`undefined` 和空对象不覆盖原值  |
 | `metadata`                                           | 替换整条指令和模式；默认 `merge` 与源元数据合并 |
 
 `bitrate` 与 `quality` 互斥：同时提供会失败，后设置其中一项会移除另一项。无效方法参数同步抛出 `MediaError`；依赖最终配置或源内容的错误在准备阶段使 `run()` 拒绝。
@@ -43,20 +43,22 @@ Builder 方法不进行媒体 I/O，复制选项并返回新 builder。每次 `r
 | WebM | vp9, vp8 | opus                      | vp8, vp9, av1 | opus, vorbis              |
 | M4A  | 无       | aac                       | 无            | aac                       |
 | WAV  | 无       | pcm-s16, pcm-s24, pcm-f32 | 无            | pcm-s16, pcm-s24, pcm-f32 |
+| Ogg  | 无       | opus                      | 无            | opus, vorbis              |
 
 - 默认选择全部音视频轨。`primary` 使用 Mediabunny 的主轨道；`false` 排除该媒体类型。ID 列表须非空，包含不重复的非负安全整数，且指向对应类型的轨道。
-- M4A/WAV 要求恰好一个音轨且无视频，调用者须显式排除视频。MP4/WebM 在后端限制内保留所选轨道，允许无声视频。
+- M4A/WAV/Ogg 要求恰好一个音轨且无视频，即使 Mediabunny 的 Ogg 写入器允许更多音轨。调用者须显式排除视频。MP4/WebM 在后端限制内保留所选轨道，允许无声视频。
 - 未选中轨道返回 `NO_TRACKS`；轨道数量不兼容或意外丢失所选轨道返回 `TRACK_LOSS`。
 - 对不存在或已排除的媒体类型设置处理选项会失败。轨道保留不涵盖非音视频内容；发现此类内容时可能报告 `NON_AV_CONTENT_NOT_PRESERVED`。
 
 ## 编码与几何处理
 
 - 默认模式为 `auto`：确定显式编码或格式默认编码，再在处理设置允许时复制兼容轨道。`transcode` 重新编码全部所选轨道。
-- `copy` 在复制白名单内保留源编码，不需要解码器或编码器。它拒绝 trim、resize、crop、非零旋转及非空音视频设置。任一所选轨道无法复制时，整个任务失败。
+- `copy` 在复制白名单内保留源编码，不需要解码器或编码器。它拒绝 trim、resize、crop、非零旋转、任一轴为 `true` 的 `flip`，以及非空音视频设置。两个轴都为 `false` 时允许。任一所选轨道无法复制时，整个任务失败。
 - 编码默认采用 `quality: "high"`；显式质量或码率强制转码。码率为正有限整数，单位 bits/s。PCM 拒绝 quality 和 bitrate 选项。
 - 帧率为正有限值，单位帧/秒；采样率和声道数为正整数。省略时保留源行为。请求的配置不可用时失败，不替换编码、采样率或声道数。
+- `keyFrameInterval` 为视频关键帧之间的有限秒数，`>= 0`；`0` 表示每帧都是关键帧。设置它（包括 `0`）会强制视频转码，不改变音频的复制判断。省略时不向 Mediabunny 传入该属性，其 1.62.1 编码器回退到 2 秒。该值是对编码器的请求，不保证关键帧的精确时间戳。它不出现在 `ResolvedTrack` 中。
 - Trim 使用有限的 `start >= 0` 和可选的 `end > start`，相对于 `max(0, min(selected firstTimestamp))`。省略 end 时使用所选轨道的结束时间。start 达到或超过该结束时间，或 end 超出该时间时失败。显式 trim 会转码全部所选轨道、归一化输出时间，并在帧/样本精度内保留轨道间偏移。
-- 几何处理顺序固定为源方向/翻转 → 额外旋转 → 裁切 → 缩放，与调用顺序无关。旋转角度为 0、90、180 或 270 度。裁切 x/y 为非负整数，宽高为正整数，范围须位于旋转后的画面内。
+- 几何处理顺序固定为源方向/翻转 → 额外旋转 → 额外翻转 → 裁切 → 缩放，与调用顺序无关。旋转角度为 0、90、180 或 270 度。`flip` 分别设置 `horizontal` 和 `vertical`。省略的轴保留前值，`false` 清除该轴。翻转不改变画面尺寸。垂直翻转是水平翻转再加 180 度，因为 Mediabunny 在旋转之后只保存一次水平翻转。裁切 x/y 为非负整数，宽高为正整数，范围须位于旋转后的画面内。
 - 缩放至少提供一个正偶数尺寸。同时提供宽高时必填 `fit: "contain" | "cover" | "fill"`；只提供一维时禁止 fit，另一维按 `2 * ceil(round(保持比例计算的尺寸) / 2)` 推算。允许放大。
 - 转码拒绝变化的帧尺寸。AVC 转码要求 avcC 描述，且整个源文件的序列参数集保持一致，包括 trim 范围之外。复制不受此限制。
 
@@ -76,23 +78,23 @@ Builder 方法不进行媒体 I/O，复制选项并返回新 builder。每次 `r
 
 即使不调用 metadata，也会省略原始标签、图片、附件及不支持的字段。默认/merge 模式通过 `METADATA_OMITTED` 报告省略或无效的源字段，显式覆盖优先。Replace 报告 `replacedSourceMetadata`，不逐字段报告省略警告。显式删除记录在 `removedByUser`，即使源中不存在该字段。
 
-MP4/M4A 使用 mdir 标签，WebM 使用 SimpleTags，WAV 使用 ID3v2.4。删除描述性标签会保留技术性容器元数据和媒体内容。
+MP4/M4A 使用 mdir 标签，WebM 使用 SimpleTags，WAV 使用 ID3v2.4，Ogg 使用 Vorbis 注释。删除描述性标签会保留技术性容器元数据和媒体内容。
 
-| 字段        | MP4/M4A | WebM         | WAV  |
-| ----------- | ------- | ------------ | ---- |
-| title       | ©nam    | TITLE        | TIT2 |
-| artist      | ©ART    | ARTIST       | TPE1 |
-| album       | ©alb    | ALBUM        | TALB |
-| albumArtist | aART    | ALBUM_ARTIST | TPE2 |
-| genre       | ©gen    | GENRE        | TCON |
-| comment     | ©cmt    | COMMENT      | COMM |
-| description | ©des    | DESCRIPTION  | TIT3 |
-| date        | ©day    | DATE         | TDRC |
+| 字段        | MP4/M4A | WebM         | WAV  | Ogg         |
+| ----------- | ------- | ------------ | ---- | ----------- |
+| title       | ©nam    | TITLE        | TIT2 | TITLE       |
+| artist      | ©ART    | ARTIST       | TPE1 | ARTIST      |
+| album       | ©alb    | ALBUM        | TALB | ALBUM       |
+| albumArtist | aART    | ALBUM_ARTIST | TPE2 | ALBUMARTIST |
+| genre       | ©gen    | GENRE        | TCON | GENRE       |
+| comment     | ©cmt    | COMMENT      | COMM | COMMENT     |
+| description | ©des    | DESCRIPTION  | TIT3 | DESCRIPTION |
+| date        | ©day    | DATE         | TDRC | DATE        |
 
 ## 输出与取消
 
 - 默认目标返回 `BlobResult`；文件目标仅在成功关闭后返回 `FileResult`。报告包含解析后的设置、选中/排除的轨道、元数据变化和警告。解析后的设置不代表逐帧执行实测或实际硬件使用情况。
-- 包含视频时 MIME 为 `video/mp4` 或 `video/webm`，否则为 `audio/mp4` 或 `audio/webm`；M4A 使用 `audio/mp4`，WAV 使用 `audio/wav`。
+- 包含视频时 MIME 为 `video/mp4` 或 `video/webm`，否则为 `audio/mp4` 或 `audio/webm`；M4A 使用 `audio/mp4`，WAV 使用 `audio/wav`，Ogg 使用 `audio/ogg`。MIME 不带 codecs 参数。
 - Blob 文件名为 `output.<format>`。文件输出保留实际名称，必要时报告 `FILENAME_EXTENSION_MISMATCH`。大小为最终逻辑长度。MP4/M4A 禁用 fast start；WebM 不采用仅追加模式；WAV 限于普通 RIFF 的 `0xffffffff` 字节上限，不回退到 RF64。预估或实际大小超限时，在超限写入或提交前失败。
 - 文件句柄须已获得读写权限，并提供 `queryPermission`、`createWritable` 和 `isSameEntry`。应用选择与输入不同的目标；库不打开选择器、请求权限、删除选择器创建的文件或自动重试覆盖写入。
 - 配置、源、编码、轨道和元数据的准备完成后，才打开实际可写流。成功输出替换原有内容，包括旧尾部字节。同一模块实例内并发写入同一文件会以 `TARGET_BUSY` 失败。
