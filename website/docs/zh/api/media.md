@@ -49,7 +49,7 @@ class MediaBuilder {
 
 ```ts
 format(value: Format): MediaBuilder;
-type Format = "mp4" | "webm" | "m4a" | "wav";
+type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 ```
 
 必须在 `run()` 之前设置。每种格式列出的第一个编码器是默认值。复制模式可保留后两列中的源编解码器。
@@ -60,8 +60,9 @@ type Format = "mp4" | "webm" | "m4a" | "wav";
 | `webm` | `vp9`、`vp8` | `opus`                          | `vp8`、`vp9`、`av1` | `opus`、`vorbis`                |
 | `m4a`  | 无           | `aac`                           | 无                  | `aac`                           |
 | `wav`  | 无           | `pcm-s16`、`pcm-s24`、`pcm-f32` | 无                  | `pcm-s16`、`pcm-s24`、`pcm-f32` |
+| `ogg`  | 无           | `opus`                          | 无                  | `opus`、`vorbis`                |
 
-M4A 和 WAV 要求恰好一条音轨且没有视频，需显式设置 `tracks({ video: false, audio: "primary" })`。显式编解码器与格式不兼容时，`run()` 以 `UNSUPPORTED_OUTPUT_COMBINATION` 拒绝。
+M4A、WAV 和 Ogg 要求恰好一条音轨且没有视频，需显式设置 `tracks({ video: false, audio: "primary" })`。显式编解码器与格式不兼容时，`run()` 以 `UNSUPPORTED_OUTPUT_COMBINATION` 拒绝。
 
 ### mode
 
@@ -136,18 +137,20 @@ type VideoOptions = {
   bitrate?: number;
   quality?: Quality;
   frameRate?: number;
+  keyFrameInterval?: number;
 };
 type Quality = "low" | "medium" | "high";
 ```
 
-| 字段        | 默认值                      | 说明                                          |
-| ----------- | --------------------------- | --------------------------------------------- |
-| `codec`     | 格式的首个视频编码器        | 必须与输出格式兼容。                          |
-| `bitrate`   | 未设置                      | 正安全整数，单位为 bit/s，与 `quality` 互斥。 |
-| `quality`   | 无比特率的转码使用 `"high"` | 质量预设；显式设置会强制转码。                |
-| `frameRate` | 源行为                      | 正的有限数，单位为帧/秒。                     |
+| 字段               | 默认值                      | 说明                                                     |
+| ------------------ | --------------------------- | -------------------------------------------------------- |
+| `codec`            | 格式的首个视频编码器        | 必须与输出格式兼容。                                     |
+| `bitrate`          | 未设置                      | 正安全整数，单位为 bit/s，与 `quality` 互斥。            |
+| `quality`          | 无比特率的转码使用 `"high"` | 质量预设；显式设置会强制转码。                           |
+| `frameRate`        | 源行为                      | 正的有限数，单位为帧/秒。                                |
+| `keyFrameInterval` | 编码器回退值                | 关键帧间隔秒数，有限且至少为 0。`0` 表示每帧都是关键帧。 |
 
-后续调用设置比特率时会移除之前的质量设置，反之亦然。视频选项要求存在选中视频轨道。视频转码拒绝帧尺寸变化；AVC 转码还要求整个源中的 avcC 配置稳定，包括裁剪范围之外。
+后续调用设置比特率时会移除之前的质量设置，反之亦然。设置 `keyFrameInterval`（包括 `0`）会强制视频转码；音轨仍在可行时复制。省略时由编码器决定，Mediabunny 1.62.1 目前回退到 2 秒。该间隔是对编码器的请求，不保证关键帧的精确时间戳。之后的 `video()` 调用只有传入新数值才会替换已保存的间隔；`undefined` 不会清除它。视频选项要求存在选中视频轨道。视频转码拒绝帧尺寸变化；AVC 转码还要求整个源中的 avcC 配置稳定，包括裁剪范围之外。
 
 ### audio
 

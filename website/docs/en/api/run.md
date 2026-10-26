@@ -115,6 +115,7 @@ Successful close does not guarantee power-loss durability. Failed file runs set 
 | WebM   | `video/webm` with selected video; otherwise `audio/webm` |
 | M4A    | `audio/mp4`                                              |
 | WAV    | `audio/wav`                                              |
+| Ogg    | `audio/ogg`                                              |
 
 Output length must be a nonnegative safe integer. WAV has a 4,294,967,295-byte RIFF limit with no RF64 fallback. Overflow fails with `OUTPUT_TOO_LARGE`.
 

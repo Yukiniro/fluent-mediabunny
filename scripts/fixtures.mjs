@@ -29,6 +29,7 @@ run("av.mp4", [
 run("silent.mp4", [...video, "-c:v", "libx264"]);
 run("audio.wav", [...audio, "-c:a", "pcm_s16le"]);
 run("audio.mp3", [...audio, "-c:a", "libmp3lame"]);
+run("vorbis.ogg", [...audio, "-c:a", "libvorbis"]);
 run("av.webm", [...video, ...audio, "-c:v", "libvpx-vp9", "-c:a", "libopus"]);
 run("multi.mp4", [
   ...video,

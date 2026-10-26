@@ -49,7 +49,7 @@ Every configuration method returns a **new** `MediaBuilder`. Methods validate ar
 
 ```ts
 format(value: Format): MediaBuilder;
-type Format = "mp4" | "webm" | "m4a" | "wav";
+type Format = "mp4" | "webm" | "m4a" | "wav" | "ogg";
 ```
 
 Required before `run()`. The first encode codec listed for each format is the default. Copy mode can preserve the additional source codecs in the last two columns.
@@ -60,8 +60,9 @@ Required before `run()`. The first encode codec listed for each format is the de
 | `webm` | `vp9`, `vp8` | `opus`                          | `vp8`, `vp9`, `av1` | `opus`, `vorbis`                |
 | `m4a`  | None         | `aac`                           | None                | `aac`                           |
 | `wav`  | None         | `pcm-s16`, `pcm-s24`, `pcm-f32` | None                | `pcm-s16`, `pcm-s24`, `pcm-f32` |
+| `ogg`  | None         | `opus`                          | None                | `opus`, `vorbis`                |
 
-M4A and WAV need exactly one audio track and no video. Exclude video explicitly with `tracks({ video: false, audio: "primary" })`. An incompatible explicit codec rejects `run()` with `UNSUPPORTED_OUTPUT_COMBINATION`.
+M4A, WAV, and Ogg need exactly one audio track and no video. Exclude video explicitly with `tracks({ video: false, audio: "primary" })`. An incompatible explicit codec rejects `run()` with `UNSUPPORTED_OUTPUT_COMBINATION`.
 
 ### mode
 
@@ -136,18 +137,20 @@ type VideoOptions = {
   bitrate?: number;
   quality?: Quality;
   frameRate?: number;
+  keyFrameInterval?: number;
 };
 type Quality = "low" | "medium" | "high";
 ```
 
-| Field       | Default                                   | Description                                                                   |
-| ----------- | ----------------------------------------- | ----------------------------------------------------------------------------- |
-| `codec`     | First video codec for the format          | Must be compatible with the output format.                                    |
-| `bitrate`   | Unset                                     | Positive safe integer, in bits per second. Mutually exclusive with `quality`. |
-| `quality`   | `"high"` when transcoding without bitrate | A quality preset. An explicit preset forces transcoding.                      |
-| `frameRate` | Source behavior                           | Positive finite frames per second.                                            |
+| Field              | Default                                   | Description                                                                       |
+| ------------------ | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `codec`            | First video codec for the format          | Must be compatible with the output format.                                        |
+| `bitrate`          | Unset                                     | Positive safe integer, in bits per second. Mutually exclusive with `quality`.     |
+| `quality`          | `"high"` when transcoding without bitrate | A quality preset. An explicit preset forces transcoding.                          |
+| `frameRate`        | Source behavior                           | Positive finite frames per second.                                                |
+| `keyFrameInterval` | Encoder fallback                          | Finite seconds between key frames, at least 0. `0` makes every frame a key frame. |
 
-Setting bitrate in a later call removes a previous quality setting, and the reverse. Video options require a selected video track. Video transcoding rejects changing frame dimensions; AVC transcoding also requires a stable avcC configuration across the source, including outside a trim.
+Setting bitrate in a later call removes a previous quality setting, and the reverse. Setting `keyFrameInterval`, including `0`, forces video transcoding; audio tracks still copy when they can. When it is omitted, the encoder chooses; Mediabunny 1.62.1 currently falls back to 2 seconds. The interval is a request to the encoder, not a promise of exact key-frame timestamps. A later `video()` call keeps the stored interval unless it passes a new number; `undefined` does not clear it. Video options require a selected video track. Video transcoding rejects changing frame dimensions; AVC transcoding also requires a stable avcC configuration across the source, including outside a trim.
 
 ### audio
 

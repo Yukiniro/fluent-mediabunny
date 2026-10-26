@@ -54,7 +54,7 @@ const previewUrl = URL.createObjectURL(result.blob);
 
 这里的 `file` 是应用提供的浏览器 `File`，时长应足以覆盖请求的第 2–12 秒。预览不再使用时，请调用 `URL.revokeObjectURL()` 释放 `previewUrl`。
 
-转换支持输出 MP4、WebM、M4A 或 WAV，默认选中全部音视频轨道。纯音频的 M4A 和 WAV 需要显式选择一条音轨并排除视频。默认模式会在符合最终参数时复制轨道，否则按需转码；显式裁剪时间范围会使所有选中的轨道转码。
+转换支持输出 MP4、WebM、M4A、WAV 或 Ogg，默认选中全部音视频轨道。纯音频的 M4A、WAV 和 Ogg 需要显式选择一条音轨并排除视频。默认模式会在符合最终参数时复制轨道，否则按需转码；显式裁剪时间范围会使所有选中的轨道转码。
 
 ### 生成视频预览图
 

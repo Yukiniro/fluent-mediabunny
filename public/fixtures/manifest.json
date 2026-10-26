@@ -24,7 +24,8 @@
     "rotated.mp4",
     "silent.mp4",
     "two-video.mp4",
-    "vfr.mp4"
+    "vfr.mp4",
+    "vorbis.ogg"
   ],
   "exceptions": {
     "long.mp4": "30 seconds, 640x360, 24 fps",

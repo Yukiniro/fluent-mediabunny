@@ -11,13 +11,13 @@ The field list is on [media](/api/media). Failures reject with [MediaError](/api
 
 ## Set the format
 
-Pass `"mp4"`, `"webm"`, `"m4a"`, or `"wav"`.
+Pass `"mp4"`, `"webm"`, `"m4a"`, `"wav"`, or `"ogg"`.
 
 ```ts
 media(file).format("webm");
 ```
 
-MP4 encodes `avc` and `aac`. WebM encodes `vp9` or `vp8`, and `opus`. M4A encodes `aac` and no video. WAV encodes `pcm-s16`, `pcm-s24`, or `pcm-f32`, and no video. A codec outside that set throws `UNSUPPORTED_OUTPUT_COMBINATION`. When you omit the codec, a transcode uses the first of those codecs.
+MP4 encodes `avc` and `aac`. WebM encodes `vp9` or `vp8`, and `opus`. M4A encodes `aac` and no video. WAV encodes `pcm-s16`, `pcm-s24`, or `pcm-f32`, and no video. Ogg encodes `opus` and no video. A codec outside that set throws `UNSUPPORTED_OUTPUT_COMBINATION`. When you omit the codec, a transcode uses the first of those codecs.
 
 ## Set the mode
 
@@ -27,7 +27,7 @@ media(file).format("mp4").mode("copy");
 
 `"auto"` resolves the explicit or format-default codec, then copies compatible tracks when the processing settings allow it and transcodes the rest. `"transcode"` decodes and encodes every selected track. `"copy"` copies every selected track and rejects `trim`, `resize`, `crop`, nonzero `rotate`, and nonempty video or audio options. `rotate(0)` is allowed.
 
-Copy can keep `avc` and `hevc` in MP4, `aac` in MP4 or M4A, `vp8`, `vp9`, and `av1` in WebM, `opus` and `vorbis` in WebM, and `pcm-s16`, `pcm-s24`, and `pcm-f32` in WAV. Anything else in copy mode throws `COPY_NOT_POSSIBLE`.
+Copy can keep `avc` and `hevc` in MP4, `aac` in MP4 or M4A, `vp8`, `vp9`, and `av1` in WebM, `opus` and `vorbis` in WebM or Ogg, and `pcm-s16`, `pcm-s24`, and `pcm-f32` in WAV. Anything else in copy mode throws `COPY_NOT_POSSIBLE`.
 
 An explicit `trim` transcodes every selected track, including in `"auto"`.
 
@@ -76,6 +76,12 @@ media(file).format("mp4").video({ codec: "avc", quality: "high", frameRate: 30 }
 
 When a transcode sets neither bitrate nor quality, the resolved quality is `"high"`.
 
+`keyFrameInterval` is the number of seconds between key frames. It is a finite number and may be zero. `0` makes every frame a key frame. Setting it re-encodes the video, even in `"auto"` mode, and audio still copies when it can. Omit it to let the encoder choose. Mediabunny 1.62.1 currently falls back to 2 seconds. The value is a request to the encoder, so this library does not promise key frames at exact timestamps.
+
+```ts
+media(file).format("webm").video({ keyFrameInterval: 2 });
+```
+
 ## Set the audio encoding
 
 `codec` is `"aac"`, `"opus"`, `"pcm-s16"`, `"pcm-s24"`, or `"pcm-f32"`. `sampleRate` and `channels` are positive integers. The same bitrate and quality rules as video apply. WAV rejects bitrate and quality. Calls merge onto the previous audio options.
@@ -94,7 +100,7 @@ media(file)
   .tracks({ video: "primary", audio: [1] });
 ```
 
-M4A and WAV need exactly one audio track and no video. Drop video and pick one audio track.
+M4A, WAV, and Ogg need exactly one audio track and no video. Drop video and pick one audio track.
 
 ```ts
 media(file).format("m4a").tracks({ video: false, audio: "primary" });
