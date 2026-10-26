@@ -70,6 +70,8 @@ if (poster) {
 
 A request returns `null` when no frame covers that time. For a strip of previews, `thumbnails()` yields images on demand and preserves each requested position, including positions without a frame. Batches accept 1–1000 requests; output images are JPEG or PNG, with at most 4096 pixels per dimension and 16,000,000 pixels in area.
 
+`thumbnail()` returns the presentation frame that covers a time, which may be a B frame. `getClosestKeyFrameImage()`, `getKeyFrameImages()`, and `getKeyFrameCount()` read encoded keyframes instead. See the [keyframe contract](spec/keyframes.md).
+
 ### Read an embedded picture
 
 ```ts
@@ -106,7 +108,7 @@ Conversion returns an in-memory Blob result by default. Applications can instead
 
 ## Contributing
 
-Developer contracts: [conversion](spec/conversion.md), [waveforms](spec/waveforms.md), [thumbnails](spec/thumbnails.md), and [embedded pictures](spec/embedded-picture.md).
+Developer contracts: [conversion](spec/conversion.md), [waveforms](spec/waveforms.md), [thumbnails](spec/thumbnails.md), [keyframes](spec/keyframes.md), and [embedded pictures](spec/embedded-picture.md).
 
 Bug reports and focused improvements are welcome through [GitHub issues](https://github.com/Yukiniro/fluent-mediabunny/issues) and pull requests. For browser-specific issues, include your browser, operating system, and a small reproducible example using shareable media.
 

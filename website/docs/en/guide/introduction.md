@@ -35,6 +35,9 @@ New to the package? Follow [Get started](/guide/getting-started) to build and in
 | Draw that waveform as one PNG           | [renderWaveform()](/api/waveforms)            | `Promise<WaveformImage>`                         |
 | Decode one video frame                  | [thumbnail()](/api/thumbnails#thumbnail)      | `Promise<ThumbnailImage \| null>`                |
 | Build a strip of video previews         | [thumbnails()](/api/thumbnails#thumbnails)    | `AsyncGenerator<ThumbnailItem>`                  |
+| Decode the nearest encoded keyframe     | [getClosestKeyFrameImage()](/api/keyframes)   | `Promise<KeyFrameImage \| null>`                 |
+| List encoded keyframes in a time range  | [getKeyFrameImages()](/api/keyframes)         | `AsyncGenerator<KeyFrameImage>`                  |
+| Count encoded keyframes                 | [getKeyFrameCount()](/api/keyframes)          | `Promise<number>`                                |
 | Read a file's embedded cover image      | [getEmbeddedPicture()](/api/embedded-picture) | `Promise<Uint8Array<ArrayBuffer> \| null>`       |
 
 ## How the API works

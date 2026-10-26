@@ -5,7 +5,7 @@ description: 按明确的时间与尺寸解码单帧视频，或惰性生成有�
 
 # thumbnail / thumbnails
 
-将视频帧解码为 JPEG 或 PNG。单个时间使用 `thumbnail`，批量使用 `thumbnails`。读取原始封面请使用 [getEmbeddedPicture](/zh/api/embedded-picture)。
+将视频帧解码为 JPEG 或 PNG。单个时间使用 `thumbnail`，批量使用 `thumbnails`。读取原始封面请使用 [getEmbeddedPicture](/zh/api/embedded-picture)。编码关键帧请使用 [getClosestKeyFrameImage](/zh/api/keyframes)。
 
 ## thumbnail
 

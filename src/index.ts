@@ -169,6 +169,7 @@ export function media(source: MediaInput) {
 }
 
 export { thumbnail, thumbnails } from "./thumbnail.ts";
+export { getClosestKeyFrameImage, getKeyFrameCount, getKeyFrameImages } from "./keyframes.ts";
 export { getWaveformData } from "./waveform.ts";
 export { renderWaveform } from "./waveform-image.ts";
 export { getEmbeddedPicture } from "./embedded-picture.ts";
@@ -178,6 +179,10 @@ export type {
   ThumbnailsOptions,
   ThumbnailImage,
   ThumbnailItem,
+  KeyFrameImage,
+  KeyFrameImageOptions,
+  KeyFrameImagesOptions,
+  KeyFrameCountOptions,
   EmbeddedPictureOptions,
   WaveformOptions,
   WaveformData,

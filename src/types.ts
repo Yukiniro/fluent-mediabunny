@@ -199,6 +199,15 @@ export type ThumbnailImage = {
   timeOriginSeconds: number;
 };
 export type ThumbnailItem = { index: number; requestedTime: number; image: ThumbnailImage | null };
+export type KeyFrameImage = Omit<ThumbnailImage, "requestedTime">;
+export type KeyFrameImageOptions = ThumbnailImageOptions & { time: number };
+export type KeyFrameImagesOptions = ThumbnailImageOptions & { start?: number; end?: number };
+export type KeyFrameCountOptions = {
+  track?: "primary" | number;
+  start?: number;
+  end?: number;
+  signal?: AbortSignal;
+};
 export type EmbeddedPictureOptions = { signal?: AbortSignal };
 export type WaveformOptions = {
   track?: "primary" | number;
